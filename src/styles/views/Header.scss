@@ -1,6 +1,11 @@
 @import 'styles/theme';
 
 .header {
+  overflow: hidden;
+  padding: 10px 10px;
+  width: 100vw;
+  // background-color: #f1f1f1;
+
   &.container {
     @include center;
   }
@@ -9,5 +14,23 @@
     font-weight: bold;
     color: $background;
     text-align: center;
+  }
+
+  &.link {
+    background-color: white;
+    color: rgb(0, 0, 0);
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 20px;
+    width: 80px;
+  }
+
+  &.right {
+    width: 70vw;
+    padding-left: 35vw;
+    // background-color: black;
   }
 }

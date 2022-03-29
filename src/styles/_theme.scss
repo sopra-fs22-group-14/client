@@ -8,8 +8,8 @@
    feel free to play around with these and see what other look you can come up with! :D
 */
 
-$accent: #97ABFF;
-$accentDark: #123597;
+$accent: #77c2ff;
+$accentDark: #39568b;
 $textColor: white;
 $background: #262632;
 
@@ -22,13 +22,13 @@ $SMALL_WIDTH: 768px;
 
 /* some standard elements */
 /* fonts */
-$fontDefault: "M PLUS Rounded 1c", sans-serif;
+$fontDefault: 'Domine', serif;
 $fontMono: "Roboto Mono", monospace;
 
 /* a standard drop shadow */
 $dropShadow: 0 0.25em 0.25em rgba(0, 0, 0, 0.25);
 
-$borderRadius: 0.75em;
+$borderRadius: 0.3em;
 
 /* mixins
 

@@ -1,7 +1,9 @@
 import React from "react";
-import {ReactLogo} from "components/ui/ReactLogo";
+import {CAHLogo} from "components/ui/CAHLogo";
+import {Button} from 'components/ui/Button';
 import PropTypes from "prop-types";
 import "styles/views/Header.scss";
+import { useHistory } from "react-router-dom";
 
 /**
  * This is an example of a Functional and stateless component (View) in React. Functional components are not classes and thus don't handle internal state changes.
@@ -11,12 +13,33 @@ import "styles/views/Header.scss";
  * https://reactjs.org/docs/components-and-props.html
  * @FunctionalComponent
  */
-const Header = props => (
-  <div className="header container" style={{height: props.height}}>
-    <h1 className="header title">SoPra FS22 rocks with React!</h1>
-    <ReactLogo width="60px" height="60px"/>
-  </div>
-);
+const Header = props => {
+
+  const history = useHistory()
+
+  const redirectHome = () => {
+    history.push('/home');
+  };
+  
+  const redirectGame = () => {
+    history.push('/game');
+  };
+  
+  const redirectAbout = () => {
+    history.push('/about');
+  };
+
+  return (
+    <div className="header container" style={{height: props.height}}>
+      <CAHLogo width="60px" height="60px"/>
+      <div className="header right">
+        <Button className="header link" onClick={() => redirectHome()}>Home</Button>
+        <Button className="header link" onClick={() => redirectGame()}>Game</Button>
+        <Button className="header link" onClick={() => redirectAbout()}>About</Button>
+      </div>
+    </div>
+  );
+}
 
 Header.propTypes = {
   height: PropTypes.string

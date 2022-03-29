@@ -2,7 +2,11 @@ import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import {GameGuard} from "components/routing/routeProtectors/GameGuard";
 import GameRouter from "components/routing/routers/GameRouter";
 import {LoginGuard} from "components/routing/routeProtectors/LoginGuard";
+import Header from "components/views/Header";
 import Login from "components/views/Login";
+import Register from "components/views/Register";
+import Home from "components/views/Home";
+import About from "components/views/About";
 
 /**
  * Main router of your application.
@@ -24,8 +28,21 @@ const AppRouter = () => {
         </Route>
         <Route exact path="/login">
           <LoginGuard>
+            <Header height="100"/>
             <Login/>
           </LoginGuard>
+        </Route>
+        <Route exact path="/register">
+          <Header height="100"/>
+          <Register/>
+        </Route>
+        <Route exact path="/home">
+          <Header height="100"/>
+          <Home/>
+        </Route>
+        <Route exact path="/about">
+          <Header height="100"/>
+          <About/>
         </Route>
         <Route exact path="/">
           <Redirect to="/game"/>

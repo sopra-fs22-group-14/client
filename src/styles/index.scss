@@ -10,7 +10,8 @@ body {
   min-width: 100vw;
   min-height: 100vh;
   font-family: $fontDefault;
-  background-image: linear-gradient(135deg, $accent 10%, $accentDark 100%);
+  // background-image: linear-gradient(135deg, $accent 10%, $accentDark 100%);
+  background-color: white;
 }
 
 input,
@@ -21,6 +22,15 @@ button {
   line-height: inherit;
   font-size: inherit;
   outline: none;
+}
+
+h2 {
+  text-align: center;
+}
+
+img {
+  width :100px;
+  height: auto; /*to preserve the aspect ratio of the image*/
 }
 
 *:focus {
