@@ -20,8 +20,8 @@ const FormField = props => {
         {props.label}
       </label>
       <input
-        className="login input"
-        placeholder="enter here.."
+        className="login inputLogin"
+        placeholder="Username"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -36,9 +36,9 @@ const FormFieldPassword = props => {
         {props.label}
       </label>
       <input
-        className="register input"
+        className="login inputRegister"
         type="password"
-        placeholder="enter here..."
+        placeholder="Password"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -89,14 +89,14 @@ const Login = props => {
     <BaseContainer>
       <div className="login container">
         <div className="login form">
-        <h2>LOGIN</h2>
+        <h2>Login</h2>
           <FormField
-            label="Username"
+            // label="Username"
             value={username}
             onChange={un => setUsername(un)}
           />
           <FormFieldPassword
-            label="Password"
+            // label="Password"
             value={password}
             onChange={n => setPassword(n)}
           />
