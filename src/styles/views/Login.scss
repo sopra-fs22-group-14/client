@@ -19,10 +19,12 @@
     font-weight: 300;
     padding-left: 37px;
     padding-right: 37px;
-    border-radius: 0.75em;
+    border-radius: 0.6em;
+    border-style: solid;
+    border-color: black;
     background-color: $background;
     transition: opacity 0.5s ease, transform 0.5s ease;
-    box-shadow: $dropShadow;
+    // box-shadow: $dropShadow;
   }
   &.field {
     display: flex;
@@ -36,14 +38,20 @@
     border: none;
     border-radius: $borderRadius;
     margin-bottom: 20px;
-    background: transparentize(white, 0.85);
+    background: #ebebeb;
     color: $textColor;
+
+    // &:focus {
+    //   border-style: solid;
+    //   border-color: black;
+    //   border-width: 0.1px;
+    // }
   }
   &.label {
     color: $textColor;
     margin-bottom: 8px;
     text-transform: lowercase;
-    font-weight: 300;
+    font-weight: 500;
   }
   &.button-container {
     display: flex;
@@ -55,11 +63,12 @@
     margin-bottom: 1em;
     // text-align: right;
     :link {
-      color: rgb(98, 109, 255);
+      color: rgb(28, 43, 250);
       text-decoration: none;
+      font-weight: bold;
     }
     :visited {
-      color: rgb(73, 73, 250);
+      color: rgb(28, 43, 250);
     }
     :hover {
       text-decoration: underline;
@@ -68,4 +77,9 @@
       color: blue;
     }
   }
+}
+
+h2 {
+  font-family: 'Pacifico', cursive;
+  font-size: 20px;
 }

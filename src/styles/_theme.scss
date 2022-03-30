@@ -10,8 +10,8 @@
 
 $accent: #77c2ff;
 $accentDark: #39568b;
-$textColor: white;
-$background: #262632;
+$textColor: rgb(0, 0, 0);
+$background: #ffffff;
 
 /* some constants */
 
@@ -22,7 +22,8 @@ $SMALL_WIDTH: 768px;
 
 /* some standard elements */
 /* fonts */
-$fontDefault: 'Domine', serif;
+// $fontDefault: 'Domine', serif;
+$fontDefault: 'Ubuntu', sans-serif;
 $fontMono: "Roboto Mono", monospace;
 
 /* a standard drop shadow */

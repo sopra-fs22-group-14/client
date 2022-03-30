@@ -3,12 +3,16 @@
 .primary-button {
   &:hover {
     transform: translateY(-2px);
+    background-color: #000000;
+    color: white;
   }
   &:disabled {
     cursor: default;
     opacity: 0.4;
     &:hover {
       transform: none;
+      background-color: #ebebeb;
+      color: black;
     }
   }
   padding: 6px;
@@ -17,11 +21,13 @@
   font-size: 18px;
   text-align: center;
   height: 35px;
-  border: none;
+  // border: none;
   border-radius: $borderRadius;
   cursor: pointer;
   opacity: 1;
-  color: $background;
-  background-color: $accent;
+  color: black;
+  border-style: solid;
+  border-color: black;
+  background-color: #ebebeb;
   transition: all 0.3s ease;
 }
