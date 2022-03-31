@@ -15,8 +15,8 @@ const FormFieldText = props => {
         {props.label}
       </label>
       <input
-        className="register input"
-        placeholder="enter here..."
+        className="register inputUsername"
+        placeholder="Username"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -31,9 +31,9 @@ const FormFieldPassword = props => {
         {props.label}
       </label>
       <input
-        className="register input"
+        className="register inputPassword"
         type="password"
-        placeholder="enter here..."
+        placeholder="Password"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -58,6 +58,7 @@ const Register = () => {
   const history = useHistory();
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
+  const [isPending, setIsPending] = useState(false);
 
   const goBack = () => {
     history.push(`/login`);
@@ -65,6 +66,7 @@ const Register = () => {
 
   const doRegister = async () => {
     try {
+      setIsPending(true);
       // Create a new user -> send POST to /users with the username and password
       const requestBody = JSON.stringify({username, password});
       const response = await api.post('/users/register', requestBody);
@@ -91,26 +93,37 @@ const Register = () => {
     <BaseContainer>
       <div className="register container">
         <div className="register form">
-          <h2>REGISTER</h2>
+          <h2>Register</h2>
           <FormFieldText
-            label="Username"
+            //label="Username"
             value={username}
             onChange={un => setUsername(un)}
           />
           <FormFieldPassword
-            label="Password"
+            //label="Password"
             value={password}
             onChange={pw => setPassword(pw)}
           />
+
           <div className="register button-container">
+          {!isPending && 
             <Button
               disabled={!username || !password}
               width="100%"
               onClick={() => doRegister()}
             >
               Register
-            </Button>
+            </Button>}
+
+            {isPending && 
+                <Button
+                disabled
+                width="100%"
+              >
+                Registering...
+              </Button>}
           </div>
+
           <div className="register redirect-link">
             Already registered? Click to&nbsp;
             <Link to="/login">Log in</Link>

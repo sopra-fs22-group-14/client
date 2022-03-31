@@ -20,7 +20,7 @@ const FormField = props => {
         {props.label}
       </label>
       <input
-        className="login inputLogin"
+        className="login inputUsername"
         placeholder="Username"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
@@ -36,7 +36,7 @@ const FormFieldPassword = props => {
         {props.label}
       </label>
       <input
-        className="login inputRegister"
+        className="login inputPassword"
         type="password"
         placeholder="Password"
         value={props.value}
@@ -62,9 +62,11 @@ const Login = props => {
   const history = useHistory();
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
+  const [isPending, setIsPending] = useState(false);
 
   const doLogin = async () => {
     try {
+      setIsPending(true);
       const requestBody = JSON.stringify({username, password});
       const response = await api.post('/users/login', requestBody);
 
@@ -100,14 +102,24 @@ const Login = props => {
             value={password}
             onChange={n => setPassword(n)}
           />
+
           <div className="login button-container">
+          {!isPending && 
             <Button
               disabled={!username || !password}
               width="100%"
               onClick={() => doLogin()}
             >
               Login
-            </Button>
+            </Button>}
+
+            {isPending && 
+              <Button
+                disabled
+                width="100%"
+              >
+                Logging in...
+              </Button>}
           </div>
           <div className="login redirect-link">
             No account? Click to&nbsp;

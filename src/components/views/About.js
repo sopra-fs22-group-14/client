@@ -7,7 +7,7 @@ const About = props => {
       <BaseContainer>
         <div className="about container">
           <div className="about">
-            <h2>ABOUT</h2>
+            <h2>About</h2>
           </div>
 
           <div class="row">

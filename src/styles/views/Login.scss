@@ -35,7 +35,7 @@
     justify-content: center;
     
   }
-  &.inputLogin {
+  &.inputUsername {
     height: 60px;
     padding-left: 15px;
     margin-left: -4px;
@@ -44,16 +44,12 @@
     margin-bottom: 20px;
     background: #d6d6d6;
     color: $textColor;
-
-
-    // &:focus {
-    //   border-style: solid;
-    //   border-color: black;
-    //   border-width: 0.1px;
-    // }
+  }
+  &.inputUsername:hover {
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
   }
 
-  &.inputRegister{
+  &.inputPassword{
     height: 60px;
     padding-left: 15px;
     margin-left: -4px;
@@ -62,6 +58,9 @@
     margin-bottom: 20px;
     background: #d6d6d6;
     color: $textColor;
+  }
+  &.inputPassword:hover {
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
   }
 
   &.label {
@@ -74,6 +73,9 @@
     display: flex;
     justify-content: center;
     margin-top: 1em;
+  }
+  &.button-container:hover{
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.1);
   }
   &.redirect-link {
     margin-top: 1em;

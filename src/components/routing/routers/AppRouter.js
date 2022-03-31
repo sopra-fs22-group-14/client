@@ -7,6 +7,7 @@ import Login from "components/views/Login";
 import Register from "components/views/Register";
 import Home from "components/views/Home";
 import About from "components/views/About";
+import NotFound from "components/views/NotFound";
 
 /**
  * Main router of your application.
@@ -20,6 +21,7 @@ import About from "components/views/About";
 const AppRouter = () => {
   return (
     <BrowserRouter>
+      <Header height="100"/>
       <Switch>
         <Route path="/game">
           <GameGuard>
@@ -28,24 +30,23 @@ const AppRouter = () => {
         </Route>
         <Route exact path="/login">
           <LoginGuard>
-            <Header height="100"/>
             <Login/>
           </LoginGuard>
         </Route>
         <Route exact path="/register">
-          <Header height="100"/>
           <Register/>
         </Route>
         <Route exact path="/home">
-          <Header height="100"/>
           <Home/>
         </Route>
         <Route exact path="/about">
-          <Header height="100"/>
           <About/>
         </Route>
         <Route exact path="/">
           <Redirect to="/game"/>
+        </Route>
+        <Route path="*">
+            <NotFound />
         </Route>
       </Switch>
     </BrowserRouter>
