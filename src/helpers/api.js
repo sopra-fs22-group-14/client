@@ -1,19 +1,9 @@
 import axios from 'axios';
 import { getDomain } from 'helpers/getDomain';
 
-// UUID authentication 
-export default function getHeaders() {
-  const token = localStorage.getItem('token')
-  if (token != null) {
-    return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token};
-  } else {
-    return {'Content-Type': 'application/json'};
-  }
-}
-
 export const api = axios.create({
   baseURL: getDomain(),
-  headers: getHeaders()
+  headers: { 'Content-Type': 'application/json' }
 });
 
 export const handleError = error => {
