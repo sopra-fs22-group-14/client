@@ -77,9 +77,10 @@ const Login = props => {
       localStorage.setItem('loggedInUserID', user.id);
       localStorage.setItem('token', user.token);
 
-      // Login successfully worked --> navigate to the route /game in the GameRouter
-      history.push(`/game`);
+      // Login successfully worked --> navigate to the route /lobby in the GameRouter
+      history.push(`/lobby`);
     } catch (error) {
+      setIsPending(false);
       alert(`Something went wrong during the login: \n${handleError(error)}`);
       // reset the fields after login failed
       setUsername("");

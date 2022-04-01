@@ -23,9 +23,9 @@ const AppRouter = () => {
     <BrowserRouter>
       <Header height="100"/>
       <Switch>
-        <Route path="/game">
+        <Route path="/lobby">
           <GameGuard>
-            <GameRouter base="/game"/>
+            <GameRouter base="/lobby"/>
           </GameGuard>
         </Route>
         <Route exact path="/login">
@@ -46,7 +46,7 @@ const AppRouter = () => {
           <Redirect to="/game"/>
         </Route>
         <Route path="*">
-            <NotFound />
+          <NotFound />
         </Route>
       </Switch>
     </BrowserRouter>

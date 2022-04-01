@@ -22,7 +22,7 @@ const Header = props => {
   };
   
   const redirectGame = () => {
-    history.push('/game');
+    history.push('/lobby');
   };
   
   const redirectAbout = () => {

@@ -5,7 +5,7 @@ import {Button} from 'components/ui/Button';
 import {useHistory} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
-import "styles/views/Game.scss";
+import "styles/views/Lobby.scss";
 
 const Player = ({user}) => (
   <div className="player container">
@@ -19,7 +19,7 @@ Player.propTypes = {
   user: PropTypes.object
 };
 
-const Game = () => {
+const Lobby = () => {
   // use react-router-dom's hook to access the history
   const history = useHistory();
 
@@ -103,4 +103,4 @@ const Game = () => {
   );
 }
 
-export default Game;
+export default Lobby;

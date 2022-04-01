@@ -60,10 +60,6 @@ const Register = () => {
   const [password, setPassword] = useState(null);
   const [isPending, setIsPending] = useState(false);
 
-  const goBack = () => {
-    history.push(`/login`);
-  }
-
   const doRegister = async () => {
     try {
       setIsPending(true);
@@ -78,10 +74,11 @@ const Register = () => {
       localStorage.setItem('loggedInUserID', user.id);
       localStorage.setItem('token', user.token);
 
-      // Registration successfully worked --> navigate back to /login
-      history.push(`/login`);
+      // Registration successfully worked --> navigate to /lobby
+      history.push(`/lobby`);
 
     } catch (error) {
+      setIsPending(false);
       alert(`Something went wrong during the registration: \n${handleError(error)}`);
       // reset the fields after failed registration
       setUsername("");
