@@ -17,13 +17,14 @@ const About = props => {
                 <div class="container">
                   <h1>Regular (Card Czar) Mode</h1>
                   <p class="title">The Classic</p>
-                  <p>To start the game, each player receives ten White Cards.
+                  <p>To start the game, each player receives ten white cards.
                     One randomly chosen player begins as the Card Czar and plays 
-                    a Black Card for everyone to see.<br/>All the others then answer 
-                    the question or fill in the blank by playing one White Card.<br/>
-                    Only the Card Czar can see the played cards (without knowing by whom
-                    the cards were played) and determines the winner by choosing his
-                    favorite card.<br/>The Card Czar rotates and the next round starts!
+                    a black card for everyone to see.<br/>All the others then answer 
+                    the question or fill in the blank by playing one white card.<br/>
+                    All players can then see the played cards (without knowing by whom
+                    the cards were played), but only the Card Czar determines the winner 
+                    by choosing his/her favorite card.<br/>After announcing the winner,
+                    the Card Czar rotates and the next round begins!
                   </p>
                 </div>
               </div>

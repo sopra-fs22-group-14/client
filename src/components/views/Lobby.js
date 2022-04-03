@@ -30,9 +30,18 @@ const Lobby = () => {
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    history.push('/login');
+  const logout = async () => {
+    try {
+      // prepare logout API call
+      // await api.post('/users/logout');
+  
+      localStorage.removeItem('token');
+      localStorage.removeItem('loggedInUserID');
+      history.push('/login');
+
+    } catch (error) {
+      alert(`Something went wrong during the logout: \n${handleError(error)}`);
+    }
   }
 
   // the effect hook can be used to react to change in your component.
@@ -90,6 +99,14 @@ const Lobby = () => {
           onClick={() => logout()}
         >
           Logout
+        </Button>
+
+        {/* @SZYMON include this button */}
+        <Button
+          width="100%"
+          onClick={() => history.push('lobby/create')}
+        >
+          Create a new game
         </Button>
       </div>
     );

@@ -1,0 +1,53 @@
+@import 'styles/theme';
+
+.gameCreation {
+  &.container {
+    margin-top: 7em;
+    min-height: 300px;
+    min-width: 450px;
+    /* we include the center mixin defined in _theme.scss and save three duplicate lines :) */
+    @include center;
+    flex-direction: column;
+  }
+  &.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 80%;
+    max-width: 25em;
+    height: 22em;
+    font-size: 16px;
+    font-weight: 300;
+    padding-left: 37px;
+    padding-right: 37px;
+
+    // border-radius: 0.6em;
+    // border-style: solid;
+    // border-color: black;
+    // background-color: $background;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    // box-shadow: $dropShadow;
+  }
+  &.field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  &.label {
+    color: $textColor;
+    margin-bottom: 8px;
+    margin-top: 12px;
+    font-weight: 500;
+  }
+  &.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1em;
+  }
+  &.button-container:hover{
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.1);
+  }
+
+}

@@ -43,7 +43,7 @@ const AppRouter = () => {
           <About/>
         </Route>
         <Route exact path="/">
-          <Redirect to="/game"/>
+          <Redirect to="/lobby"/>
         </Route>
         <Route path="*">
           <NotFound />

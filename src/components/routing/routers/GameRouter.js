@@ -1,6 +1,8 @@
-import {Redirect, Route} from "react-router-dom";
+import {Redirect, Route, Switch} from "react-router-dom";
 import Lobby from "components/views/Lobby";
+import GameCreation from "components/views/GameCreation";
 import PropTypes from 'prop-types';
+import NotFound from "components/views/NotFound";
 
 const GameRouter = props => {
   /**
@@ -8,12 +10,17 @@ const GameRouter = props => {
    */
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
-      <Route exact path={`${props.base}`}>
-        <Lobby/>
-      </Route>
-      {/* <Route exact path={`${props.base}`}>
-        <Redirect to={`${props.base}/dashboard`}/>
-      </Route> */}
+      <Switch>
+        <Route exact path={`${props.base}`}>
+          <Lobby/>
+        </Route>
+        <Route path={`${props.base}/create`}>
+          <GameCreation/>
+        </Route>
+        <Route path="*">
+          <NotFound />
+        </Route>
+      </Switch>
     </div>
   );
 };
