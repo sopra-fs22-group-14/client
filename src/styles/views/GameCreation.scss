@@ -8,6 +8,7 @@
     /* we include the center mixin defined in _theme.scss and save three duplicate lines :) */
     @include center;
     flex-direction: column;
+    text-align: left;
   }
   &.form {
     display: flex;

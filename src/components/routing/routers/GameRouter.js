@@ -1,6 +1,7 @@
 import {Redirect, Route, Switch} from "react-router-dom";
 import Lobby from "components/views/Lobby";
 import GameCreation from "components/views/GameCreation";
+import WaitingArea from "components/views/WaitingArea";
 import PropTypes from 'prop-types';
 import NotFound from "components/views/NotFound";
 
@@ -16,6 +17,9 @@ const GameRouter = props => {
         </Route>
         <Route path={`${props.base}/create`}>
           <GameCreation/>
+        </Route>
+        <Route path={`${props.base}/wait`}>
+          <WaitingArea/>
         </Route>
         <Route path="*">
           <NotFound />

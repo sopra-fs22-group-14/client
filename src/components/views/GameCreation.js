@@ -44,7 +44,13 @@ const GameCreation = () => {
 
         const requestBody = JSON.stringify({cardDeck, gameMode, numberOfRounds: Number(numberOfRounds)});
         console.log(requestBody);
-        const response = await api.post('/games', requestBody);
+        // const response = await api.post('/games', requestBody);
+
+
+        // game was successfully created (and joined)
+        // TODO extract game and player
+
+        history.push('/lobby/wait');
 
       } catch (error) {
         alert(`Something went wrong during the game creation: \n${handleError(error)}`);
@@ -91,8 +97,7 @@ const GameCreation = () => {
                 onClick={() => history.push("/lobby")}
               >
                 Back
-              </Button>
-  
+              </Button>&nbsp;&nbsp;
               <Button
                 width="50%"
                 onClick={() => createGame()}
