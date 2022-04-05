@@ -6,6 +6,7 @@ import {useHistory} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import "styles/views/Lobby.scss";
+import {useInterval} from 'helpers/utils';
 
 const Player = ({user}) => (
   <div className="player container">
@@ -44,11 +45,8 @@ const Lobby = () => {
     }
   }
 
-  // the effect hook can be used to react to change in your component.
-  // in this case, the effect hook is only run once, the first time the component is mounted
-  // this can be achieved by leaving the second argument an empty array.
-  // for more information on the effect hook, please see https://reactjs.org/docs/hooks-effect.html
-  useEffect(() => {
+  // Showing example of how to implement polling
+  useInterval(() => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchData() {
       try {
@@ -82,7 +80,7 @@ const Lobby = () => {
     }
 
     fetchData();
-  }, []);
+  }, 1000);
 
   let content = <Spinner/>;
 
