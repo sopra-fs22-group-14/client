@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {useHistory, Link} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
+import {api, handleError} from 'helpers/api';
 import 'styles/views/GameCreation.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
@@ -18,6 +19,7 @@ const FormField = props => {
         >
           <option value={props.value1}>{props.option1}</option>
           <option value={props.value2}>{props.option2}</option>
+          {props.value3 != null && <option value={props.value3}>{props.option3}</option>}
         </select>
       </div>
     );
@@ -25,7 +27,6 @@ const FormField = props => {
 
   FormField.propTypes = {
     label: PropTypes.string,
-    value: PropTypes.string,
     onChange: PropTypes.func
   };
 
@@ -33,13 +34,21 @@ const FormField = props => {
 const GameCreation = () => {
 
     const history = useHistory();
-    const [cards, setCards] = useState("regular");
-    const [gamemode, setGamemode] = useState("cz");
+    const [cardDeck, setCardDeck] = useState("regular");
+    const [gameMode, setGameMode] = useState("cardczar");
+    const [numberOfRounds, setNumberOfRounds] = useState(8);
 
     const createGame = async () => {
-      // TODO
-      console.log({cards});
-      console.log({gamemode})
+
+      try {
+
+        const requestBody = JSON.stringify({cardDeck, gameMode, numberOfRounds: Number(numberOfRounds)});
+        console.log(requestBody);
+        const response = await api.post('/games', requestBody);
+
+      } catch (error) {
+        alert(`Something went wrong during the game creation: \n${handleError(error)}`);
+      }
     }
   
     return (
@@ -53,19 +62,29 @@ const GameCreation = () => {
               value1="regular"
               option2="Family Edition"
               value2="family"
-              value={cards}
-              onChange={cs => setCards(cs)}
+              value={cardDeck}
+              onChange={cd => setCardDeck(cd)}
             />
             <FormField
               label="2) Choose Game Mode"
               option1="Card Czar Mode"
-              value1="cz"
+              value1="cardczar"
               option2="Community Mode"
-              value2="nocz"
-              value={gamemode}
-              onChange={gm => setGamemode(gm)}
+              value2="nocardczar"
+              value={gameMode}
+              onChange={gm => setGameMode(gm)}
             />
-  
+            <FormField
+              label="3) Choose Number of Rounds"
+              option1="8"
+              value1={8}
+              option2="12"
+              value2={12}
+              option3="16"
+              value3={16}
+              value={numberOfRounds}
+              onChange={ro => setNumberOfRounds(ro)}
+            />
             <div className="gameCreation button-container">
               <Button
                 width="50%"
