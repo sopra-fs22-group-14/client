@@ -7,21 +7,21 @@
   for more information visit https://sass-lang.com/guide
  */
 
-.lobby {
+.game {
   &.container {
+    background: $background;
     padding: 1.5em;
     border-radius: $borderRadius;
     display: flex;
     flex-direction: column;
-    align-items: center;  
-    // background: $background;
-    // box-shadow: $dropShadow;
+    align-items: center;
+    box-shadow: $dropShadow;
   }
-  &.games-list {
+  &.user-list {
     list-style: none;
     padding-left: 0;
   }
-  &.games-item {
+  &.user-item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -32,54 +32,28 @@
   }
 }
 
-
-.tableHeader {
+.player {
   &.container {
-    flex-direction: row;
-    justify-content: center;
     margin: 0.5em 0;
-    height: 1VW;
-    width: 50VW;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    font-weight: 900;
-    // background: lighten($background, 5);
-    // border-radius: $borderRadius;
-    // background: yellow;
-    // box-shadow: $dropShadow;
-  }
-  &.container > div{
-    width: 50%;
-    margin: 10px;
-  } 
-}
-
-
-.game {
-  &.container:hover {
-    background-color: #000000;
-    color: white;
-    cursor: pointer;
-    // transition: all 0.3s ease;
-  }
-  &.container {
-    background: lighten($background, 5);
-    flex-direction: row;
-    box-shadow: $dropShadowGame;
-    justify-content: center;
-    margin: 2em 0;
-    width: 50VW;
+    width: 20em;
     padding: 10px;
     border-radius: $borderRadius;
     display: flex;
     align-items: center;
+    background: lighten($background, 5);
   }
-  &.container > div{
-    width: 50%;
-    margin: 10px;
-  } 
-  &.empty {
-    width: 100%;
+  &.name {
+    font-weight: 300;
+    margin-left: 5px;
+  }
+  &.username {
+    font-weight: 500;
+    color: $accent;
+  }
+  &.id {
+    margin-left: auto;
+    margin-right: 10px;
+    font-family: $fontMono;
+    font-weight: 300;
   }
 }

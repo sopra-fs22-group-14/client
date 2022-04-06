@@ -8,63 +8,34 @@ import PropTypes from "prop-types";
 import "styles/views/Lobby.scss";
 import {useInterval} from 'helpers/utils';
 
-// -------------------------------- LOBBY --------------------------------
+const Player = ({user}) => (
+  <div className="player container">
+    <div className="player username">{user.username}</div>
+    <div className="player name">{user.name}</div>
+    <div className="player id">id: {user.id}</div>
+  </div>
+);
+
+Player.propTypes = {
+  user: PropTypes.object
+};
+
 const Lobby = () => {
+  // use react-router-dom's hook to access the history
   const history = useHistory();
-  const [games, setGames] = useState(null);
 
-  // Container for each GAME instance 
-  const Game = ({game}) => (
-    <div className="game container" 
-         onClick={() => history.push('/lobby/wait')}>
-           {/* TODO join game on click and redirect to the waiting area */}
-      <div className="game id">{game.id}</div>
-      {/* <div className="game name">{game.name}</div> */}
-      <div className="game numberOfPlayers">{game.numberOfPlayers} / 4</div>
-      <div className="game cardsType">{game.cardsType}</div>
-      <div className="game gameMode">{game.gameMode ? "Card Czar" : "Points"}</div>
-      {/* <div>
-        <Button
-          width="100%"
-          onClick={() => history.push('/lobby/wait')}
-        >
-          JOIN
-        </Button>
-      </div> */}
-    </div>
-  );
-  Game.propTypes = {
-    game: PropTypes.object
-  };
+  // define a state variable (using the state hook).
+  // if this variable changes, the component will re-render, but the variable will
+  // keep its value throughout render cycles.
+  // a component can have as many state variables as you like.
+  // more information can be found under https://reactjs.org/docs/hooks-state.html
+  const [users, setUsers] = useState(null);
 
-
-  // POOLING
-  useInterval(() => {
-    async function fetchData() {
-      try {
-        // updating the current game list
-        const response = await api.get('/games');
-        // Get the returned users and update the state.
-        setGames(response.data);
-
-        // See here to get more data.
-        console.log(response);
-      } catch (error) {
-        console.error(`Something went wrong while fetching the games list: \n${handleError(error)}`);
-        console.error("Details:", error);
-        alert("Something went wrong while fetching the games list! See the console for details.");
-        // NOT AUTHORIZED 
-        error.response.data.status == 401 && history.push('/login') && localStorage.removeItem('token'); 
-      }
-    }
-    fetchData();
-  }, 1000);
-
-  // -------------------------------- LOGOUT --------------------------------
   const logout = async () => {
     try {
       // prepare logout API call
       // await api.post('/users/logout');
+  
       localStorage.removeItem('token');
       localStorage.removeItem('loggedInUserID');
       history.push('/login');
@@ -73,49 +44,78 @@ const Lobby = () => {
       alert(`Something went wrong during the logout: \n${handleError(error)}`);
     }
   }
-  // -------------------------------- SPINNER --------------------------------
+
+  // Showing example of how to implement polling
+  useInterval(() => {
+    // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
+    async function fetchData() {
+      try {
+        const response = await api.get('/users');
+
+        // delays continuous execution of an async operation for 1 second.
+        // This is just a fake async call, so that the spinner can be displayed
+        // feel free to remove it :)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Get the returned users and update the state.
+        setUsers(response.data);
+
+        // This is just some data for you to see what is available.
+        // Feel free to remove it.
+        console.log('request to:', response.request.responseURL);
+        console.log('status code:', response.status);
+        console.log('status text:', response.statusText);
+        console.log('requested data:', response.data);
+
+        // See here to get more data.
+        console.log(response);
+      } catch (error) {
+        console.error(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        console.error("Details:", error);
+        alert("Something went wrong while fetching the users! See the console for details.");
+
+        // NOT AUTHORIZED 
+        error.response.data.status == 401 && history.push('/login') && localStorage.removeItem('token'); 
+      }
+    }
+
+    fetchData();
+  }, 1000);
+
   let content = <Spinner/>;
-  // -------------------------------- IF --------------------------------
-  if (games) {
+
+  if (users) {
     content = (
-      <div  className="lobby">
-        <h2>Games</h2>
-        <h5>Join by clicking on the game!</h5>
-        <div className="tableHeader container">
-          <div>ID</div>
-          {/* <div>Name</div> */}
-          <div>Players</div>
-          <div>Cards</div>
-          <div>Game Mode</div>
-          {/* <div></div> */}
-        </div>
-        <ul className="lobby games-list">
-          {games.map(game => (
-            <Game game={game} key={game.id}/>
+      <div className="game">
+        <ul className="game user-list">
+          {users.map(user => (
+            <Player user={user} key={user.id}/>
           ))}
         </ul>
+        <Button
+          width="100%"
+          onClick={() => logout()}
+        >
+          Logout
+        </Button>
 
-        {/* GAME CREATION BUTTON  */}
+        {/* @SZYMON include this button */}
         <Button
           width="100%"
           onClick={() => history.push('lobby/create')}
         >
           Create a new game
         </Button>
-
-        {/* LOGOUT BUTTON  */}
-        {/* <Button
-          width="100%"
-          onClick={() => logout()}
-        >
-          Logout
-        </Button> */}
       </div>
     );
   }
-   // -------------------------------- RETURN --------------------------------
+
   return (
-    <BaseContainer className="lobby container">
+    <BaseContainer className="game container">
+      <h2>Happy Coding!</h2>
+      <p className="game paragraph">
+        Get all users from secure endpoint:
+      </p>
       {content}
     </BaseContainer>
   );
