@@ -16,6 +16,12 @@ export const api = axios.create({
   headers: getHeaders()
 });
 
+//COMMENT Used everywhere except login & registration 
+export const apiToken = axios.create({
+  baseURL: getDomain(),
+  headers: getHeaders()
+});
+
 export const handleError = error => {
   const response = error.response;
 

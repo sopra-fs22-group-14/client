@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
-import {api, handleError} from 'helpers/api';
+import {api, apiToken, handleError} from 'helpers/api';
 import 'styles/views/GameCreation.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
@@ -44,7 +44,8 @@ const GameCreation = () => {
 
         const requestBody = JSON.stringify({cardDeck, gameMode, numberOfRounds: Number(numberOfRounds)});
         console.log(requestBody);
-        // const response = await api.post('/games', requestBody);
+        //COMMENT added apiToken instead of api
+        // const response = await apiToken.post('/games', requestBody); 
 
 
         // game was successfully created (and joined)
