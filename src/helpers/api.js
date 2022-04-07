@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { getDomain } from 'helpers/getDomain';
 
-// UUID authentication 
-export default function getHeaders() {
+// UUID authentication
+const getHeaders = () => {
   const token = localStorage.getItem('token')
   if (token != null) {
     console.log("Token included from now on")
@@ -23,16 +23,12 @@ const createApi = () => {
 // initially create the api
 let apiObject = createApi();
 
-// and save it
-export const api = apiObject;
-
-// update the api in include / exclude Authorization
-export const updateApi = () => {
+// update the api to include / exclude Authorization
+const updateApi = () => {
   apiObject = createApi();
 }
 
-
-export const handleError = error => {
+const handleError = error => {
   const response = error.response;
 
   // catch 4xx and 5xx status codes
@@ -58,4 +54,10 @@ export const handleError = error => {
     console.log('Something else happened.', error);
     return error.message;
   }
+};
+
+export {
+  apiObject as api,
+  updateApi,
+  handleError
 };
