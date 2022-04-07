@@ -18,7 +18,6 @@ const WaitingArea = () => {
   useInterval( async () => {
 
     // TODO implement polling to update
-    // TODO use apiToken instead of api
   
     // when playerCount is reached -> redirect to game after 1.5sec
     if (playerCount === 4) {

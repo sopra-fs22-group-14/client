@@ -12,11 +12,11 @@ const About = props => {
 
           <div class="row">
 
-            <div class="column">
-              <div class="card">
-                <div class="container">
+            <div className="column">
+              <div className="card">
+                <div className="container">
                   <h1>Regular (Card Czar) Mode</h1>
-                  <p class="title">The Classic</p>
+                  <p className="title">The Classic</p>
                   <p>To start the game, each player receives ten white cards.
                     One randomly chosen player begins as the Card Czar and plays 
                     a black card for everyone to see.<br/>All the others then answer 
@@ -30,11 +30,11 @@ const About = props => {
               </div>
             </div>
 
-            <div class="column">
-              <div class="card">
-                <div class="container">
+            <div className="column">
+              <div className="card">
+                <div className="container">
                   <h1>No Card Czar Mode</h1>
-                  <p class="title">The Engaging</p>
+                  <p className="title">The Engaging</p>
                   <p>Rather than a Card Czar choosing the winner, this Mode allows for
                     all players to decide for themselves.<br/>After all white cards were
                     played, every player gets ten points to distribute between the
@@ -44,11 +44,11 @@ const About = props => {
               </div>
             </div>
 
-            <div class="column">
-              <div class="card">
-                <div class="container">
+            <div className="column">
+              <div className="card">
+                <div className="container">
                   <h1>Different Card Types</h1>
-                  <p class="title">Fun for Everyone</p>
+                  <p className="title">Fun for Everyone</p>
                   <p>To make Cards Against Humanity a game for everyone to play,
                     we decided to include different card types!<br/>No matter how old 
                     you are, you will find a deck that suits your wishes!<br/>What 

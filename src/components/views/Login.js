@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {api, handleError} from 'helpers/api';
+import {api, handleError, updateApi} from 'helpers/api';
 import User from 'models/User';
 import {useHistory, Link} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
@@ -76,6 +76,8 @@ const Login = props => {
       // Store the ID of the logged in user as well as the token into the local storage
       localStorage.setItem('loggedInUserID', user.id);
       localStorage.setItem('token', user.token);
+      // and update the API, to include Authorization for future requests
+      updateApi();
 
       // Login successfully worked --> navigate to the route /lobby in the GameRouter
       history.push(`/lobby`);

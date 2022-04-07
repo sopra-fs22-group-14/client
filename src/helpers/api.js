@@ -5,22 +5,32 @@ import { getDomain } from 'helpers/getDomain';
 export default function getHeaders() {
   const token = localStorage.getItem('token')
   if (token != null) {
+    console.log("Token included from now on")
     return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token};
   } else {
+    console.log("Token excluded from now on")
     return {'Content-Type': 'application/json'};
   }
 }
 
-export const api = axios.create({
-  baseURL: getDomain(),
-  headers: getHeaders()
-});
+const createApi = () => {
+  return axios.create({
+    baseURL: getDomain(),
+    headers: getHeaders()
+  });
+};
 
-//COMMENT Used everywhere except login & registration 
-export const apiToken = axios.create({
-  baseURL: getDomain(),
-  headers: getHeaders()
-});
+// initially create the api
+let apiObject = createApi();
+
+// and save it
+export const api = apiObject;
+
+// update the api in include / exclude Authorization
+export const updateApi = () => {
+  apiObject = createApi();
+}
+
 
 export const handleError = error => {
   const response = error.response;

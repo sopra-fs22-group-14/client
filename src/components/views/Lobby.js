@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {api, apiToken, handleError} from 'helpers/api';
+import {api, updateApi, handleError} from 'helpers/api';
 import {Spinner} from 'components/ui/Spinner';
 import {Button} from 'components/ui/Button';
 import {useHistory} from 'react-router-dom';
@@ -17,7 +17,7 @@ const Lobby = () => {
   const joinGame = async (id) => {
     try {
       const requestBody = JSON.stringify({id});
-      // const response = await apiToken.put('/games', requestBody);
+      // const response = await api.put('/games', requestBody);
       //TODO make request to join the game
 
       //TODO if response was correct then push 
@@ -64,7 +64,7 @@ const Lobby = () => {
     async function fetchData() {
       try {
         // updating the current game list
-        const response = await apiToken.get('/games');
+        const response = await api.get('/games');
         // Get the returned users and update the state.
         setGames(response.data);
 
@@ -88,6 +88,9 @@ const Lobby = () => {
       // await api.post('/users/logout');
       localStorage.removeItem('token');
       localStorage.removeItem('loggedInUserID');
+      // and update the API, to NOT include Authorization for future requests
+      updateApi();
+
       history.push('/login');
 
     } catch (error) {
@@ -125,12 +128,12 @@ const Lobby = () => {
         </Button>
 
         {/* LOGOUT BUTTON  */}
-        {/* <Button
+        <Button
           width="100%"
           onClick={() => logout()}
         >
           Logout
-        </Button> */}
+        </Button>
       </div>
     );
   }
