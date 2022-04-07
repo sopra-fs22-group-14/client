@@ -6,7 +6,7 @@ export default function getHeaders() {
   const token = localStorage.getItem('token')
   if (token != null) {
     console.log("Token included from now on")
-    return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token};
+    return {'Content-Type': 'application/json', 'Authorization': token};
   } else {
     console.log("Token excluded from now on")
     return {'Content-Type': 'application/json'};

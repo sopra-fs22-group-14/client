@@ -85,7 +85,7 @@ const Lobby = () => {
   const logout = async () => {
     try {
       // prepare logout API call
-      // await api.post('/users/logout');
+      await api.post('/users/logout');
       localStorage.removeItem('token');
       localStorage.removeItem('loggedInUserID');
       // and update the API, to NOT include Authorization for future requests
