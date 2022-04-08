@@ -56,8 +56,23 @@ const handleError = error => {
   }
 };
 
+
+const catchError = (history, error, activityName) => {
+  alert(`Something went wrong while ${activityName}: \n${handleError(error)}`);
+  console.error("Details:", error);
+  // NOT AUTHORIZED 
+  if(error.response.data.status == 401){
+    localStorage.removeItem('token'); 
+    // and update the API, to NOT include Authorization for future requests
+    updateApi();
+    history.push('/login');
+  }
+}
+
+
 export {
   apiObject as api,
   updateApi,
-  handleError
+  handleError,
+  catchError
 };
