@@ -6,7 +6,7 @@
 
   &.container {
     cursor: pointer;
-    background-color: #858585ab;
+    background-color: #8585853b;
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
     transition: all .4s ease;
@@ -26,29 +26,38 @@
 
 
   &.lobby{
+    border-radius: $borderRadius;
     padding: 1em;
   }
   &.profile{
+    border-radius: $borderRadius;
     padding: 1em;
     margin-bottom: 0;
   }
   &.logout{
+    border-radius: $borderRadius;
     padding: 1em;
   }
 
 
   // HOVERING OVER DIVs
   &.lobby:hover{
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
     background-color: rgb(255, 255, 255);
-    transition: all 0.5s ease;
+    transition: all 0.7s ease;
   }
   &.profile:hover{
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
     background-color: rgb(255, 255, 255);
-    transition: all 0.5s ease;
+    transition: all 0.7s ease;
   }
   &.logout:hover{
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
     background-color: rgb(255, 255, 255);
-    transition: all 0.5s ease;
+    transition: all 0.7s ease;
   }
 
 
@@ -58,16 +67,19 @@
     margin-top: 0;
     text-align: left;
     list-style-position: inside;
-    background-color: #696969bd;
+    background-color: #83838338;
   }
   &.buttonsList > li{
     padding: 0.3em;
-    width: 8VW;
+    width: 9VW;
     margin: 0.6em;
-    border-radius: 25px;
+    border-radius: $borderRadius;
+    // border-radius: 25px;
   } 
   &.buttonsList > li:hover{
-    background-color: #d8d8d8ab;
-    transition: all 0.5s ease;
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+    background-color: rgb(255, 255, 255);
+    transition: all 0.7s ease;
   }
 }

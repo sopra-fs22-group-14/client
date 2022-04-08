@@ -70,21 +70,21 @@ const Lobby = () => {
   }, 1000);
 
   // -------------------------------- LOGOUT --------------------------------
-  const logout = async () => {
-    try {
-      // prepare logout API call
-      await api.post('/users/logout');
-      localStorage.removeItem('token');
-      localStorage.removeItem('loggedInUserID');
-      // and update the API, to NOT include Authorization for future requests
-      updateApi();
+  // const logout = async () => {
+  //   try {
+  //     // prepare logout API call
+  //     await api.post('/users/logout');
+  //     localStorage.removeItem('token');
+  //     localStorage.removeItem('loggedInUserID');
+  //     // and update the API, to NOT include Authorization for future requests
+  //     updateApi();
 
-      history.push('/login');
+  //     history.push('/login');
 
-    } catch (error) {
-      alert(`Something went wrong during the logout: \n${handleError(error)}`);
-    }
-  }
+  //   } catch (error) {
+  //     alert(`Something went wrong during the logout: \n${handleError(error)}`);
+  //   }
+  // }
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
@@ -119,13 +119,13 @@ const Lobby = () => {
               Create a new game
             </Button>
 
-            {/* LOGOUT BUTTON  */}
+            {/* LOGOUT BUTTON 
             <Button
               width="100%"
               onClick={() => logout()}
             >
               Logout
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
