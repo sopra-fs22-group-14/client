@@ -1,12 +1,17 @@
 import {useState} from 'react';
 import {api,catchError, updateApi, handleError} from 'helpers/api';
 import {Spinner} from 'components/ui/Spinner';
+import {SpinnerSquares} from 'components/ui/SpinnerSquares';
+import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import {Button} from 'components/ui/Button';
 import {useHistory} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import {useInterval} from 'helpers/utils';
 import "styles/views/Lobby.scss";
+import SideBar from "components/views/SideBar";
+
+
 
 // -------------------------------- LOBBY --------------------------------
 const Lobby = () => {
@@ -81,42 +86,50 @@ const Lobby = () => {
     }
   }
   // -------------------------------- SPINNER --------------------------------
-  let content = <Spinner/>;
+  let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
   if (games) {
     content = (
-      <div  className="lobby">
-        <h2>Games</h2>
-        <h5>Join by clicking on the game!</h5>
-        <div className="tableHeader container">
-          <div>ID</div>
-          {/* <div>Name</div> */}
-          <div>Players</div>
-          <div>Cards</div>
-          <div>Game Mode</div>
+      <div className = "lobby main">
+        <SideBar height="100"/>
+        <div  className="lobby games">
+          <h2>Games</h2>
+          <h5>Join by clicking on the game!</h5>
+          <div className="tableHeader container">
+            <div>ID</div>
+            {/* <div>Name</div> */}
+            <div>Players</div>
+            <div>Cards</div>
+            <div>Game Mode</div>
+          </div>
+          <ul className="lobby games-list">
+            {games.map(game => (
+              <Game game={game} key={game.gameId}/>
+            ))}
+          </ul>
+
+
+          <div className = "buttons">
+            {/* GAME CREATION BUTTON  */}
+            <Button
+              width="100%"
+              onClick={() => history.push('lobby/create')}
+              className = "button"
+            >
+              Create a new game
+            </Button>
+
+            {/* LOGOUT BUTTON  */}
+            <Button
+              width="100%"
+              onClick={() => logout()}
+            >
+              Logout
+            </Button>
+          </div>
         </div>
-        <ul className="lobby games-list">
-          {games.map(game => (
-            <Game game={game} key={game.gameId}/>
-          ))}
-        </ul>
-
-        {/* GAME CREATION BUTTON  */}
-        <Button
-          width="100%"
-          onClick={() => history.push('lobby/create')}
-        >
-          Create a new game
-        </Button>
-
-        {/* LOGOUT BUTTON  */}
-        <Button
-          width="100%"
-          onClick={() => logout()}
-        >
-          Logout
-        </Button>
       </div>
+     
     );
   }
    // -------------------------------- RETURN --------------------------------

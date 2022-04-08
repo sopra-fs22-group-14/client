@@ -1,0 +1,73 @@
+@import 'styles/theme';
+
+.sidebar {
+//   overflow: hidden;
+//   padding: 10px 10px;
+
+  &.container {
+    cursor: pointer;
+    background-color: #858585ab;
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+    transition: all .4s ease;
+
+    width: 15VW;
+    padding-top: 5em;
+    display: flex;
+    flex-direction: column;
+    // background-color: grey;
+    text-align: left;
+
+  }
+
+  &.container:hover{
+    border-radius: 0% 0% 50% 50% / 0% 0% 5% 5% ;
+  }
+
+
+  &.lobby{
+    padding: 1em;
+  }
+  &.profile{
+    padding: 1em;
+    margin-bottom: 0;
+  }
+  &.logout{
+    padding: 1em;
+  }
+
+
+  // HOVERING OVER DIVs
+  &.lobby:hover{
+    background-color: rgb(255, 255, 255);
+    transition: all 0.5s ease;
+  }
+  &.profile:hover{
+    background-color: rgb(255, 255, 255);
+    transition: all 0.5s ease;
+  }
+  &.logout:hover{
+    background-color: rgb(255, 255, 255);
+    transition: all 0.5s ease;
+  }
+
+
+  // LIST 
+  &.buttonsList{
+    padding-top: 0;
+    margin-top: 0;
+    text-align: left;
+    list-style-position: inside;
+    background-color: #696969bd;
+  }
+  &.buttonsList > li{
+    padding: 0.3em;
+    width: 8VW;
+    margin: 0.6em;
+    border-radius: 25px;
+  } 
+  &.buttonsList > li:hover{
+    background-color: #d8d8d8ab;
+    transition: all 0.5s ease;
+  }
+}

@@ -9,6 +9,7 @@ import Home from "components/views/Home";
 import About from "components/views/About";
 import NotFound from "components/views/NotFound";
 import WaitingArea from "components/views/WaitingArea";
+import SideBar from "components/views/SideBar";
 
 /**
  * Main router of your application.
@@ -27,13 +28,6 @@ const AppRouter = () => {
         <Route path="/lobby">
           <GameGuard>
             <GameRouter base="/lobby"/>
-
-            {/* <Switch>
-              <Route path="/lobby/wait/:id">
-                <WaitingArea />
-              </Route>  
-            </Switch> */}
-
           </GameGuard>
         </Route>
         <Route exact path="/login">

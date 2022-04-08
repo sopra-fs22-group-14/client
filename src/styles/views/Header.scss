@@ -1,14 +1,24 @@
 @import 'styles/theme';
 
 .header {
-  overflow: hidden;
-  padding: 10px 10px;
-  // background-color: #f1f1f1;
-
+  // background-color: lawngreen;
+  
   &.container {
-    @include center;
-    width: 100vw;
+    padding-top: 10px;
+    padding-left: 3em;
+    padding-right: 3em;
+    overflow: hidden;
+    max-width: $DESKTOP_WIDTH;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    // @include center;
+    width: 100%;
     border-bottom: 1px solid #f2f2f2;
+    // justify-content: flex-end;
   }
 
   &.title {
@@ -29,9 +39,9 @@
     width: 80px;
   }
 
-  &.right {
-    // width: 70vw;
-    padding-left: 35vw;
-    // background-color: black;
-  }
+  // &.right {
+  //   width: 70vw;
+  //   padding-left: 35vw;
+  //   background-color: black;
+  // }
 }
