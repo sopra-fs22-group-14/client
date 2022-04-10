@@ -60,7 +60,7 @@ const GameCreation = () => {
 
       try {
         
-        const requestBody = JSON.stringify({gameName, gameEdition, cardCzarMode: !!cardCzarMode, numOfRounds: Number(numOfRounds)});
+        const requestBody = JSON.stringify({gameName, gameEdition, cardCzarMode, numOfRounds: Number(numOfRounds)});
         // console.log(requestBody);
         const response = await api.post('/games', requestBody); 
 
