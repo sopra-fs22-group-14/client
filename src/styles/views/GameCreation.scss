@@ -55,6 +55,7 @@
     // font: 400 12px/1.3 sans-serif;
     // -webkit-appearance: none;
     // appearance: none;
+    height: 38px;
     color: var(--baseFg);
     border: 1px solid black;
     cursor: pointer;
@@ -68,6 +69,23 @@
       box-shadow: 1px 3px 5px rgba(0,0,0,0.2);
     }
 
+  }
+
+  &.inputName {
+    height: 35px;
+    padding-left: 15px;
+    width: 100%;
+    border: 1px solid #ebebeb;
+    border-radius: $borderRadius;
+    // margin-bottom: 20px;
+    margin-top: 5px;
+    background: #ebebeb;
+    color: $textColor;
+  }
+  
+  &.inputName:hover {
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
+    border: 1px solid black;
   }
 
 }
