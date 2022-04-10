@@ -18,7 +18,7 @@ const GameRouter = props => {
         <Route path={`${props.base}/create`}>
           <GameCreation/>
         </Route>
-        <Route path={`${props.base}/wait`}>
+        <Route path={`${props.base}/wait/:gameId`}>
           <WaitingArea/>
         </Route>
         <Route path="*">
