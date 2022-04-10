@@ -23,14 +23,8 @@ const Lobby = () => {
     try {
       const requestBody = JSON.stringify({gameId});
       console.log(gameId);
-      // const response = await api.put('/games', requestBody);
-      //TODO make request to join the game
-      //TODO if response was correct then push 
-      const status = 200; //COMMENT just for now
-      // if(response.status == 200){
-      if(status == 200){
-        history.push('/lobby/wait'); 
-      }
+      const response = await api.put('/games', requestBody);
+      history.push(`/lobby/wait/${gameId}`);
     } catch (error) {
       catchError(history, error, 'joining the game');
     }
@@ -41,7 +35,7 @@ const Lobby = () => {
       <div className="game container"
            onClick={() => joinGame(game.gameId)}>    
         <div className="game id">{game.gameId}</div>
-        {/* <div className="game name">{game.gameName}</div> */}
+        <div className="game name">{game.gameName}</div>
         <div className="game numberOfPlayers">{game.numOfPlayersJoined} / 4</div>
         <div className="game cardsType">{game.gameEdition}</div>
         <div className="game gameMode">{game.cardCzarMode ? "Card Czar" : "Points"}</div>
@@ -97,7 +91,7 @@ const Lobby = () => {
           <h5>Join by clicking on the game!</h5>
           <div className="tableHeader container">
             <div>ID</div>
-            {/* <div>Name</div> */}
+            <div>Name</div>
             <div>Players</div>
             <div>Cards</div>
             <div>Game Mode</div>
@@ -107,8 +101,6 @@ const Lobby = () => {
               <Game game={game} key={game.gameId}/>
             ))}
           </ul>
-
-
           <div className = "buttons">
             {/* GAME CREATION BUTTON  */}
             <Button
