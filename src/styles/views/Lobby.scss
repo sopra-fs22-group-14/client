@@ -18,7 +18,6 @@
     align-content: center;
   }
 
-  // // FANCE FRAME part.1
   &.games:hover{
     border-radius: 0% 0% 50% 50% / 0% 0% 5% 5% ;
     // box-shadow: 10px 10px rgba(0,0,0,.25);
@@ -26,31 +25,29 @@
   &.games{
     // background: yellow;
 
-    //FANCE FRAME part.2
-    position: relative;
-    // background: white;
+    // FRAME: 
+    // position: relative;
     border-radius: 0% 0% 0% 0% / 0% 0% 0% 0% ;
     // box-shadow: 20px 20px rgba(0,0,0,.15);
     transition: all .4s ease;
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
 
-
-    width: 70VW;
+    width: 100%;
     padding: 1.5em;
     display: flex;
     flex-direction: column;
     align-items: center;  
-    // ISTEAD OF THE FANCY FRAME: 
-    border-radius: $borderRadius;
-    box-shadow: $dropShadowGame;
 
     .buttons{
-      width: 60VW;
+      width: 100%;
       // background-color: blue;
     }
   }
   &.games-list {
     list-style: none;
     padding-left: 0;
+    width: 100%;
   }
   &.games-item {
     display: flex;
@@ -73,7 +70,7 @@
     flex-direction: row;
     justify-content: center;
     height: 1VW;
-    width: 60VW;
+    width: 100%;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -103,7 +100,7 @@
     box-shadow: $dropShadowGame;
     justify-content: center;
     margin: 0 0 1em;
-    width: 60VW;
+    width: 100%;
     padding: 10px;
     border-radius: $borderRadius;
     display: flex;
