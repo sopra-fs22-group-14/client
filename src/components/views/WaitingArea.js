@@ -13,7 +13,9 @@ const WaitingArea = () => {
 
   const history = useHistory();
   const [playerCount, setPlayerCount] = useState(1);
-  const [gameName, setGameName] = useState(0)
+  const [gameName, setGameName] = useState(0);
+  const [delay, setDelay] = useState(1000); //NOTE - for pausing the polling 
+  const [isLastPlayerLeaving, setIsLastPlayerLeaving] = useState(false); //NOTE - for pausing the polling 
 
   const getPlayerCount = async () => {
     try {
@@ -39,19 +41,26 @@ const WaitingArea = () => {
 
   useInterval( async () => {
     getPlayerCount();
-  }, 1000)
+  }, isLastPlayerLeaving ? null : delay) //NOTE - for pausing the polling 
+
 
   const leaveGame = async () => {
-    try {
-      // send leave request to backend
-      await api.put('/games/waitingArea/'+gameId);
-
-      history.push('/lobby'); // TODO change to game view
+    try { 
+      if (playerCount === 1) {
+        setIsLastPlayerLeaving(true); //NOTE - for pausing the polling 
+        await api.put('/games/waitingArea/'+gameId) // leaving
+        await api.delete('/games/'+gameId); // deleting game  
+        history.push('/lobby'); 
+      }else{
+        // send leave request to backend
+        await api.put('/games/waitingArea/'+gameId);
+        history.push('/lobby'); 
+      }
     } catch (error) {
       catchError(history, error, 'leaving the game');
     }
-
   }
+  
 
   // define css based on the playerCount
   const hname = "waitingArea h2_" + playerCount;
