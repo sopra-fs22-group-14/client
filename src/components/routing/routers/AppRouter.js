@@ -45,7 +45,7 @@ const AppRouter = () => {
         <Route exact path="/about">
           <About/>
         </Route>
-        <Route exact path="/game">
+        <Route path="/game/:gameId">
           <GameView/>
         </Route>
         <Route exact path="/">

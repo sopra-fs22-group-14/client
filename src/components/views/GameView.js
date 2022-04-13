@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import {useInterval} from 'helpers/utils';
 import {api, updateApi, handleError} from 'helpers/api';
 import User from 'models/User';
-import {useHistory, Link} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
 import 'styles/views/GameView.scss';
 import BaseContainer from "components/ui/BaseContainer";
@@ -25,11 +26,12 @@ Card.propTypes = {
 
 const GameView = () => {
 
+  const { gameId } = useParams();
   const history = useHistory();
   // TODO maybe role & whiteCards can be combined in a Player
   const [role, setRole] = useState(null);
   const [whiteCards, setWhiteCards] = useState(null);
-  // TODO maybe blackCard & roundNum (& even choices) can be combined in a Round
+  // TODO maybe blackCard, roundNum & choices can be combined in a Round
   const [blackCard, setBlackCard] = useState(null);
   const [roundNr, setRoundNr] = useState(1);
   const [choices, setChoices] = useState(null);

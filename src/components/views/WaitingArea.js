@@ -27,7 +27,7 @@ const WaitingArea = () => {
       // when playerCount is reached -> redirect to game after 1.5sec
       if (playerCount === 4) {
         await new Promise(resolve => setTimeout(resolve, 1500));
-        history.push('/lobby/create'); // TODO change to game view
+        history.push(`/game/${gameId}`);
       }
     } catch (error) {
       catchError(history, error, 'polling the userCount');
