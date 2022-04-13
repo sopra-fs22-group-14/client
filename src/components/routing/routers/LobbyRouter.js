@@ -5,7 +5,7 @@ import WaitingArea from "components/views/WaitingArea";
 import PropTypes from 'prop-types';
 import NotFound from "components/views/NotFound";
 
-const GameRouter = props => {
+const LobbyRouter = props => {
   /**
    * "this.props.base" is "/app" because as been passed as a prop in the parent of GameRouter, i.e., App.js
    */
@@ -32,8 +32,8 @@ const GameRouter = props => {
 * Don't forget to export your component!
  */
 
-GameRouter.propTypes = {
+LobbyRouter.propTypes = {
   base: PropTypes.string
 }
 
-export default GameRouter;
+export default LobbyRouter;

@@ -31,6 +31,7 @@ const WaitingArea = () => {
       }
     } catch (error) {
       catchError(history, error, 'polling the userCount');
+      history.push('/lobby');   // redirect back to lobby
     }
   }
 
@@ -50,7 +51,7 @@ const WaitingArea = () => {
         setIsLastPlayerLeaving(true); //NOTE - for pausing the polling 
         await api.put('/games/waitingArea/'+gameId);
         history.push('/lobby'); 
-      }else{
+      } else {
         // send leave request to backend
         await api.put('/games/waitingArea/'+gameId);
         history.push('/lobby'); 

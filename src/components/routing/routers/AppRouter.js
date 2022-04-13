@@ -1,6 +1,6 @@
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
-import {GameGuard} from "components/routing/routeProtectors/GameGuard";
-import GameRouter from "components/routing/routers/GameRouter";
+import {LobbyGuard} from "components/routing/routeProtectors/LobbyGuard";
+import LobbyRouter from "components/routing/routers/LobbyRouter";
 import {LoginGuard} from "components/routing/routeProtectors/LoginGuard";
 import Header from "components/views/Header";
 import Login from "components/views/Login";
@@ -10,6 +10,7 @@ import About from "components/views/About";
 import NotFound from "components/views/NotFound";
 import WaitingArea from "components/views/WaitingArea";
 import SideBar from "components/views/SideBar";
+import GameView from "components/views/GameView";
 
 /**
  * Main router of your application.
@@ -26,9 +27,9 @@ const AppRouter = () => {
       <Header height="100"/>
       <Switch>
         <Route path="/lobby">
-          <GameGuard>
-            <GameRouter base="/lobby"/>
-          </GameGuard>
+          <LobbyGuard>
+            <LobbyRouter base="/lobby"/>
+          </LobbyGuard>
         </Route>
         <Route exact path="/login">
           <LoginGuard>
@@ -43,6 +44,9 @@ const AppRouter = () => {
         </Route>
         <Route exact path="/about">
           <About/>
+        </Route>
+        <Route exact path="/game">
+          <GameView/>
         </Route>
         <Route exact path="/">
           <Redirect to="/lobby"/>

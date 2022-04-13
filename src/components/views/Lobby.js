@@ -48,7 +48,7 @@ const Lobby = () => {
       try {
         // updating the current game list
         const response = await api.get('/games');
-        // Get the returned users and update the state.
+        // Get the returned games and update the state.
         setGames(response.data);
 
         // See here to get more data.

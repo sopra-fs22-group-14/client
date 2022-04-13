@@ -1,0 +1,115 @@
+@import 'styles/theme';
+// @import "~bootstrap/scss/bootstrap";
+
+.gameView {
+
+  &.mainContainer {
+    padding: 2em;
+    width: 100%;
+    height: 100%;
+    background: yellow;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  // &.topSection {
+  //   background-color: blue;
+  //   display: flex;
+  //   justify-content: right;
+  // }
+
+  &.roundSection {
+    padding: 0.2em;
+    width: 100%;
+    background-color: green;
+    font-size:xx-large;
+  }
+
+  &.bottomSection {
+    background-color: rgb(122, 122, 255);
+    padding: 0.5em;
+    width: 100%;
+    height: 50px;
+  }
+
+  &.whiteCardSection {
+    background-color: rgb(0, 255, 0);
+    padding: 0.3em;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    flex-wrap: no-wrap;
+  }
+  
+  &.choiceSection {
+    background-color: aqua;
+    padding: 0.5em;
+    width: 40%;
+    height: 240px;
+
+    &.cards {
+      display: flex;
+      background-color: rgb(88, 255, 171);
+      justify-content: center;
+      width: 100%;
+      height: 70%;
+    }
+
+    &.submit {
+      background-color: rgb(255, 148, 250);
+      padding: 0.5em;
+      width: 100%;
+      height: 30%;
+    }
+  }
+
+  &.blackCardSection {
+    background-color: lightcoral;
+    display: flex;
+    justify-content: center;
+    padding: 0.3em;
+    width: 34%;
+    height: 150px;
+  }
+
+  &.opponentSection {
+    background-color: red;
+    padding: 0.5em;
+    width: 33%;
+    height: 150px;
+
+    &.center {
+      flex-basis: 100%;
+    }
+  }
+
+  // &.scoreSection {
+  //   padding: 1em;
+  //   width: 30%;
+  //   float: right;
+  //   background-color: orange;
+  // }
+
+}
+
+.card {
+  padding: 5px;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  width: 30%;
+  height: 100%;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.blackCard {
+  padding: 5px;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  width: 40%;
+  height: 100%;
+  background-color: black;
+  color: white;
+  border-radius: 10px;
+}
