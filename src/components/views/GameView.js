@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useInterval} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
@@ -30,12 +30,14 @@ const GameView = () => {
   const { gameId } = useParams();
   const history = useHistory();
 
+  const didMount = useRef(false);
+
   // TODO maybe role & whiteCards can be combined in a Player
   // const [role, setRole] = useState(null);
   // const [whiteCards, setWhiteCards] = useState(null);
   const [player, setPlayer] = useState(null);
 
-  // TODO maybe blackCard, roundNum & choices can be combined in a Round
+  // TODO maybe blackCard, roundNum & choices can be combined in a Round (probably easier to leave it like this)
   const [blackCard, setBlackCard] = useState(null);
   const [roundNr, setRoundNr] = useState(1);
   const [choices, setChoices] = useState(null);
@@ -47,6 +49,10 @@ const GameView = () => {
   // const [scores, setScores] = useState(null);
 
   const [winner, setWinner] = useState(null);
+
+  // variables to store temporarily store information of a new round
+  let roundNumberVariable = roundNr;
+  let blackCardVariable = blackCard;
 
   /*
    useEffect is used to always fetch new Player-data (white cards & role) 
@@ -65,16 +71,25 @@ const GameView = () => {
   }, [roundNr, cardsPlayed]);
 
 
-  // it might also be used to show the winner when this state changes
+  /*
+  As soon as the winner changes (therefore, was decided from the Card Czar),
+  it is displayed for 10 seconds. After that, the information of the new round
+  will be rendered! Will NOT be called on mount
+  */
   useEffect(() => {
-    /*
-    TODO add a 10 second countdown until the round and blackCard are set and therefore updated
-    This is for the players to actually see the winner!
-    */
+    // DO NOT run this useEffect on mounting
+    if (didMount.current) {
+      /*
+      TODO add a 10 second countdown until the round and blackCard are set and therefore updated
+      This is for the players to actually see the winner!
+      */
 
-
-    // TODO setRoundNr & setBlackCard
-    // setRoundNr(response.data.roundNr);
+      // TODO setRoundNr & setBlackCard (the STATES)
+      // setRoundNr(roundNumberVariable);
+      // setBlackCard(blackCardVariable);
+    } else {
+      didMount.current = true;
+    }
   }, [winner]);
 
 
@@ -82,45 +97,47 @@ const GameView = () => {
   useIntervall is used to periodically fetch data regarding the rounds
   of the game. This includes things such as the played cards, (so that 
   the played cards from all players are shown), the black card as well
-  as the current round number
+  as the current round number and even the winner
   */
   useInterval(async () => {
 
     // if new round data is available, display the new data
     fetchRoundData();
 
-    // if a winner was decided, display the winner! (INCLUDED IN THE ROUND!)
-    // fetchWinner();
-
   }, 5000);
 
+  /*
+  This method is used to fetch all round relevant information such as
+  the choices (played cards), the winner as well as the round number and the black card
+  */
   const fetchRoundData = async () => {
     try {
-      // console.log("FETCH ROUND DATA");
+      console.log("Fetch round data");
       // const response = await api.get(`/${gameId}/gameround`);
-      setRoundNr(roundNr + 1); //TODO delete
+
+      /*
+      in case a new round started, save the important things in variables for now.
+      This way, the new round is not yet displayed.
+      The corresponding states will only be updated after a delay (see useEffect of the winner)
+      */
+
+      // will look something like this:
+      // roundNumberVariable = response.data.roundNr;
+      // blackCardVariable = response.data.blackCard;
 
       // TODO setChoices (played Cards) - always update the choices when they change
 
-      // TODO setWinner - always update the winner (will trigger useEffect when actually changing)
+      // TODO setWinner - always update the winner (will trigger useEffect when changing)
       
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
   }
 
-  // const fetchWinner = async () => {
-  //   try {
-  //     // TODO
-  //     // const response = await api.get(`/${gameId}/roundwinner`);
-  //     // setWinner() ...
-  //     // console.log("FETCH WINNER DATA");
-  //   } catch (error) {
-  //     catchError(history, error, 'fetching the winner');
-  //   }
-  // }
-
-
+  
+  /*
+  TODO display the winner in some sort of textField for all to see
+  */
   return (
     <BaseContainer className="gameView mainContainer">
       {/* <div className="gameView topSection"> */}
