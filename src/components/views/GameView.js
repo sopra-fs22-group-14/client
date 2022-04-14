@@ -59,15 +59,18 @@ const GameView = () => {
    whenever a new round starts (so when roundNr changes!) OR when
    a card was played (to only display 9 white cards)
   */
-  useEffect(async () => {
-    try {
-      // TODO fetch the player data
-      // const response = await api.get('/player');
-      // const player = new Player(response.data);
-      // setPlayer(player);
-    } catch (error) {
-      catchError(history, error, 'fetching the player data');
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // TODO fetch the player data
+        // const response = await api.get('/player');
+        // const player = new Player(response.data);
+        // setPlayer(player);
+      } catch (error) {
+        catchError(history, error, 'fetching the player data');
+      }
     }
+    fetchData();
   }, [roundNr, cardsPlayed]);
 
 
@@ -77,22 +80,24 @@ const GameView = () => {
   new round will be rendered!
   */
   useEffect(() => {
-    // DO NOT include 10 second countown when mounting (render immediately)
-    if (didMount.current) {
-      /*
-      TODO add a 10 second countdown until the round and blackCard are set and therefore updated
-      This is for the players to actually see the winner!
-      */
-    } else {
-      didMount.current = true;
+    async function fetchData() {
+      // DO NOT include 10 second countown when mounting (render immediately)
+      if (didMount.current) {
+        /*
+        TODO add a 10 second countdown until the round and blackCard are set and therefore updated
+        This is for the players to actually see the winner!
+        */
+      } else {
+        didMount.current = true;
+      }
+  
+      // TODO setRoundNr & setBlackCard (the STATES)
+      // setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
+      // setBlackCard(blackCardVariable);
+  
+      // TODO enable the submit button again
     }
-
-    // TODO setRoundNr & setBlackCard (the STATES)
-    // setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
-    // setBlackCard(blackCardVariable);
-
-    // TODO enable the submit button again
-
+    fetchData();
   }, [winner]);
 
 
@@ -102,7 +107,7 @@ const GameView = () => {
   the played cards from all players are shown), the black card as well
   as the current round number and even the winner
   */
-  useInterval(async () => {
+  useInterval(() => {
 
     // if new round data is available, display the new data
     fetchRoundData();
