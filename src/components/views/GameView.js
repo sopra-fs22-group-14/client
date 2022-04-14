@@ -73,23 +73,26 @@ const GameView = () => {
 
   /*
   As soon as the winner changes (therefore, was decided from the Card Czar),
-  it is displayed for 10 seconds. After that, the information of the new round
-  will be rendered! Will NOT be called on mount
+  a countdown of 10 seconds will start. After that, the information of the
+  new round will be rendered!
   */
   useEffect(() => {
-    // DO NOT run this useEffect on mounting
+    // DO NOT include 10 second countown when mounting (render immediately)
     if (didMount.current) {
       /*
       TODO add a 10 second countdown until the round and blackCard are set and therefore updated
       This is for the players to actually see the winner!
       */
-
-      // TODO setRoundNr & setBlackCard (the STATES)
-      // setRoundNr(roundNumberVariable);
-      // setBlackCard(blackCardVariable);
     } else {
       didMount.current = true;
     }
+
+    // TODO setRoundNr & setBlackCard (the STATES)
+    // setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
+    // setBlackCard(blackCardVariable);
+
+    // TODO enable the submit button again
+
   }, [winner]);
 
 
@@ -117,7 +120,6 @@ const GameView = () => {
 
       /*
       in case a new round started, save the important things in variables for now.
-      This way, the new round is not yet displayed.
       The corresponding states will only be updated after a delay (see useEffect of the winner)
       */
 
@@ -134,19 +136,44 @@ const GameView = () => {
     }
   }
 
+  // method that is called when a player plays a white card
+  const playCard = async () => {
+    try {
+      // TODO add playCard POST
+  
+      /*
+      after successfully playing a card, change cardsPlayed so that the useEffect is triggered
+      to fetch the playerData. This will then update the white cards (only 9 left)
+      */
+      setCardsPlayed(cardsPlayed + 1);
+
+      // TODO disable the button after card is played (until new round starts)
+    } catch (error) {
+      catchError(history, error, 'playing a white card');
+    }
+  }
+
+  // method that is used when the Card Czar chooses a round winner
+  const chooseRoundWinner = async () => {
+    try {
+      // TODO add chooseRoundWinner POST
+    } catch (error) {
+      catchError(history, error, 'choosing the winning card');
+    }
+  }
   
   /*
   TODO display the winner in some sort of textField for all to see
+  if (winner == null) don't display anything (only the case when mounting)
+  This textfield is not yet included anywhere..
   */
   return (
     <BaseContainer className="gameView mainContainer">
-      {/* <div className="gameView topSection"> */}
       <div className="gameView roundSection">
         {"Round "+roundNr}
       </div>
       {/* TODO display a hidden card tile maybe together with the opponents name */}
       <div className="gameView opponentSection center"> OPPONENT </div>
-        {/* <div className="gameView scoreSection"> (SCORE) </div> */}
       <div className="gameView opponentSection"> OPPONENT </div>
       <div className="gameView blackCardSection">
         {/* TODO display the black card fetched from the backend here */}
@@ -164,6 +191,7 @@ const GameView = () => {
           {/* TODO dependent on the role of the player, don't allow any submission 
           here (either don't include any buttons or don't make them clickable) 
           Also, submission is only possible when 3 choices are available*/}
+          {/* TODO add chooseRoundWinner for the onClick event */}
           <div> SUBMIT SECTION (FOR CARD CZAR) </div>
         </div>
       </div>
@@ -181,8 +209,8 @@ const GameView = () => {
         <Card isBlack={false} text="CARD 9"/>
         <Card isBlack={false} text="CARD 10"/>
       </div>
+      {/* TODO call playCard for the onClick event of the button */}
       <div className="gameView bottomSection"> SUBMIT / LEAVE SECTION </div>
-      {/* </div> */}
     </BaseContainer>
   );
 
