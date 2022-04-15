@@ -13,7 +13,7 @@ const About = props => {
           <div class="row">
 
             <div className="column">
-              <div className="card">
+              <div className="about-card">
                 <div className="container">
                   <h1>Regular (Card Czar) Mode</h1>
                   <p className="title">The Classic</p>
@@ -31,7 +31,7 @@ const About = props => {
             </div>
 
             <div className="column">
-              <div className="card">
+              <div className="about-card">
                 <div className="container">
                   <h1>No Card Czar Mode</h1>
                   <p className="title">The Engaging</p>
@@ -45,7 +45,7 @@ const About = props => {
             </div>
 
             <div className="column">
-              <div className="card">
+              <div className="about-card">
                 <div className="container">
                   <h1>Different Card Types</h1>
                   <p className="title">Fun for Everyone</p>

@@ -9,21 +9,6 @@ import 'styles/views/GameView.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 
-// Container for all cards
-const Card = props => {
-  let className = props.isBlack ? "blackCard" : "card";
-  return (
-    <div className={className}>
-      {props.text}
-    </div>
-  );
-};
-
-Card.propTypes = {
-  isBlack: PropTypes.bool,
-  text: PropTypes.string
-};
-
 
 const GameView = () => {
 
@@ -33,9 +18,9 @@ const GameView = () => {
   const didMount = useRef(false);
 
   // TODO maybe role & whiteCards can be combined in a Player
-  // const [role, setRole] = useState(null);
-  // const [whiteCards, setWhiteCards] = useState(null);
-  const [player, setPlayer] = useState(null);
+  const [role, setRole] = useState(null);
+  const [whiteCards, setWhiteCards] = useState(null);
+  // const [player, setPlayer] = useState(null);
 
   // TODO maybe blackCard, roundNum & choices can be combined in a Round (probably easier to leave it like this)
   const [blackCard, setBlackCard] = useState(null);
@@ -53,6 +38,46 @@ const GameView = () => {
   // variables to store temporarily store information of a new round
   let roundNumberVariable = roundNr;
   let blackCardVariable = blackCard;
+
+  // keep track of which card was selected
+  // TODO they have to be reset to null when a new round starts!!
+  const [chosenCard, setChosenCard] = useState(null);
+  const [chosenWinner, setChosenWinner] = useState(null);
+
+
+  // ------------------- Container for all cards ------------------------------
+  const Card = props => {
+    let className;
+    if (props.text === chosenCard) className = "card focused";
+    else className = props.isBlack ? "blackCard" : "card";
+    // BLACK CARD
+    if (props.isBlack) {
+      return (
+        <div className={className}>
+          {props.text}
+        </div>
+      );
+    }
+    // WHITE CARD
+    // TODO IF (props.isChoice && role === 'cardCzar') THEN DISPLAY BUTTONS WITH ONCLICK TO SET chosenWinner
+    // TODO IF (props.isChoice && role === 'notNardCzar') THEN DISPLAY DIVS
+    // TODO IF (!props.isChoice && role === 'cardCzar') THEN DISPLAY DIVS
+    // TODO IF (!props.isChoice && role === 'notCardCzar') THEN DISPLAY BUTTONS WITH ONCLICK TO SET chosenCard
+    
+    // TODO to be removed after the above cases are implemented
+    return (
+      <button className={className} onClick={() => setChosenCard(props.text)}>
+        {props.text}
+      </button>
+    );
+  };
+
+  Card.propTypes = {
+    isBlack: PropTypes.bool,
+    text: PropTypes.string
+  };
+  // ---------------------------------------------------------------------------
+
 
   /*
    useEffect is used to always fetch new Player-data (white cards & role) 
@@ -188,34 +213,38 @@ const GameView = () => {
       <div className="gameView choiceSection">
         <div className="gameView choiceSection cards">
           {/* TODO iterate over the choices and display the ones that are available */}
-          <Card isBlack={false} text="CHOICE 1"/>
-          <Card isBlack={false} text="CHOICE 2"/>
-          <Card isBlack={false} text="CHOICE 3"/>
+          <Card isBlack={false} isChoice={true} text="CHOICE 1"/>
+          <Card isBlack={false} isChoice={true} text="CHOICE 2"/>
+          <Card isBlack={false} isChoice={true} text="CHOICE 3"/>
         </div>
         <div className="gameView choiceSection submit">
-          {/* TODO dependent on the role of the player, don't allow any submission 
-          here (either don't include any buttons or don't make them clickable) 
-          Also, submission is only possible when 3 choices are available*/}
+          {/* TODO submission is only possible when 3 choices are available*/}
           {/* TODO add chooseRoundWinner for the onClick event */}
-          <div> SUBMIT SECTION (FOR CARD CZAR) </div>
+          SUBMIT SECTION (FOR CARD CZAR)&nbsp;
+          {/* TODO add the role to the disables as well (only visible for card czar) -> even more secure */}
+          <button disabled={!chosenWinner}>SUBMIT</button>
         </div>
       </div>
       <div className="gameView whiteCardSection">
         {/* TODO iterate over player.whiteCards or just whiteCards (depends on
         what states are used) and set the texts accordingly */}
-        <Card isBlack={false} text="CARD 1"/>
-        <Card isBlack={false} text="CARD 2"/>
-        <Card isBlack={false} text="CARD 3"/>
-        <Card isBlack={false} text="CARD 4"/>
-        <Card isBlack={false} text="CARD 5"/>
-        <Card isBlack={false} text="CARD 6"/>
-        <Card isBlack={false} text="CARD 7"/>
-        <Card isBlack={false} text="CARD 8"/>
-        <Card isBlack={false} text="CARD 9"/>
-        <Card isBlack={false} text="CARD 10"/>
+        <Card isBlack={false} isChoice={false} text="CARD 1"/>
+        <Card isBlack={false} isChoice={false} text="CARD 2"/>
+        <Card isBlack={false} isChoice={false} text="CARD 3"/>
+        <Card isBlack={false} isChoice={false} text="CARD 4"/>
+        <Card isBlack={false} isChoice={false} text="CARD 5"/>
+        <Card isBlack={false} isChoice={false} text="CARD 6"/>
+        <Card isBlack={false} isChoice={false} text="CARD 7"/>
+        <Card isBlack={false} isChoice={false} text="CARD 8"/>
+        <Card isBlack={false} isChoice={false} text="CARD 9"/>
+        <Card isBlack={false} isChoice={false} text="CARD 10"/>
       </div>
       {/* TODO call playCard for the onClick event of the button */}
-      <div className="gameView bottomSection"> SUBMIT / LEAVE SECTION </div>
+      <div className="gameView bottomSection">
+        SUBMIT / LEAVE SECTION&nbsp;
+        {/* TODO add the role to the disables as well (only for regular players) -> even more secure */}
+        <button disabled={!chosenCard}>SUBMIT</button>
+      </div>
     </BaseContainer>
   );
 
