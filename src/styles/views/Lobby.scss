@@ -96,13 +96,13 @@
   }
   &.container {
     background: lighten($background, 5);
-    flex-direction: row;
+    border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
+    flex-direction: row;
     justify-content: center;
     margin: 0 0 1em;
     width: 100%;
     padding: 10px;
-    border-radius: $borderRadius;
     display: flex;
     align-items: center;
   }

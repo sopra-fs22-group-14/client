@@ -18,7 +18,7 @@ const GameView = () => {
   const didMount = useRef(false);
 
   // TODO maybe role & whiteCards can be combined in a Player
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState("notCardCzar");
   const [whiteCards, setWhiteCards] = useState(null);
   // const [player, setPlayer] = useState(null);
 
@@ -45,6 +45,7 @@ const GameView = () => {
   const [chosenWinner, setChosenWinner] = useState(null);
 
 
+
   // ------------------- Container for all cards ------------------------------
   const Card = props => {
     let className;
@@ -60,16 +61,35 @@ const GameView = () => {
     }
     // WHITE CARD
     // TODO IF (props.isChoice && role === 'cardCzar') THEN DISPLAY BUTTONS WITH ONCLICK TO SET chosenWinner
-    // TODO IF (props.isChoice && role === 'notNardCzar') THEN DISPLAY DIVS
-    // TODO IF (!props.isChoice && role === 'cardCzar') THEN DISPLAY DIVS
     // TODO IF (!props.isChoice && role === 'notCardCzar') THEN DISPLAY BUTTONS WITH ONCLICK TO SET chosenCard
-    
-    // TODO to be removed after the above cases are implemented
-    return (
-      <button className={className} onClick={() => setChosenCard(props.text)}>
+    if(props.isChoice && role === 'cardCzar'){
+      return(
+        <button className={className} onClick={() => setChosenCard(props.text)}>
         {props.text}
-      </button>
-    );
+        </button>
+      );
+    }
+    else if(props.isChoice && role === 'notCardCzar'){
+      return(
+        <button className="notActiveCard" disabled>
+        {props.text}
+        </button>
+      );
+    }
+    else if(!props.isChoice && role === 'cardCzar'){
+      return(
+        <button className="notActiveCard" disabled>
+        {props.text}
+        </button>
+      );
+    }
+    else if(!props.isChoice && role === 'notCardCzar'){
+      return(
+        <button className={className} onClick={() => setChosenCard(props.text)}>
+        {props.text}
+        </button>
+      );
+    }
   };
 
   Card.propTypes = {
@@ -201,50 +221,115 @@ const GameView = () => {
     <BaseContainer className="gameView mainContainer">
       <div className="gameView roundSection">
         {"Round "+roundNr}
+        {role === "notCardCzar" && <p>You are a normal player this round - pick card from hand!</p>}
+        {role === "cardCzar" && <p>You are a Card Czar this round - pick played card that you think is best!</p>}
       </div>
       {/* TODO display a hidden card tile maybe together with the opponents name */}
-      <div className="gameView opponentSection center"> OPPONENT </div>
-      <div className="gameView opponentSection"> OPPONENT </div>
+      <div className="gameView opponentSection center"> 
+        <h2>oponnents name 1</h2> 
+        <div className="gameView opponentSection tile"></div>
+      </div>
+      <div className="gameView opponentSection"> 
+        <h2>oponnents name 2</h2> 
+        <div className="gameView opponentSection tile"></div>
+      </div>
       <div className="gameView blackCardSection">
         {/* TODO display the black card fetched from the backend here */}
         <Card isBlack={true} text="BLACK CARD"/>
       </div>
-      <div className="gameView opponentSection"> OPPONENT </div>
-      <div className="gameView choiceSection">
-        <div className="gameView choiceSection cards">
-          {/* TODO iterate over the choices and display the ones that are available */}
-          <Card isBlack={false} isChoice={true} text="CHOICE 1"/>
-          <Card isBlack={false} isChoice={true} text="CHOICE 2"/>
-          <Card isBlack={false} isChoice={true} text="CHOICE 3"/>
+      <div className="gameView opponentSection"> 
+        <h2>oponnents name 3</h2> 
+        <div className="gameView opponentSection tile"></div>
+      </div>
+
+
+      <div className="gameView cardsSection">
+        {/* COMMENT - choice section for Card Czar */}
+        <div className="gameView choiceSection">
+          <h2>Round's played cards:</h2>
+          <div className="gameView choiceSection cards">
+            {/* TODO iterate over the choices and display the ones that are available */}
+            <Card isBlack={false} isChoice={true} text="CHOICE 1"/>
+            <Card isBlack={false} isChoice={true} text="CHOICE 2"/>
+            <Card isBlack={false} isChoice={true} text="CHOICE 3"/>
+          </div>
+              {/* TODO submission is only possible when 3 choices are available*/}
+              {/* TODO add chooseRoundWinner for the onClick event */}
         </div>
-        <div className="gameView choiceSection submit">
-          {/* TODO submission is only possible when 3 choices are available*/}
-          {/* TODO add chooseRoundWinner for the onClick event */}
-          SUBMIT SECTION (FOR CARD CZAR)&nbsp;
-          {/* TODO add the role to the disables as well (only visible for card czar) -> even more secure */}
-          <button disabled={!chosenWinner}>SUBMIT</button>
+
+        {/* COMMENT - choice section for normal players */}
+        <div className="gameView handSection">
+          <h2>Your hand:</h2>
+          <div className="gameView whiteCardSection">
+            {/* TODO iterate over player.whiteCards or just whiteCards (depends on
+            what states are used) and set the texts accordingly */}
+            <Card isBlack={false} isChoice={false} text="CARD 1"/>
+            <Card isBlack={false} isChoice={false} text="CARD 2"/>
+            <Card isBlack={false} isChoice={false} text="CARD 3"/>
+            <Card isBlack={false} isChoice={false} text="CARD 4"/>
+            <Card isBlack={false} isChoice={false} text="CARD 5"/>
+            <Card isBlack={false} isChoice={false} text="CARD 6"/>
+            <Card isBlack={false} isChoice={false} text="CARD 7"/>
+            <Card isBlack={false} isChoice={false} text="CARD 8"/>
+            <Card isBlack={false} isChoice={false} text="CARD 9"/>
+            <Card isBlack={false} isChoice={false} text="CARD 10"/>
+          </div>
+          {/* TODO call playCard for the onClick event of the button */}
         </div>
       </div>
-      <div className="gameView whiteCardSection">
-        {/* TODO iterate over player.whiteCards or just whiteCards (depends on
-        what states are used) and set the texts accordingly */}
-        <Card isBlack={false} isChoice={false} text="CARD 1"/>
-        <Card isBlack={false} isChoice={false} text="CARD 2"/>
-        <Card isBlack={false} isChoice={false} text="CARD 3"/>
-        <Card isBlack={false} isChoice={false} text="CARD 4"/>
-        <Card isBlack={false} isChoice={false} text="CARD 5"/>
-        <Card isBlack={false} isChoice={false} text="CARD 6"/>
-        <Card isBlack={false} isChoice={false} text="CARD 7"/>
-        <Card isBlack={false} isChoice={false} text="CARD 8"/>
-        <Card isBlack={false} isChoice={false} text="CARD 9"/>
-        <Card isBlack={false} isChoice={false} text="CARD 10"/>
-      </div>
-      {/* TODO call playCard for the onClick event of the button */}
-      <div className="gameView bottomSection">
-        SUBMIT / LEAVE SECTION&nbsp;
-        {/* TODO add the role to the disables as well (only for regular players) -> even more secure */}
-        <button disabled={!chosenCard}>SUBMIT</button>
-      </div>
+
+
+      {/* COMMENT - SECTION - if you are normal Player */}
+      {role == 'notCardCzar' && 
+        <div className="gameView bottomSection">
+          <Button
+              width="100%"
+              // onClick={() => createGame()}
+            >
+            🥺 Leave game...
+          </Button>
+          <Button
+              disabled = {!chosenCard}
+              width="100%"
+              // onClick={() => createGame()}
+            >
+            🔁 Reset choice
+          </Button>
+          <Button
+              disabled = {!chosenCard}
+              width="100%"
+              // onClick={() => createGame()}
+            >
+            ✔️ Submit
+          </Button>
+        </div>
+       } 
+
+      {/*COMMENT - SECTION - if you are Card Czar */}
+      {role == 'cardCzar' && 
+        <div className="gameView bottomSection">
+          <Button
+              width="100%"
+              // onClick={() => createGame()}
+            >
+            🥺 Leave game...
+          </Button>
+          <Button
+              disabled = {!chosenCard}
+              width="100%"
+              // onClick={() => createGame()}
+            >
+            🔁 Reset choice
+          </Button>
+          <Button
+              disabled = {!chosenCard}
+              width="100%"
+              // onClick={() => createGame()}
+            >
+            ✔️ Submit
+          </Button>
+        </div>
+       } 
     </BaseContainer>
   );
 

@@ -2,9 +2,9 @@
 // @import "~bootstrap/scss/bootstrap";
 
 .gameView {
-
+//  background: yellow;
   &.mainContainer {
-    background: yellow;
+    // background: yellow;
     padding: 2em;
     width: 100%;
     height: 100%;
@@ -19,69 +19,191 @@
   //   justify-content: right;
   // }
 
+
   &.roundSection {
-    background-color: green;
+    // background-color: green;
     padding: 0.2em;
     width: 100%;
     font-size:xx-large;
-  }
-
-  &.bottomSection {
-    background-color: rgb(122, 122, 255);
-    padding: 0.5em;
-    width: 100%;
-    height: 50px;
-  }
-
-  &.whiteCardSection {
-    background-color: rgb(255, 155, 255);
-    padding: 0.3em;
-    width: 100%;
-    height: 150px;
-    display: flex;
-    flex-wrap: no-wrap;
-  }
-  
-  &.choiceSection {
-    background-color: aqua;
-    padding: 0.5em;
-    width: 40%;
-    height: 240px;
-
-    &.cards {
-      display: flex;
-      background-color: rgb(88, 255, 171);
-      justify-content: center;
-      width: 100%;
-      height: 70%;
-    }
-
-    &.submit {
-      background-color: rgb(255, 148, 250);
-      padding: 0.5em;
-      width: 100%;
-      height: 30%;
+    // change font size of paragraphs inisde roundSection
+    & p {
+      margin-top: 1px;
+      margin-bottom: 1px;
+      font-size: large;
     }
   }
-
   &.blackCardSection {
-    background-color: lightcoral;
+    // background-color: lightcoral;
     display: flex;
     justify-content: center;
     padding: 0.3em;
     width: 34%;
-    height: 150px;
+    height: 25VH;
   }
-
   &.opponentSection {
-    background-color: red;
+    // background-color: red;
     padding: 0.5em;
     width: 33%;
-    height: 150px;
-
+    height: 25VH;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    & h2{
+      transform: rotate(-45deg);
+      margin-top: 3em;
+      margin-left: -120px;
+    }
     &.center {
       flex-basis: 100%;
+      margin-bottom: 20px;
+      height: 25VH;
+      // background-color: aqua;
     }
+
+    &.tile{
+      width: 100px;
+      height: 140px;
+      background-color: white;
+      display: block;
+      margin-top: 80px;
+      margin-left: -80px;
+      box-shadow: 10px -10px 0 -3px white, 10px -10px black,
+            20px -20px 0 -3px white, 20px -20px black,
+            30px -30px 0 -3px white, 30px -30px black,
+            40px -40px 0 -3px white, 40px -40px black,
+            50px -50px 0 -3px white, 50px -50px black,
+            60px -60px 0 -3px white, 60px -60px black,
+            70px -70px 0 -3px white, 70px -70px black,
+            80px -80px 0 -3px white, 80px -80px black,
+            80px -80px 0 -3px white, 80px -80px black,
+            80px -80px 0 -3px white, 80px -80px black;
+      border-radius: 0.8rem;
+      border-style: solid;
+      border-color: black;
+      border-width: 3px;
+    }
+  }
+
+
+
+ 
+
+  &.cardsSection{
+    // background-color: teal;
+    padding: 0.5em;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &.choiceSection {
+    // background-color: aqua;
+    padding: 0.5em;
+    width: 30%;
+    height: 100%;
+    
+
+    & h2{
+      margin: 0.3em;
+    }
+
+    &.cards {
+      display: flex;
+      // background-color: rgb(88, 255, 171);
+      justify-content: center;
+      width: 100%;
+      height: 18VH;
+    }
+    &.cards:hover .card{
+      filter:blur(1px);
+      opacity:.5;
+      transform: scale(.90);
+      box-shadow:none;
+    }
+    &.cards:hover .card:hover{
+      transform:scale(1);
+      filter:blur(0px);
+      opacity:1;
+      box-shadow: 5px 5px 5px black;
+    }
+
+    &.submit {
+      // background-color: rgb(255, 148, 250);
+      padding: 0.5em;
+      width: 100%;
+      height: 30%;
+      // for alignment of buttons 
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+    }
+  }
+  &.choiceSection:hover .card{
+    filter:blur(1px);
+    opacity:.5;
+    transform: scale(.90);
+    box-shadow:none;
+  }
+  &.choiceSection:hover .card:hover{
+    transform:scale(1);
+    filter:blur(0px);
+    opacity:1;
+    box-shadow: $dropShadowGame;
+  }
+
+
+
+
+  &.handSection {
+    // background-color: brown;
+    // background: lighten($background, 5);
+    // border-radius: $borderRadius;
+    // box-shadow: $dropShadowGame;
+    padding: 0.5em;
+    margin-left: 0.5em;
+    width: 90%;
+    height: 100%;
+    & h2{
+      margin: 0.3em;
+    }
+  }
+  &.whiteCardSection {
+    // background-color: rgb(255, 155, 255);
+    padding: 0.3em;
+    width: 100%;
+    height: 18VH;
+    display: flex;
+    flex-wrap: no-wrap;
+  }
+  &.whiteCardSection:hover .card{
+    filter:blur(1px);
+    opacity:.5;
+    transform: scale(.90);
+    box-shadow:none;
+  }
+  &.whiteCardSection:hover .card:hover{
+    transform:scale(1);
+    filter:blur(0px);
+    opacity:1;
+    box-shadow: 5px 5px 5px black;
+  }
+
+
+
+
+
+  &.bottomSection {
+    // background-color: rgb(122, 122, 255);
+    padding: 0.5em;
+    width: 100%;
+    height: 10VH;
+    
+    // for alignment of buttons 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
   }
 
   // &.scoreSection {
@@ -93,26 +215,21 @@
 }
 
 
-
-
 // WHITE CARD: 
 .card {
+  cursor: pointer;
   padding: 5px;
   margin-left: 0.1em;
   margin-right: 0.1em;
   width: 30%;
   height: 100%;
   background-color: white;
-  border-radius: $borderRadius;
-  cursor: pointer;
   border-style: solid;
   border-color: black;
   border-width: 2px;
   transition:.2s all; 
-  // transition: transform 450ms;
-  // &:hover{
-  //   transform: translateY(-20px);
-  // }
+  border-radius: 0.8rem;
+  box-shadow: $dropShadowGame;
 
   &.focused {
     background-color: rgb(221, 253, 221);
@@ -120,31 +237,20 @@
   }
 }
 
-.whiteCardSection:hover .card{
-  filter:blur(1px);
-  opacity:.5;
-  transform: scale(.90);
-  box-shadow:none;
-}
-.whiteCardSection:hover .card:hover{
-  transform:scale(1);
-  filter:blur(0px);
-  opacity:1;
+.notActiveCard{
+  padding: 5px;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  width: 30%;
+  height: 100%;
+  background-color: white;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+  transition:.2s all; 
+  border-radius: 0.8rem;
   box-shadow: $dropShadowGame;
 }
-// .whiteCardSection:hover .card:active{
-//   transition: transform 100ms;
-//   &:hover{
-//     transform:scale(1.05);
-//   }
-// }
-// .whiteCardSection .card:focus {
-//   background-color: rgb(221, 253, 221);
-//   border-color: rgb(49, 173, 49);
-// }
-
-
-
 
 
 // BLACK CARD: 
@@ -156,7 +262,42 @@
   height: 100%;
   background-color: black;
   color: white;
-  border-radius: $borderRadius;
   border-style: solid;
   border-color: white;
+  border-width: 2px;
+  transition:.2s all; 
+  border-radius: 0.8rem;
+  box-shadow: $dropShadowGame;
+  position: relative;
+  &::before,
+  &::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    border: 2px solid black;
+    transition: all .25s ease-out;
+    border-radius: 0.8rem;
+  }
+  &::before {
+    background-color: black;
+    top: -15px;
+    left: -15px;
+  }
+  &::after {
+    bottom: -15px;
+    right: -15px;
+  }
+  &:hover {
+    &::before {
+      top: 15px;
+      left: 15px;
+    }
+    &::after {
+      bottom: 15px;
+      right: 15px;
+    }
+  }
 }
+
