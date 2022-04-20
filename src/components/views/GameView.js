@@ -10,47 +10,35 @@ import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 
-
 const GameView = () => {
-
   const { gameId } = useParams();
   const history = useHistory();
-
   const didMount = useRef(false);
 
-  // TODO maybe role & whiteCards can be combined in a Player
-  const [role, setRole] = useState("notCardCzar");
-  const [whiteCards, setWhiteCards] = useState(null);
   const [player, setPlayer] = useState(null);
-
   // TODO maybe blackCard, roundNum & choices can be combined in a Round (probably easier to leave it like this)
   const [blackCard, setBlackCard] = useState(null);
   const [roundNr, setRoundNr] = useState(1);
   const [choices, setChoices] = useState(null);
   // const [round, setRound] = useState(null);
-
   // TODO update this counter whenever a player successfully played a card
   const [cardsPlayed, setCardsPlayed] = useState(0);
-
   // const [scores, setScores] = useState(null);
-
   const [winner, setWinner] = useState(null);
-
-  // variables to store temporarily store information of a new round
-  let roundNumberVariable = roundNr;
-  let blackCardVariable = blackCard;
 
   // keep track of which card was selected
   // TODO they have to be reset to null when a new round starts!!
   const [chosenCard, setChosenCard] = useState(null);
   const [chosenWinner, setChosenWinner] = useState(null);
 
-
+  // variables to temporarily store information of a new round
+  let roundNumberVariable = roundNr;
+  let blackCardVariable = blackCard;
 
   // ------------------- Container for all cards ------------------------------
   const Card = props => {
     let className;
-    if (props.text === chosenCard) className = "card focused";
+    if (props.text === chosenCard || props.text === chosenWinner) className = "card focused";
     else className = props.isBlack ? "blackCard" : "card";
     // BLACK CARD
     if (props.isBlack) {
@@ -61,30 +49,28 @@ const GameView = () => {
       );
     }
     // WHITE CARD
-    // TODO IF (props.isChoice && role === 'cardCzar') THEN DISPLAY BUTTONS WITH ONCLICK TO SET chosenWinner
-    // TODO IF (!props.isChoice && role === 'notCardCzar') THEN DISPLAY BUTTONS WITH ONCLICK TO SET chosenCard
-    if(props.isChoice && role === 'cardCzar'){
+    if(props.isChoice && props.role === true){
       return(
-        <button className={className} onClick={() => setChosenCard(props.text)}>
+        <button className={className} onClick={() => setChosenWinner(props.text)}>
         {props.text}
         </button>
       );
     }
-    else if(props.isChoice && role === 'notCardCzar'){
+    else if(props.isChoice && props.role === false){
       return(
         <button className="notActiveCard" disabled>
         {props.text}
         </button>
       );
     }
-    else if(!props.isChoice && role === 'cardCzar'){
+    else if(!props.isChoice && props.role === true){
       return(
         <button className="notActiveCard" disabled>
         {props.text}
         </button>
       );
     }
-    else if(!props.isChoice && role === 'notCardCzar'){
+    else if(!props.isChoice && props.role === false){
       return(
         <button className={className} onClick={() => setChosenCard(props.text)}>
         {props.text}
@@ -95,10 +81,16 @@ const GameView = () => {
 
   Card.propTypes = {
     isBlack: PropTypes.bool,
-    isChoice: PropTypes.bool, // freshly added 
-    text: PropTypes.string
+    isChoice: PropTypes.bool, 
+    text: PropTypes.string,
+    role: PropTypes.bool
   };
   // ---------------------------------------------------------------------------
+  // useEffect to initially get the round data - at the page load, so that we can display blackCard
+  // fist this one is called then fetchData for player then other fetchData with didMount
+  useEffect(() => {
+    fetchRoundData();
+  }, []);
 
 
   /*
@@ -109,7 +101,6 @@ const GameView = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        // TODO fetch the player data
         const response = await api.get('/player');
         const player = new Player(response.data);
         setPlayer(player);
@@ -137,15 +128,14 @@ const GameView = () => {
       } else {
         didMount.current = true;
       }
-  
       // TODO setRoundNr & setBlackCard (the STATES)
-      // setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
-      // setBlackCard(blackCardVariable);
-  
+      setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
+      setBlackCard(blackCardVariable);
       // TODO enable the submit button again
     }
     fetchData();
   }, [winner]);
+
 
 
   /*
@@ -155,11 +145,10 @@ const GameView = () => {
   as the current round number and even the winner
   */
   useInterval(() => {
-
     // if new round data is available, display the new data
     fetchRoundData();
-
   }, 5000);
+
 
   /*
   This method is used to fetch all round relevant information such as
@@ -168,8 +157,7 @@ const GameView = () => {
   const fetchRoundData = async () => {
     try {
       console.log("Fetch round data");
-      // const response = await api.get(`/${gameId}/gameround`);
-
+      const response = await api.get(`/${gameId}/gameround`);
       /*
       in case a new round started, save the important things in variables for now.
       The corresponding states will only be updated after a delay (see useEffect of the winner)
@@ -177,33 +165,34 @@ const GameView = () => {
 
       // will look something like this:
       // roundNumberVariable = response.data.roundNr;
-      // blackCardVariable = response.data.blackCard;
-
+      blackCardVariable = response.data.blackCard;
+      if(blackCard == null){ 
+        setBlackCard(blackCardVariable); // COMMENT - called only intially when the blackCard is still null
+      }
       // TODO setChoices (played Cards) - always update the choices when they change
-
       // TODO setWinner - always update the winner (will trigger useEffect when changing)
-      
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
   }
 
+
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
       // TODO add playCard POST
-  
       /*
       after successfully playing a card, change cardsPlayed so that the useEffect is triggered
       to fetch the playerData. This will then update the white cards (only 9 left)
       */
+     // TODO make sure that only 9 cards are visible after playing the card
       setCardsPlayed(cardsPlayed + 1);
-
       // TODO disable the button after card is played (until new round starts)
     } catch (error) {
       catchError(history, error, 'playing a white card');
     }
   }
+
 
   // method that is used when the Card Czar chooses a round winner
   const chooseRoundWinner = async () => {
@@ -232,7 +221,7 @@ const GameView = () => {
           {player.cardCzar === true && <p>You are a Card Czar this round - pick played card that you think is best!</p>}
         </div>
         
-        {/* TODO display a hidden card tile maybe together with the opponents name */}
+        {/* TODO display the opponents name */}
         <div className="gameView opponentSection center"> 
           <h2>oponnents name 1</h2> 
           <div className="gameView opponentSection tile"></div>
@@ -242,8 +231,7 @@ const GameView = () => {
           <div className="gameView opponentSection tile"></div>
         </div>
         <div className="gameView blackCardSection">
-          {/* TODO display the black card fetched from the backend here */}
-          <Card isBlack={true} text="BLACK CARD"/>
+          <Card isBlack={true} isChoice={false} key={blackCard.cardId} text={blackCard.cardText} role={player.cardCzar}/>
         </div>
         <div className="gameView opponentSection"> 
           <h2>oponnents name 3</h2> 
@@ -257,9 +245,9 @@ const GameView = () => {
             <h2>Round's played cards:</h2>
             <div className="gameView choiceSection cards">
               {/* TODO iterate over the choices and display the ones that are available */}
-              <Card isBlack={false} isChoice={true} text="CHOICE 1"/>
-              <Card isBlack={false} isChoice={true} text="CHOICE 2"/>
-              <Card isBlack={false} isChoice={true} text="CHOICE 3"/>
+              <Card isBlack={false} isChoice={true} text="CHOICE 1" role={player.cardCzar}/>
+              <Card isBlack={false} isChoice={true} text="CHOICE 2" role={player.cardCzar}/>
+              <Card isBlack={false} isChoice={true} text="CHOICE 3" role={player.cardCzar}/>
             </div>
                 {/* TODO submission is only possible when 3 choices are available*/}
                 {/* TODO add chooseRoundWinner for the onClick event */}
@@ -269,20 +257,8 @@ const GameView = () => {
           <div className="gameView handSection">
             <h2>Your hand:</h2>
             <div className="gameView whiteCardSection">
-              {/* TODO iterate over player.whiteCards or just whiteCards (depends on
-              what states are used) and set the texts accordingly */}
-              {/* <Card isBlack={false} isChoice={false} text="CARD 1"/>
-              <Card isBlack={false} isChoice={false} text="CARD 2"/>
-              <Card isBlack={false} isChoice={false} text="CARD 3"/>
-              <Card isBlack={false} isChoice={false} text="CARD 4"/>
-              <Card isBlack={false} isChoice={false} text="CARD 5"/>  
-              <Card isBlack={false} isChoice={false} text="CARD 6"/>
-              <Card isBlack={false} isChoice={false} text="CARD 7"/>
-              <Card isBlack={false} isChoice={false} text="CARD 8"/>
-              <Card isBlack={false} isChoice={false} text="CARD 9"/>
-              <Card isBlack={false} isChoice={false} text="CARD 10"/> */}
               {player.cardsOnHands.map(card => (
-              <Card isBlack={false} isChoice={false} key={card.cardId} text={card.cardText}/>
+              <Card isBlack={false} isChoice={false} key={card.cardId} text={card.cardText} role={player.cardCzar}/>
               ))}
             </div>
             {/* TODO call playCard for the onClick event of the button */}
@@ -291,18 +267,18 @@ const GameView = () => {
 
 
         {/* COMMENT - SECTION - if you are normal Player */}
-        {role == 'notCardCzar' && 
+        {player.cardCzar == false && 
           <div className="gameView bottomSection">
             <Button
                 width="100%"
-                // onClick={() => createGame()}
+                // onClick={() => createGame()} //TODO leave function 
               >
               🥺 Leave game...
             </Button>
             <Button
                 disabled = {!chosenCard}
                 width="100%"
-                // onClick={() => createGame()}
+                onClick={() => window.location.reload(false)}
               >
               🔁 Reset choice
             </Button>
@@ -317,23 +293,23 @@ const GameView = () => {
         } 
 
         {/*COMMENT - SECTION - if you are Card Czar */}
-        {role == 'cardCzar' && 
+        {player.cardCzar == true && 
           <div className="gameView bottomSection">
             <Button
                 width="100%"
-                // onClick={() => createGame()}
+                // onClick={() => createGame()} //TODO leave function 
               >
               🥺 Leave game...
             </Button>
             <Button
-                disabled = {!chosenCard}
+                disabled = {!chosenWinner}
                 width="100%"
-                // onClick={() => createGame()}
+                onClick={() => window.location.reload(false)}
               >
               🔁 Reset choice
             </Button>
             <Button
-                disabled = {!chosenCard}
+                disabled = {!chosenWinner}
                 width="100%"
                 // onClick={() => createGame()}
               >
