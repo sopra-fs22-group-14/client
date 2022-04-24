@@ -24,7 +24,7 @@ const GameView = () => {
   const [playersChoices, setPlayersChoices] = useState(null);  // cards that were played in this round
   
   // COMMENT Game data:
-  const [cardsPlayed, setCardsPlayed] = useState(0);
+  const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   // const [scores, setScores] = useState(null); 
   const [winner, setWinner] = useState(null);
 
@@ -41,6 +41,10 @@ const GameView = () => {
   const Card = props => {
     let className;
     if (props.cardId === chosenCard || props.cardId === chosenWinner) className = "card focused";
+    // else if (props.cardId === chosenCard && cardsPlayed > 0 ) {
+    //     //  TODO this card should stay makred as green 
+    //     //  TODO create a css which is marked as green 
+    // }
     else className = props.isBlack ? "blackCard" : "card";
     // BLACK CARD
     if (props.isBlack) {
@@ -134,7 +138,7 @@ const GameView = () => {
       }
       setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
       setBlackCard(blackCardVariable);
-      // TODO enable the submit button again
+      setCardsPlayed(0); // COMMENT  - enable the submit button again
     }
     fetchData();
   }, [winner]);
@@ -161,6 +165,7 @@ const GameView = () => {
     try {
       console.log("Fetch round data");
       const response = await api.get(`/${gameId}/gameround`);
+      console.log(response.data);
       /*
       in case a new round started, save the important things in variables for now.
       The corresponding states will only be updated after a delay (see useEffect of the winner)
@@ -180,8 +185,8 @@ const GameView = () => {
         2: {cardId: 2968, cardText: 'The wrath of Vladimir Putin.'}
       };
       setPlayersChoices(dict); 
-      // setPlayersChoices(response.data.playersChoices); 
-      // TODO setWinner - always update the winner (will trigger useEffect when changing)
+      // setPlayersChoices(response.data.playersChoices); // TESTME setPlayersChoices
+      // setWinner(response.data.winner); // TESTME setWinner - always update the winner (will trigger useEffect when changing)
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -191,14 +196,13 @@ const GameView = () => {
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
+      console.log("Player submitted a card: ", chosenCard);
       // TODO add playCard POST
       /*
       after successfully playing a card, change cardsPlayed so that the useEffect is triggered
       to fetch the playerData. This will then update the white cards (only 9 left)
       */
-     // TODO make sure that only 9 cards are visible after playing the card
       setCardsPlayed(cardsPlayed + 1);
-      // TODO disable the button after card is played (until new round starts)
     } catch (error) {
       catchError(history, error, 'playing a white card');
     }
@@ -209,6 +213,7 @@ const GameView = () => {
   const chooseRoundWinner = async () => {
     try {
       // TODO add chooseRoundWinner POST
+      setCardsPlayed(cardsPlayed + 1); // COMMENT to make the submit button disabled after submission
     } catch (error) {
       catchError(history, error, 'choosing the winning card');
     }
@@ -222,7 +227,7 @@ const GameView = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (player) {
+  if (player != null && blackCard != null && playersChoices != null && roundNr != null) {
     content = (
       <div className = "gameView main">
 
@@ -232,7 +237,7 @@ const GameView = () => {
           {player.cardCzar === true && <p>You are a Card Czar this round - pick played card that you think is best!</p>}
         </div>
         
-        {/* TODO display the opponents name */}
+        {/* TODO display the opponents name - waiting for the endpoint*/}
         <div className="gameView opponentSection center"> 
           <h2>oponnents name 1</h2> 
           <div className="gameView opponentSection tile"></div>
@@ -250,24 +255,55 @@ const GameView = () => {
         </div>
 
 
+
         <div className="gameView cardsSection">
           {/* COMMENT - choice section for Card Czar */}
           <div className="gameView choiceSection">
             <h2>Round's played cards:</h2>
             <div className="gameView choiceSection cards">
-              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar}/>}
-            </div>
+              {/* COMMENT - makes the card not clickable after submitting */}
+              {(cardsPlayed > 0) && 
+                <div className="gameView choiceSection cards">
+                  <Card isBlack={false} isChoice={false} key={playersChoices[0].cardId} text={playersChoices[0].cardText} role={true}/>
+                  <Card isBlack={false} isChoice={false} key={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true}/>
+                  <Card isBlack={false} isChoice={false} key={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true}/>
+                </div> 
+              }
+              {(cardsPlayed == 0) && 
+                <div className="gameView choiceSection cards">
+                  {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
+                  {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar}/>}
+                  {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar}/>}
+                </div> 
+              }
+              </div>
           </div>
+
 
           {/* COMMENT - choice section for normal players */}
           <div className="gameView handSection">
             <h2>Your hand:</h2>
             <div className="gameView whiteCardSection">
-              {player.cardsOnHands.map(card => (
+
+              {/* {player.cardsOnHands.map(card => (
               <Card isBlack={false} isChoice={false} key={card.cardId} cardId={card.cardId} text={card.cardText} role={player.cardCzar}/>
-              ))}
+              ))} */}
+
+              {/* COMMENT - makes the card not clickable after submitting */}
+              {(cardsPlayed > 0) && 
+                <div className="gameView whiteCardSection">
+                  {player.cardsOnHands.map(card => (
+                    <Card isBlack={false} isChoice={true} key={card.cardId} cardId={card.cardId} text={card.cardText} role={false}/>
+                  ))}
+                </div> 
+              }
+              {(cardsPlayed == 0) && 
+                <div className="gameView whiteCardSection">
+                  {player.cardsOnHands.map(card => (
+                    <Card isBlack={false} isChoice={false} key={card.cardId} cardId={card.cardId} text={card.cardText} role={player.cardCzar}/>
+                  ))}
+                </div> 
+              }
             </div>
             {/* TODO call playCard for the onClick event of the button */}
           </div>
@@ -284,16 +320,16 @@ const GameView = () => {
               🥺 Leave game...
             </Button>
             <Button
-                disabled = {!chosenCard}
+                disabled = {!chosenCard || (cardsPlayed > 0)}
                 width="100%"
                 onClick={() => window.location.reload(false)}
               >
               🔁 Reset choice
             </Button>
             <Button
-                disabled = {!chosenCard}
+                disabled = {!chosenCard || (cardsPlayed > 0)}
                 width="100%"
-                // onClick={() => createGame()} //TODO submit function 
+                onClick={() => playCard()} //TODO submit function 
               >
               ✔️ Submit
             </Button>
@@ -310,16 +346,16 @@ const GameView = () => {
               🥺 Leave game...
             </Button>
             <Button
-                disabled = {!chosenWinner}
+                disabled = {!chosenWinner || (cardsPlayed > 0)}
                 width="100%"
                 onClick={() => window.location.reload(false)}
               >
               🔁 Reset choice
             </Button>
             <Button
-                disabled = {!chosenWinner || (Object.keys(playersChoices).length != 3)}
+                disabled = {!chosenWinner || (Object.keys(playersChoices).length != 3) || (cardsPlayed > 0)}
                 width="100%"
-                // onClick={() => createGame()} //TODO submit function 
+                onClick={() => chooseRoundWinner()}
               >
               ✔️ Submit
             </Button>
