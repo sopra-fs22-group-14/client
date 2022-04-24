@@ -1,0 +1,28 @@
+.home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // padding: 10px;
+
+  &.paragraph {
+    width: 20%;
+    height: 200px;
+    padding: 20px;
+    margin: 30px;
+    font-size: large;
+    border: solid black;
+    border-radius: 10px;
+
+    // transform:rotate(5deg);
+    animation: rotation 2s infinite linear alternate;
+
+    @keyframes rotation {
+      from {
+        transform: rotate(-10deg);
+      }
+      to {
+        transform: rotate(10deg);
+      }
+    }
+  }
+}
