@@ -5,7 +5,8 @@
     constructor(data = {}) {
       this.blackCard = null;
       this.roundNr = null;
-      this.playedCards = null;
+      this.playersChoices = null;
+      this.winner = null;
       Object.assign(this, data);
     }
   }
