@@ -286,7 +286,8 @@ const GameView = () => {
             <Button
                 disabled = {!chosenCard}
                 width="100%"
-                onClick={() => window.location.reload(false)}
+                // onClick={() => window.location.reload(false)}
+                onClick={() => setChosenCard(null)}
               >
               🔁 Reset choice
             </Button>
@@ -312,7 +313,8 @@ const GameView = () => {
             <Button
                 disabled = {!chosenWinner}
                 width="100%"
-                onClick={() => window.location.reload(false)}
+                // onClick={() => window.location.reload(false)}
+                onClick={() => setChosenWinner(null)}
               >
               🔁 Reset choice
             </Button>
