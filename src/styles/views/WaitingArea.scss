@@ -39,9 +39,10 @@
     // align-items: center;
     justify-content: right;
 
+    transition: all 0.2s ease;
+
     &:hover {
       box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);
-
     }
   }
 

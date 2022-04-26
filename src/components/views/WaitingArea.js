@@ -47,15 +47,10 @@ const WaitingArea = () => {
 
   const leaveGame = async () => {
     try { 
-      if (playerCount === 1) {
+      if (playerCount === 1)
         setIsLastPlayerLeaving(true); //NOTE - for pausing the polling 
-        await api.put('/games/waitingArea/'+gameId);
-        history.push('/lobby'); 
-      } else {
-        // send leave request to backend
-        await api.put('/games/waitingArea/'+gameId);
-        history.push('/lobby'); 
-      }
+      await api.put('/games/waitingArea/'+gameId);
+      history.push('/lobby'); 
     } catch (error) {
       catchError(history, error, 'leaving the game');
     }

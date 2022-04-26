@@ -5,6 +5,7 @@ import Player from 'models/Player';
 import Round from 'models/Round';
 import {useHistory, useParams} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
+import {Confetti} from 'components/ui/Confetti';
 import 'styles/views/GameView.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
@@ -22,11 +23,14 @@ const GameView = () => {
   const [blackCard, setBlackCard] = useState(null);
   const [roundNr, setRoundNr] = useState(1);
   const [playersChoices, setPlayersChoices] = useState(null);  // cards that were played in this round
+  const [roundWinner, setRoundWinner] = useState(null);
+  const [roundWinningCard, setRoundWinningCard] = useState(null); // TODO needed?
+  const [countdown, setCountdown] = useState(0);
   
   // COMMENT Game data:
   const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   // const [scores, setScores] = useState(null); 
-  const [winner, setWinner] = useState(null);
+  const [gameWinner, setGameWinner] = useState(null); // TDOO needed?
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
@@ -98,9 +102,8 @@ const GameView = () => {
     fetchRoundData();
   }, []);
 
-
   /*
-   useEffect is used to always fetch new Player-data (white cards & role) 
+   useEffect used to always fetch new Player-data (white cards & role) 
    whenever a new round starts (so when roundNr changes!) OR when
    a card was played (to only display 9 white cards)
   */
@@ -119,48 +122,53 @@ const GameView = () => {
 
 
   /*
-  As soon as the winner changes (therefore, was decided from the Card Czar),
-  a countdown of 10 seconds will start. After that, the information of the
-  new round will be rendered!
+  As soon as the roundWinner changes (therefore, was decided from the Card Czar),
+  a countdown of 10 seconds will start. 
   */
   useEffect(() => {
-    async function fetchData() {
-      // DO NOT include 10 second countown when mounting (render immediately)
-      if (didMount.current) {
-        /*
-        TODO add a 10 second countdown until the round and blackCard are set and therefore updated
-        This is for the players to actually see the winner!
-        */
-        setChosenCard(null);
-        setChosenWinner(null);
-      } else {
-        didMount.current = true;
-      }
+    // DO NOT include 10 second countown when mounting (render immediately)
+    if (!didMount.current) {
+      didMount.current = true;
       setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
       setBlackCard(blackCardVariable);
       setCardsPlayed(0); // COMMENT  - enable the submit button again
-    }
-    fetchData();
-  }, [winner]);
+    } else {
+      // this will trigger the useEffect for the countdown
+      setCountdown(15);
 
+      setChosenCard(null);
+      setChosenWinner(null);
+    }
+  }, [roundWinner]);
 
 
   /*
-  useIntervall is used to periodically fetch data regarding the rounds
-  of the game. This includes things such as the played cards, (so that 
-  the played cards from all players are shown), the black card as well
-  as the current round number and even the winner
+  useEffect for the 10 second countdown before new round starts.
+  After that, the information of the new round will be rendered!
+  */
+  useEffect(() => {
+    if (countdown > 0) {
+      // for 10 seconds, just count down
+      setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else {
+      // after 10 seconds, update the states from the new round data
+      setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the new player data
+      setBlackCard(blackCardVariable);
+      setCardsPlayed(0); // COMMENT  - enable the submit button again
+    }
+  }, [countdown])
+
+
+  /*
+  useInterval is used to periodically fetch data regarding the rounds of the game. 
+  This includes things such as the played cards, (so that the played cards from all 
+  players are shown), the black card as well as the current round number and even the roundWinner
   */
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
   }, 5000);
 
-
-  /*
-  This method is used to fetch all round relevant information such as
-  the choices (played cards), the winner as well as the round number and the black card
-  */
   const fetchRoundData = async () => {
     try {
       console.log("Fetch round data");
@@ -168,14 +176,15 @@ const GameView = () => {
       console.log(response.data);
       /*
       in case a new round started, save the important things in variables for now.
-      The corresponding states will only be updated after a delay (see useEffect of the winner)
+      The corresponding states will only be updated after a countdown (see useEffect of the roundWinner)
       */
 
       // will look something like this:
-      // roundNumberVariable = response.data.roundNr;
+      roundNumberVariable = response.data.roundId; // TODO wait for backend to actually send roundNr
       blackCardVariable = response.data.blackCard;
-      if(blackCard == null){ 
+      if (blackCard == null) { 
         setBlackCard(blackCardVariable); // COMMENT - called only intially when the blackCard is still null
+        setRoundNr(roundNumberVariable);
       }
 
       // COMMENT - just for testing 
@@ -186,7 +195,8 @@ const GameView = () => {
       };
       setPlayersChoices(dict); 
       // setPlayersChoices(response.data.playersChoices); // TESTME setPlayersChoices
-      // setWinner(response.data.winner); // TESTME setWinner - always update the winner (will trigger useEffect when changing)
+      // TODO wait for backend to actually send round Winner
+      // setRoundWinner(response.data.winner); // TESTME setRoundWinner - always update the roundWinner (will trigger useEffect when changing)
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -218,18 +228,16 @@ const GameView = () => {
       catchError(history, error, 'choosing the winning card');
     }
   }
-  
-  /*
-  TODO display the winner in some sort of textField for all to see
-  if (winner == null) don't display anything (only the case when mounting)
-  This textfield is not yet included anywhere..
-  */
+
+  // blurr background if countdown is active 
+  const mainClass = countdown === 0 ? 'gameView main' : 'gameView blurryMain';
+
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
   if (player != null && blackCard != null && playersChoices != null && roundNr != null) {
     content = (
-      <div className = "gameView main">
+      <div className = {mainClass}>
 
         <div className="gameView roundSection">
           {"Round "+roundNr}
@@ -254,7 +262,10 @@ const GameView = () => {
           <div className="gameView opponentSection tile"></div>
         </div>
 
-
+        {/* Displaying of the roundWinner (small and all the time)*/}
+        {/* <div className="gameView roundWinnerSection">
+          {roundWinner == null && <h3>Last round was won by: {roundWinner}</h3>}
+        </div> */}
 
         <div className="gameView cardsSection">
           {/* COMMENT - choice section for Card Czar */}
@@ -268,7 +279,7 @@ const GameView = () => {
                   <Card isBlack={false} isChoice={false} key={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true}/>
                   <Card isBlack={false} isChoice={false} key={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true}/>
                 </div> 
-              }
+              } 
               {(cardsPlayed == 0) && 
                 <div className="gameView choiceSection cards">
                   {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
@@ -365,14 +376,25 @@ const GameView = () => {
         } 
       </div>
     );
-  }
+  } 
   // -------------------------------- RETURN --------------------------------
   return (
     <BaseContainer className="gameView container">
+      {/* Include countdown until new round starts 
+      and display the roundWinner in a fancy way while countdown is active*/}
+      {countdown != 0 && 
+      <div>
+        <div className="gameView countdownSection">
+          <p>Next round starts in: {countdown}</p>
+        </div>
+        <div className="gameView countdownSection roundWinner">
+          <p>This round was won by: {roundWinner}</p> 
+        </div>
+        <Confetti/>
+      </div>}
       {content}
     </BaseContainer>
   );
-
 };
 
 export default GameView;
