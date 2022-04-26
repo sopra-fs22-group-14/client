@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {api, updateApi, handleError} from 'helpers/api';
+import {api, updateApi, catchError} from 'helpers/api';
 import User from 'models/User';
 import {useHistory, Link} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
@@ -81,7 +81,7 @@ const Register = () => {
 
     } catch (error) {
       setIsPending(false);
-      alert(`Something went wrong during the registration: \n${handleError(error)}`);
+      catchError(history, error, 'registering');
       // reset the fields after failed registration
       setUsername("");
       setPassword("");

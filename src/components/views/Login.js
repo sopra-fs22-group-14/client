@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {api, handleError, updateApi} from 'helpers/api';
+import {api, catchError, updateApi} from 'helpers/api';
 import User from 'models/User';
 import {useHistory, Link} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
@@ -83,7 +83,7 @@ const Login = props => {
       history.push(`/lobby`);
     } catch (error) {
       setIsPending(false);
-      alert(`Something went wrong during the login: \n${handleError(error)}`);
+      catchError(history, error, 'logging in');
       // reset the fields after login failed
       setUsername("");
       setPassword("");

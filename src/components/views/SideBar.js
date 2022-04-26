@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import "styles/views/SideBar.scss";
 import { useHistory } from "react-router-dom";
-import {api, updateApi, handleError} from 'helpers/api';
+import {api, updateApi, catchError} from 'helpers/api';
 
 const SideBar = props => {
 
@@ -38,7 +38,7 @@ const SideBar = props => {
       updateApi();
       history.push('/login');
     } catch (error) {
-      alert(`Something went wrong during the logout: \n${handleError(error)}`);
+      catchError(history, error, 'logging out');
     }
   }
 

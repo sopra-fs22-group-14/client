@@ -4,7 +4,7 @@ import BaseContainer from "components/ui/BaseContainer";
 import {Button} from 'components/ui/Button';
 import 'styles/views/Home.scss';
 import {useHistory} from 'react-router-dom';
-import {handleError} from 'helpers/api';
+import {catchError} from 'helpers/api';
 
 
 const Home = props => {
@@ -15,7 +15,7 @@ const Home = props => {
     try {
       history.push('/lobby')
     } catch (error) {
-      alert(`Something went wrong during the redirection: \n${handleError(error)}`);
+      catchError(history, error, 'redirecting');
     }
   }
   

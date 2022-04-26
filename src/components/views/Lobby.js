@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {api,catchError, updateApi, handleError} from 'helpers/api';
+import {api, catchError} from 'helpers/api';
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import {Button} from 'components/ui/Button';
 import {useHistory} from 'react-router-dom';

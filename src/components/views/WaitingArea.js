@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
 import {WaitingLogo} from "components/ui/WaitingLogo";
-import {api, catchError, handleError} from 'helpers/api';
+import {api, catchError} from 'helpers/api';
 import 'styles/views/WaitingArea.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import {useInterval} from 'helpers/utils';
@@ -24,9 +24,9 @@ const WaitingArea = () => {
       setPlayerCount(response.data.numOfPlayersJoined);
       setGameName(response.data.gameName);
 
-      // when playerCount is reached -> redirect to game after 1.5sec
+      // when playerCount is reached -> redirect to game after 3sec
       if (playerCount === 4) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         history.push(`/game/${gameId}`);
       }
     } catch (error) {

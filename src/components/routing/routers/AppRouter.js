@@ -11,6 +11,7 @@ import NotFound from "components/views/NotFound";
 import WaitingArea from "components/views/WaitingArea";
 import SideBar from "components/views/SideBar";
 import GameView from "components/views/GameView";
+import { GameGuard } from "../routeProtectors/GameGuard";
 
 /**
  * Main router of your application.
@@ -46,7 +47,9 @@ const AppRouter = () => {
           <About/>
         </Route>
         <Route path="/game/:gameId">
-          <GameView/>
+          <GameGuard>
+            <GameView/>
+          </GameGuard>
         </Route>
         <Route exact path="/">
           <Redirect to="/lobby"/>

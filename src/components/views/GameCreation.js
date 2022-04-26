@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
-import {api, handleError} from 'helpers/api';
+import {api, catchError} from 'helpers/api';
 import Game from 'models/Game';
 import 'styles/views/GameCreation.scss';
 import BaseContainer from "components/ui/BaseContainer";
@@ -70,7 +70,7 @@ const GameCreation = () => {
         history.push(`/lobby/wait/${game.gameId}`);
 
       } catch (error) {
-        alert(`Something went wrong during the game creation: \n${handleError(error)}`);
+        catchError(history, error, 'creating the game');
       }
     }
   
