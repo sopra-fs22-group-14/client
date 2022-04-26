@@ -24,13 +24,13 @@ const GameView = () => {
   const [roundNr, setRoundNr] = useState(1);
   const [playersChoices, setPlayersChoices] = useState(null);  // cards that were played in this round
   const [roundWinner, setRoundWinner] = useState(null);
-  const [roundWinningCard, setRoundWinningCard] = useState(null); // TODO needed?
+  const [roundWinningCardText, setRoundWinningCardText] = useState(null);
   const [countdown, setCountdown] = useState(0);
   
   // COMMENT Game data:
   const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   // const [scores, setScores] = useState(null); 
-  const [gameWinner, setGameWinner] = useState(null); // TDOO needed?
+  const [gameWinner, setGameWinner] = useState(null); // TODO needed?
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
@@ -38,8 +38,8 @@ const GameView = () => {
   const [chosenWinner, setChosenWinner] = useState(null);
 
   // variables to temporarily store information of a new round
-  let roundNumberVariable = roundNr;
-  let blackCardVariable = blackCard;
+  const roundNumberVariable = useRef(roundNr);
+  const blackCardVariable = useRef(blackCard);
 
   // ------------------- Container for all cards ------------------------------
   const Card = props => {
@@ -121,44 +121,6 @@ const GameView = () => {
 
 
   /*
-  As soon as the roundWinner changes (therefore, was decided from the Card Czar),
-  a countdown of 15 seconds will start
-  */
-  useEffect(() => {
-    // DO NOT include 15 second countown when mounting (render immediately)
-    if (!didMount.current) {
-      didMount.current = true;
-      setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
-      setBlackCard(blackCardVariable);
-      setCardsPlayed(0); // COMMENT  - enable the submit button again
-    } else {
-      // this will trigger the useEffect for the countdown
-      setCountdown(15);
-
-      setChosenCard(null);
-      setChosenWinner(null);
-    }
-  }, [roundWinner]);
-
-
-  /*
-  useEffect for the 15 second countdown before new round starts.
-  After that, the information of the new round will be rendered!
-  */
-  useEffect(() => {
-    if (countdown > 0) {
-      // for 15 seconds, just count down
-      setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else {
-      // after 15 seconds, update the states from the new round data
-      setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the new player data
-      setBlackCard(blackCardVariable);
-      setCardsPlayed(0); // COMMENT  - enable the submit button again
-    }
-  }, [countdown])
-
-
-  /*
   This useInterval is used to periodically fetch data regarding the rounds of the game. 
   This includes things such as the played cards, (so that the played cards from all 
   players are shown), the black card as well as the current round number
@@ -166,7 +128,8 @@ const GameView = () => {
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
-  }, 5000); // TODO maybe change interval?
+  }, 3000); // TODO maybe change interval?
+
 
   const fetchRoundData = async () => {
     try {
@@ -179,11 +142,11 @@ const GameView = () => {
       */
 
       // will look something like this:
-      roundNumberVariable = response.data.roundId; // TODO wait for backend to actually send roundNr
-      blackCardVariable = response.data.blackCard;
+      roundNumberVariable.current = response.data.roundId; // TODO wait for backend to actually send roundNr
+      blackCardVariable.current = response.data.blackCard;
       if (blackCard == null) { 
-        setBlackCard(blackCardVariable); // COMMENT - called only intially when the blackCard is still null
-        setRoundNr(roundNumberVariable);
+        setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
+        setRoundNr(roundNumberVariable.current);
       }
 
       // COMMENT - just for testing 
@@ -199,6 +162,7 @@ const GameView = () => {
     }
   }
 
+
   /*
   This useInterval is used to fetch the latest round winner
   */
@@ -206,14 +170,53 @@ const GameView = () => {
     async function fetchLatestWinner() {
       try {
         const response = await api.get(`/${gameId}/latestRoundWinner`);
-        // TODO wait for backend to actually send round Winner
-        // setRoundWinner(response.data.winner); // TESTME setRoundWinner - always update the roundWinner (will trigger useEffect when changing)
+        // TESTME - update the roundWinner and the winningCardText (will trigger useEffect when changing)
+        setRoundWinner(response.data.latestRoundWinner);
+        setRoundWinningCardText(response.data.latestWinningCardText);
       } catch (error) {
         catchError(history, error, 'fetching the winner data');
       }
     }
     fetchLatestWinner();
-  }, 5000); // TODO maybe change interval?
+  }, 3000); // TODO maybe change interval?
+
+
+  /*
+  As soon as the roundWinner is determined (and therefore, roundWinningCardText changes),
+  a countdown of 15 seconds will start
+  */
+  useEffect(() => {
+    // DO NOT include 15 second countown when mounting (render immediately)
+    if (!didMount.current) {
+      didMount.current = true;
+      setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the player data
+      setBlackCard(blackCardVariable.current);
+      setCardsPlayed(0); // COMMENT  - enable the submit button again
+    } else {
+      // this will trigger the useEffect for the countdown
+      setCountdown(15);
+
+      setChosenCard(null);
+      setChosenWinner(null);
+    }
+  }, [roundWinningCardText]); // use roundWinningCardText to ensure change
+
+
+  /*
+  useEffect for the 15 second countdown before new round starts.
+  After that, the information of the new round will be rendered!
+  */
+  useEffect(() => {
+    if (countdown > 0) {
+      // for 15 seconds, just count down
+      setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else {
+      // after 15 seconds, update the states from the new round data
+      setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
+      setBlackCard(blackCardVariable.current);
+      setCardsPlayed(0); // COMMENT  - enable the submit button again
+    }
+  }, [countdown]) 
 
 
   // method that is called when a player plays a white card
@@ -401,7 +404,10 @@ const GameView = () => {
           <p>Next round starts in: {countdown}</p>
         </div>
         <div className="gameView countdownSection roundWinner">
-          <p>This round was won by: {roundWinner}</p> 
+          <p>
+            This round was won by: {roundWinner} with the following card:<br/>
+            " {roundWinningCardText} "
+          </p> 
         </div>
         <Confetti/>
       </div>}
