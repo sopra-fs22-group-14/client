@@ -103,9 +103,8 @@ const GameView = () => {
   }, []);
 
   /*
-   useEffect used to always fetch new Player-data (white cards & role) 
-   whenever a new round starts (so when roundNr changes!) OR when
-   a card was played (to only display 9 white cards)
+   useEffect used to always fetch new Player-data (white cards & role) whenever a new round starts 
+   (so when roundNr changes!) OR when a card was played (to only display 9 white cards)
   */
   useEffect(() => {
     async function fetchData() {
@@ -123,10 +122,10 @@ const GameView = () => {
 
   /*
   As soon as the roundWinner changes (therefore, was decided from the Card Czar),
-  a countdown of 10 seconds will start. 
+  a countdown of 15 seconds will start
   */
   useEffect(() => {
-    // DO NOT include 10 second countown when mounting (render immediately)
+    // DO NOT include 15 second countown when mounting (render immediately)
     if (!didMount.current) {
       didMount.current = true;
       setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the player data
@@ -143,15 +142,15 @@ const GameView = () => {
 
 
   /*
-  useEffect for the 10 second countdown before new round starts.
+  useEffect for the 15 second countdown before new round starts.
   After that, the information of the new round will be rendered!
   */
   useEffect(() => {
     if (countdown > 0) {
-      // for 10 seconds, just count down
+      // for 15 seconds, just count down
       setTimeout(() => setCountdown(countdown - 1), 1000);
     } else {
-      // after 10 seconds, update the states from the new round data
+      // after 15 seconds, update the states from the new round data
       setRoundNr(roundNumberVariable);  // this will also trigger the useEffect to fetch the new player data
       setBlackCard(blackCardVariable);
       setCardsPlayed(0); // COMMENT  - enable the submit button again
@@ -160,14 +159,14 @@ const GameView = () => {
 
 
   /*
-  useInterval is used to periodically fetch data regarding the rounds of the game. 
+  This useInterval is used to periodically fetch data regarding the rounds of the game. 
   This includes things such as the played cards, (so that the played cards from all 
-  players are shown), the black card as well as the current round number and even the roundWinner
+  players are shown), the black card as well as the current round number
   */
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
-  }, 5000);
+  }, 5000); // TODO maybe change interval?
 
   const fetchRoundData = async () => {
     try {
@@ -193,14 +192,28 @@ const GameView = () => {
         1: {cardId: 2332, cardText: 'Grave robbing.'},
         2: {cardId: 2968, cardText: 'The wrath of Vladimir Putin.'}
       };
-      setPlayersChoices(dict); 
+      setPlayersChoices(dict);
       // setPlayersChoices(response.data.playersChoices); // TESTME setPlayersChoices
-      // TODO wait for backend to actually send round Winner
-      // setRoundWinner(response.data.winner); // TESTME setRoundWinner - always update the roundWinner (will trigger useEffect when changing)
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
   }
+
+  /*
+  This useInterval is used to fetch the latest round winner
+  */
+  useInterval(() => {
+    async function fetchLatestWinner() {
+      try {
+        const response = await api.get(`/${gameId}/latestRoundWinner`);
+        // TODO wait for backend to actually send round Winner
+        // setRoundWinner(response.data.winner); // TESTME setRoundWinner - always update the roundWinner (will trigger useEffect when changing)
+      } catch (error) {
+        catchError(history, error, 'fetching the winner data');
+      }
+    }
+    fetchLatestWinner();
+  }, 5000); // TODO maybe change interval?
 
 
   // method that is called when a player plays a white card
