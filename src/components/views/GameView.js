@@ -21,7 +21,7 @@ const GameView = () => {
 
   // COMMENT Round data: 
   const [blackCard, setBlackCard] = useState(null);
-  const [roundNr, setRoundNr] = useState(1);
+  const [roundNr, setRoundNr] = useState(1); // BUG fix the naming convention roundNr vs roundId
   const [playersChoices, setPlayersChoices] = useState(null);  // cards that were played in this round
   const [roundWinner, setRoundWinner] = useState(null);
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
@@ -34,8 +34,8 @@ const GameView = () => {
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
-  const [chosenCard, setChosenCard] = useState(null); // id of the selected card
-  const [chosenWinner, setChosenWinner] = useState(null);
+  const [chosenCard, setChosenCard] = useState(null);     // id of the selected card
+  const [chosenWinner, setChosenWinner] = useState(null); // id of the selected card
 
   // variables to temporarily store information of a new round
   const roundNumberVariable = useRef(roundNr);
@@ -45,9 +45,9 @@ const GameView = () => {
   const Card = props => {
     let className;
     if (props.cardId === chosenCard || props.cardId === chosenWinner) className = "card focused";
-    // else if (props.cardId === chosenCard && cardsPlayed > 0 ) {
-    //     //  TODO this card should stay makred as green 
-    //     //  TODO create a css which is marked as green 
+    // else if (props.cardId === chosenCard && playerAlreadyPlayed) {
+        //  this card should stay makred as green 
+        //  create a css which is marked as green 
     // }
     else className = props.isBlack ? "blackCard" : "card";
     // BLACK CARD
@@ -222,9 +222,9 @@ const GameView = () => {
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
-      const requestBody = JSON.stringify({'cardId' : chosenCard});
-      await api.post(`/${roundNr}/white`, requestBody);
-      console.log("Player submitted a card: ", chosenCard); // chosenCard = id of the card 
+      const requestBody = JSON.stringify({'cardId' : chosenCard}); // chosenCard = id of the card 
+      await api.post(`/${roundNr}/white`, requestBody); // TODO - roundNr should replaced with roundId after we receive it from the backend 
+      console.log("Player submitted a card: ", chosenCard); 
       /*
       after successfully playing a card, change cardsPlayed so that the useEffect is triggered
       to fetch the playerData. This will then update the white cards (only 9 left)
@@ -239,7 +239,9 @@ const GameView = () => {
   // method that is used when the Card Czar chooses a round winner
   const chooseRoundWinner = async () => {
     try {
-      // TODO add chooseRoundWinner POST
+      const requestBody = JSON.stringify({'cardId' : chosenWinner});// chosenWinner = id of the card 
+      await api.post(`/${roundNr}/roundWinner`, requestBody); // TODO - roundNr should replaced with roundId after we receive it from the backend 
+      console.log("Card Czar picked a card: ", chosenWinner); 
       setCardsPlayed(cardsPlayed + 1); // COMMENT to make the submit button disabled after submission
     } catch (error) {
       catchError(history, error, 'choosing the winning card');
@@ -352,7 +354,7 @@ const GameView = () => {
             <Button
                 disabled = {!chosenCard || (cardsPlayed > 0)}
                 width="100%"
-                onClick={() => playCard()} //TODO submit function 
+                onClick={() => playCard()}
               >
               ✔️ Submit
             </Button>
