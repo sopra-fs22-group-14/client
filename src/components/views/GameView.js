@@ -34,7 +34,7 @@ const GameView = () => {
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
-  const [chosenCard, setChosenCard] = useState(null);
+  const [chosenCard, setChosenCard] = useState(null); // id of the selected card
   const [chosenWinner, setChosenWinner] = useState(null);
 
   // variables to temporarily store information of a new round
@@ -135,7 +135,7 @@ const GameView = () => {
     try {
       console.log("Fetch round data");
       const response = await api.get(`/${gameId}/gameround`);
-      console.log(response.data);
+      // console.log(response.data);
       /*
       in case a new round started, save the important things in variables for now.
       The corresponding states will only be updated after a countdown (see useEffect of the roundWinner)
@@ -222,8 +222,9 @@ const GameView = () => {
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
-      console.log("Player submitted a card: ", chosenCard);
-      // TODO add playCard POST
+      const requestBody = JSON.stringify({'cardId' : chosenCard});
+      await api.post(`/${roundNr}/white`, requestBody);
+      console.log("Player submitted a card: ", chosenCard); // chosenCard = id of the card 
       /*
       after successfully playing a card, change cardsPlayed so that the useEffect is triggered
       to fetch the playerData. This will then update the white cards (only 9 left)
@@ -311,11 +312,6 @@ const GameView = () => {
           <div className="gameView handSection">
             <h2>Your hand:</h2>
             <div className="gameView whiteCardSection">
-
-              {/* {player.cardsOnHands.map(card => (
-              <Card isBlack={false} isChoice={false} key={card.cardId} cardId={card.cardId} text={card.cardText} role={player.cardCzar}/>
-              ))} */}
-
               {/* COMMENT - makes the card not clickable after submitting */}
               {(cardsPlayed > 0) && 
                 <div className="gameView whiteCardSection">
@@ -332,7 +328,6 @@ const GameView = () => {
                 </div> 
               }
             </div>
-            {/* TODO call playCard for the onClick event of the button */}
           </div>
         </div>
 
