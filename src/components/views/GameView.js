@@ -3,7 +3,7 @@ import {useInterval} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
 import Round from 'models/Round';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistory, useParams, useLocation} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
 import {Confetti} from 'components/ui/Confetti';
 import 'styles/views/GameView.scss';
@@ -15,6 +15,7 @@ const GameView = () => {
   const { gameId } = useParams();
   const history = useHistory();
   const didMount = useRef(false);
+  const location = useLocation();
 
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
@@ -29,6 +30,7 @@ const GameView = () => {
   
   // COMMENT Game data:
   const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
+  const [opponentNames, setOpponentNames] = useState(null)
   // const [scores, setScores] = useState(null); 
   const [gameWinner, setGameWinner] = useState(null); // TODO needed?
 
@@ -96,6 +98,22 @@ const GameView = () => {
     role: PropTypes.bool
   };
   // ---------------------------------------------------------------------------
+  
+  // TODO handle the case of leaving page
+  // useEffect(() => {
+  //   window.addEventListener('beforeunload', alertUser)
+  //   window.addEventListener('unload', leaveGame())
+  //   return () => {
+  //     window.removeEventListener('beforeunload', alertUser)
+  //     window.addEventListener('unload', leaveGame())
+  //   }
+  // }, [])
+
+  // const alertUser = event => {
+  //   event.preventDefault()
+  //   event.returnValue = ''
+  // }
+  
   // useEffect to initially get the round data - at the page load, so that we can display blackCard
   // fist this one is called then fetchData for player then other fetchData with didMount
   useEffect(() => {
@@ -164,20 +182,22 @@ const GameView = () => {
 
 
   /*
-  This useInterval is used to fetch the latest round winner
+  This useInterval is used to fetch the latest round winner and the opponent names
   */
   useInterval(() => {
-    async function fetchLatestWinner() {
+    async function fetchGameInformation() {
       try {
-        const response = await api.get(`/${gameId}/latestRoundWinner`);
+        const response = await api.get(`/games/${gameId}`);
         // TESTME - update the roundWinner and the winningCardText (will trigger useEffect when changing)
         setRoundWinner(response.data.latestRoundWinner);
         setRoundWinningCardText(response.data.latestWinningCardText);
+        // TODO look at as soon as the opponentNames are actually received
+        // setOpponentNames(response.data.opponentNames)
       } catch (error) {
         catchError(history, error, 'fetching the winner data');
       }
     }
-    fetchLatestWinner();
+    fetchGameInformation();
   }, 3000); // TODO maybe change interval?
 
 
@@ -200,6 +220,19 @@ const GameView = () => {
       setChosenWinner(null);
     }
   }, [roundWinningCardText]); // use roundWinningCardText to ensure change
+
+
+  /*
+  This useEffect is used to check whether the amount of opponents decreased
+  If this happened (meaning: someone left), every player will be forced to
+  leave as well
+  */
+  useEffect(() => {
+    if (opponentNames == null) return;
+    if (opponentNames.length != 3) {
+      leaveGame(); // if not exactly 3 opponents -> leave the game automatically
+    }
+  }, [opponentNames])
 
 
   /*
@@ -245,6 +278,17 @@ const GameView = () => {
       setCardsPlayed(cardsPlayed + 1); // COMMENT to make the submit button disabled after submission
     } catch (error) {
       catchError(history, error, 'choosing the winning card');
+    }
+  }
+
+
+  // method for players to leave an ongoing game
+  const leaveGame = async () => {
+    try {
+      await api.put('/leave/'+gameId);
+      history.push('/lobby');
+    } catch (error) {
+      catchError(history, error, 'leaving the game');
     }
   }
 
@@ -339,7 +383,7 @@ const GameView = () => {
           <div className="gameView bottomSection">
             <Button
                 width="100%"
-                // onClick={() => createGame()} //TODO leave function 
+                onClick={() => leaveGame()}
               >
               🥺 Leave game...
             </Button>
@@ -366,7 +410,7 @@ const GameView = () => {
           <div className="gameView bottomSection">
             <Button
                 width="100%"
-                // onClick={() => createGame()} //TODO leave function 
+                onClick={() => leaveGame()}
               >
               🥺 Leave game...
             </Button>
