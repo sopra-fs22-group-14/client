@@ -1,0 +1,84 @@
+@import 'styles/theme';
+
+.endGameView {
+  &.container {
+    // background: yellow;
+    padding: 1em;
+    width: 100%;
+    height: 100%;
+    // display: flex;
+    // flex-wrap: wrap;
+    // justify-content: center;
+    // align-items: center;
+  }
+
+  &.main{
+    // background: green;
+    padding: 1em;
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+  }
+
+
+
+  // PERSONALISED MESSAGE ------------------------------
+  &.personalisedMessage{
+    // background: red;
+    padding: 0.5em;
+
+    &.winners > h2{
+      background: linear-gradient(yellow, red);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: $dropShadowGame;
+    }
+  }
+
+
+
+  // GAME SUMMARY ------------------------------
+  &.gameSummary{
+    // background: greenyellow;
+    padding: 0.5em;
+
+    &.table{
+      // background-color: aqua;
+      margin: 0.1em auto;
+      width: 100%;
+      padding: 0.1em;
+      font-size: large;
+    }
+  }
+  &.gameSummary > h1{
+    letter-spacing: 10px;
+  } 
+
+
+
+  // BUTTONS SECTION ------------------------------
+  &.buttonsSection{
+    // background: pink;
+    margin-top: 5VH;
+    padding: 0.5em;
+    width: 100%;
+    height: 10VH;
+    
+    // for alignment of buttons 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+}
+
+
+.winners {
+  animation: winners 0.8s ease-in-out both;
+}
+@keyframes winners {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

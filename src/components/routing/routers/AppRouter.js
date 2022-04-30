@@ -12,6 +12,8 @@ import WaitingArea from "components/views/WaitingArea";
 import SideBar from "components/views/SideBar";
 import GameView from "components/views/GameView";
 import { GameGuard } from "../routeProtectors/GameGuard";
+import EndGameView from "components/views/EndGameView";
+import { EndGameGuard } from "../routeProtectors/EndGameGuard";
 
 /**
  * Main router of your application.
@@ -50,6 +52,11 @@ const AppRouter = () => {
           <GameGuard>
             <GameView/>
           </GameGuard>
+        </Route>
+        <Route path="/endGame/:gameId">
+          <EndGameGuard>
+            <EndGameView/>
+          </EndGameGuard>
         </Route>
         <Route exact path="/">
           <Redirect to="/lobby"/>
