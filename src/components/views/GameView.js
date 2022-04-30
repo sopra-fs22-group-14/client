@@ -2,7 +2,6 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useInterval} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
-import Round from 'models/Round';
 import {useHistory, useParams, useLocation} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
 import {Confetti} from 'components/ui/Confetti';
@@ -27,12 +26,12 @@ const GameView = () => {
   const [roundWinner, setRoundWinner] = useState(null);
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
   const [countdown, setCountdown] = useState(0);
+  const [isFinal, setIsFinal] = useRef(false); // if round is final then after countdown push to gameEndView screen 
   
   // COMMENT Game data:
   const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   const [opponentNames, setOpponentNames] = useState(null)
   // const [scores, setScores] = useState(null); 
-  const [gameWinner, setGameWinner] = useState(null); // TODO needed?
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
@@ -146,19 +145,15 @@ const GameView = () => {
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
-  }, 1500); // TODO maybe change interval?
+  }, 1500); 
 
 
   const fetchRoundData = async () => {
     try {
       console.log("Fetch round data");
       const response = await api.get(`/${gameId}/gameround`);
-      // console.log(response.data);
-      /*
-      in case a new round started, save the important things in variables for now.
-      The corresponding states will only be updated after a countdown (see useEffect of the roundWinner)
-      */
-
+      /* in case a new round started, save the important things in variables for now.
+      The corresponding states will only be updated after a countdown (see useEffect of the roundWinner)*/
       // will look something like this:
       roundNumberVariable.current = response.data.roundId; // TODO wait for backend to actually send roundNr
       blackCardVariable.current = response.data.blackCard;
@@ -167,6 +162,7 @@ const GameView = () => {
         setRoundNr(roundNumberVariable.current);
       }
       setPlayersChoices(response.data.playedCards);
+      // setIsFinal(response.data.isFinal); //TESTME - to be added after endpoint is there
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -190,7 +186,7 @@ const GameView = () => {
       }
     }
     fetchGameInformation();
-  }, 1500); // TODO maybe change interval?
+  }, 1500);
 
 
   /*
@@ -240,6 +236,10 @@ const GameView = () => {
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
       setBlackCard(blackCardVariable.current);
       setCardsPlayed(0); // COMMENT  - enable the submit button again
+      if(isFinal){
+        console.log("Going to end game screen");
+        history.push(`/endGame/${gameId}`);
+      }
     }
   }, [countdown]) 
 
@@ -433,7 +433,8 @@ const GameView = () => {
       {countdown != 0 && 
       <div>
         <div className="gameView countdownSection">
-          <p>Next round starts in: {countdown}</p>
+          {isFinal && <p>Game end screen displayed in: {countdown}</p>}
+          {!isFinal && <p>Next round starts in: {countdown}</p>}
         </div>
         <div className="gameView countdownSection roundWinner">
           <p>
