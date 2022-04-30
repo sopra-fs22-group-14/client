@@ -52,7 +52,7 @@ const Lobby = () => {
         setGames(response.data);
 
         // See here to get more data.
-        console.log(response);
+        // console.log(response);
       } catch (error) {
         catchError(history, error, 'fetching the games list');
       }

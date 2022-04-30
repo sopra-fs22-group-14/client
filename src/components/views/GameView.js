@@ -2,7 +2,6 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useInterval} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
-import Round from 'models/Round';
 import {useHistory, useParams, useLocation} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
 import {Confetti} from 'components/ui/Confetti';
@@ -31,10 +30,10 @@ const GameView = () => {
   
   // COMMENT Game data:
   const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
-  const [opponentNames, setOpponentNames] = useState(null)
-  // const [scores, setScores] = useState(null); 
-  const [gameWinner, setGameWinner] = useState(null); // TODO needed?
+  const [opponentNames, setOpponentNames] = useState(null);
   const playersWhoPlayed= useRef(null);
+  // const [scores, setScores] = useState(null); 
+
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
@@ -148,7 +147,7 @@ const GameView = () => {
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
-  }, 1500); // TODO maybe change interval?
+  }, 1500);
 
 
   const fetchRoundData = async () => {
@@ -170,7 +169,7 @@ const GameView = () => {
       }
       setPlayersChoices(response.data.playedCards);
       // isFinal.current = response.data.isFinal; //TODO - uncomment after endpoint is there
-      playersWhoPlayed.current = ["Diego", "Ege"]; //TODO - to be adjusted after endpoint is there
+      playersWhoPlayed.current = ["Diego", "Ege"]; //TODO - to be adjusted after endpoint is there - we might get this data from Round or Game endpoint
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -195,7 +194,7 @@ const GameView = () => {
       }
     }
     fetchGameInformation();
-  }, 1500); // TODO maybe change interval?
+  }, 1500);
 
 
   /*
@@ -208,7 +207,7 @@ const GameView = () => {
       didMount.current = true;
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the player data
       setBlackCard(blackCardVariable.current);
-      setCardsPlayed(0); // COMMENT  - enable the submit button again
+      setCardsPlayed(0); //enable the submit button again
     } else {
       // this will trigger the useEffect for the countdown
       setCountdown(15);
@@ -243,7 +242,7 @@ const GameView = () => {
       // after 15 seconds, update the states from the new round data
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
       setBlackCard(blackCardVariable.current);
-      setCardsPlayed(0); // COMMENT  - enable the submit button again
+      setCardsPlayed(0); //enable the submit button again
       if(isFinal.current == true){
         console.log("Going to end game screen");
         history.push(`/endGame/${gameId}`);
@@ -275,7 +274,7 @@ const GameView = () => {
       const requestBody = JSON.stringify({'cardId' : chosenWinner});// chosenWinner = id of the card 
       await api.post(`/${roundNr}/roundWinner`, requestBody); // TODO - roundNr should replaced with roundId after we receive it from the backend 
       console.log("Card Czar picked a card: ", chosenWinner); 
-      setCardsPlayed(cardsPlayed + 1); // COMMENT to make the submit button disabled after submission
+      setCardsPlayed(cardsPlayed + 1); // to make the submit button disabled after submission
     } catch (error) {
       catchError(history, error, 'choosing the winning card');
     }

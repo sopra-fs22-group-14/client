@@ -55,11 +55,12 @@ const GameCreation = () => {
     const [cardCzarMode, setCardCzarMode] = useState("true");
     const [numOfRounds, setNumOfRounds] = useState(8);
     const [gameName, setGameName] = useState("");
+    const [isPending, setIsPending] = useState(false);
 
     const createGame = async () => {
 
       try {
-        
+        setIsPending(true);
         const requestBody = JSON.stringify({gameName, gameEdition, cardCzarMode, numOfRounds: Number(numOfRounds)});
         // console.log(requestBody);
         const response = await api.post('/games', requestBody); 
@@ -70,6 +71,7 @@ const GameCreation = () => {
         history.push(`/lobby/wait/${game.gameId}`);
 
       } catch (error) {
+        setIsPending(false);
         catchError(history, error, 'creating the game');
       }
     }
@@ -120,13 +122,22 @@ const GameCreation = () => {
               >
                 Back
               </Button>&nbsp;&nbsp;
-              <Button
-                disabled = {!gameName}
-                width="50%"
-                onClick={() => createGame()}
-              >
-                Create
-              </Button>
+              {!isPending && 
+                <Button
+                  disabled = {!gameName}
+                  width="50%"
+                  onClick={() => createGame()}
+                >
+                  Create
+                </Button>}
+
+              {isPending && 
+                <Button
+                  disabled
+                  width="100%"
+                >
+                  Creating...
+                </Button>}
             </div>
           </div>
         </div>
