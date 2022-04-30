@@ -146,7 +146,7 @@ const GameView = () => {
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
-  }, 3000); // TODO maybe change interval?
+  }, 1500); // TODO maybe change interval?
 
 
   const fetchRoundData = async () => {
@@ -166,15 +166,7 @@ const GameView = () => {
         setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
         setRoundNr(roundNumberVariable.current);
       }
-
-      // COMMENT - just for testing 
-      var dict = {
-        0: {cardId: 2123, cardText: 'Crumbs all over the god damn carpet.'},
-        1: {cardId: 2332, cardText: 'Grave robbing.'},
-        2: {cardId: 2968, cardText: 'The wrath of Vladimir Putin.'}
-      };
-      setPlayersChoices(dict);
-      // setPlayersChoices(response.data.playersChoices); // TESTME setPlayersChoices
+      setPlayersChoices(response.data.playedCards);
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -198,7 +190,7 @@ const GameView = () => {
       }
     }
     fetchGameInformation();
-  }, 3000); // TODO maybe change interval?
+  }, 1500); // TODO maybe change interval?
 
 
   /*
@@ -336,13 +328,12 @@ const GameView = () => {
             <h2>Round's played cards:</h2>
             <div className="gameView choiceSection cards">
               {/* COMMENT - makes the card not clickable after submitting */}
-              {(cardsPlayed > 0) && 
-                <div className="gameView choiceSection cards">
-                  <Card isBlack={false} isChoice={false} key={playersChoices[0].cardId} text={playersChoices[0].cardText} role={true}/>
-                  <Card isBlack={false} isChoice={false} key={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true}/>
-                  <Card isBlack={false} isChoice={false} key={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true}/>
-                </div> 
-              } 
+              <div className="gameView choiceSection cards">
+                {(cardsPlayed > 0) && 
+                  playersChoices.map(choice => (
+                  <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
+                ))}
+              </div> 
               {(cardsPlayed == 0) && 
                 <div className="gameView choiceSection cards">
                   {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
