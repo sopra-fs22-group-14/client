@@ -110,8 +110,9 @@
     justify-content: center;
     & h2{
       transform: rotate(-45deg);
-      margin-top: 3em;
+      margin: 3em;
       margin-left: -120px;
+      text-shadow: $dropShadowGame;
     }
     &.center {
       flex-basis: 100%;

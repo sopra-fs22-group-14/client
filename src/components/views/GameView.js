@@ -27,12 +27,14 @@ const GameView = () => {
   const [roundWinner, setRoundWinner] = useState(null);
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
   const [countdown, setCountdown] = useState(0);
+  const isFinal = useRef(false); // if round is final then after countdown push to gameEndView screen 
   
   // COMMENT Game data:
   const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   const [opponentNames, setOpponentNames] = useState(null)
   // const [scores, setScores] = useState(null); 
   const [gameWinner, setGameWinner] = useState(null); // TODO needed?
+  const playersWhoPlayed= useRef(null);
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
@@ -167,6 +169,8 @@ const GameView = () => {
         setRoundNr(roundNumberVariable.current);
       }
       setPlayersChoices(response.data.playedCards);
+      // isFinal.current = response.data.isFinal; //TODO - uncomment after endpoint is there
+      playersWhoPlayed.current = ["Diego", "Ege"]; //TODO - to be adjusted after endpoint is there
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -185,6 +189,7 @@ const GameView = () => {
         setRoundWinningCardText(response.data.latestWinningCardText);
         // TODO look at as soon as the opponentNames are actually received
         // setOpponentNames(response.data.opponentNames)
+        setOpponentNames(["Alex", "Diego", "Ege"]); // TESTME - just for testing purposes
       } catch (error) {
         catchError(history, error, 'fetching the winner data');
       }
@@ -207,7 +212,6 @@ const GameView = () => {
     } else {
       // this will trigger the useEffect for the countdown
       setCountdown(15);
-
       setChosenCard(null);
       setChosenWinner(null);
     }
@@ -240,6 +244,10 @@ const GameView = () => {
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
       setBlackCard(blackCardVariable.current);
       setCardsPlayed(0); // COMMENT  - enable the submit button again
+      if(isFinal.current == true){
+        console.log("Going to end game screen");
+        history.push(`/endGame/${gameId}`);
+      }
     }
   }, [countdown]) 
 
@@ -290,7 +298,7 @@ const GameView = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (player != null && blackCard != null && playersChoices != null && roundNr != null) {
+  if (player != null && blackCard != null && playersChoices != null && roundNr != null && opponentNames != null && opponentNames != playersWhoPlayed) {
     content = (
       <div className = {mainClass}>
 
@@ -300,20 +308,23 @@ const GameView = () => {
           {player.cardCzar === true && <p>You are a Card Czar this round - pick played card that you think is best!</p>}
         </div>
         
-        {/* TODO display the opponents name - waiting for the endpoint*/}
+        {/* TESTME - test and adjust after endpoint is ready - for now works */}
         <div className="gameView opponentSection center"> 
-          <h2>oponnents name 1</h2> 
+          {Object.keys(opponentNames).length > 0 && (!(playersWhoPlayed.current.includes(opponentNames[0]))) && <h2>{opponentNames[0]}</h2>}
+          {Object.keys(opponentNames).length > 0 && (playersWhoPlayed.current.includes(opponentNames[0])) && <h2 style={{color: 'green'}}>{opponentNames[0]}</h2>}
           <div className="gameView opponentSection tile"></div>
         </div>
         <div className="gameView opponentSection"> 
-          <h2>oponnents name 2</h2> 
+          {Object.keys(opponentNames).length > 1 && (!(playersWhoPlayed.current.includes(opponentNames[1]))) && <h2>{opponentNames[1]}</h2>}
+          {Object.keys(opponentNames).length > 1 && (playersWhoPlayed.current.includes(opponentNames[1])) && <h2 style={{color: 'green'}}>{opponentNames[1]}</h2>}
           <div className="gameView opponentSection tile"></div>
         </div>
         <div className="gameView blackCardSection">
           <Card isBlack={true} isChoice={false} key={blackCard.cardId} text={blackCard.cardText} role={player.cardCzar}/>
         </div>
         <div className="gameView opponentSection"> 
-          <h2>oponnents name 3</h2> 
+          {Object.keys(opponentNames).length > 2 && (!(playersWhoPlayed.current.includes(opponentNames[2]))) && <h2>{opponentNames[2]}</h2>}
+          {Object.keys(opponentNames).length > 2 && (playersWhoPlayed.current.includes(opponentNames[2])) && <h2 style={{color: 'green'}}>{opponentNames[2]}</h2>}
           <div className="gameView opponentSection tile"></div>
         </div>
 
@@ -433,7 +444,9 @@ const GameView = () => {
       {countdown != 0 && 
       <div>
         <div className="gameView countdownSection">
-          <p>Next round starts in: {countdown}</p>
+          {isFinal.current && <p>Game end screen displayed in: {countdown}</p>}
+          {!isFinal.current && <p>Next round starts in: {countdown}</p>}
+          {/* <p>Next round starts in: {countdown}</p> */}
         </div>
         <div className="gameView countdownSection roundWinner">
           <p>
