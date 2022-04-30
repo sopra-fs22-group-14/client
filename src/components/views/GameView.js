@@ -307,8 +307,7 @@ const GameView = () => {
           {player.cardCzar === true && <p>You are a Card Czar this round - pick played card that you think is best!</p>}
         </div>
         
-        //COMMENT - displaying which Player has already made a choice
-        // TESTME - should be tested once the endpoint is ready 
+        {/* TESTME - test and adjust after endpoint is ready - for now works */}
         <div className="gameView opponentSection center"> 
           {Object.keys(opponentNames).length > 0 && (!(playersWhoPlayed.current.includes(opponentNames[0]))) && <h2>{opponentNames[0]}</h2>}
           {Object.keys(opponentNames).length > 0 && (playersWhoPlayed.current.includes(opponentNames[0])) && <h2 style={{color: 'green'}}>{opponentNames[0]}</h2>}
