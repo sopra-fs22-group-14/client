@@ -59,7 +59,7 @@ const AppRouter = () => {
           </EndGameGuard>
         </Route>
         <Route exact path="/">
-          <Redirect to="/lobby"/>
+          <Redirect to="/home"/>
         </Route>
         <Route path="*">
           <NotFound />

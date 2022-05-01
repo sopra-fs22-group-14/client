@@ -21,7 +21,8 @@ const GameView = () => {
 
   // COMMENT Round data: 
   const [blackCard, setBlackCard] = useState(null);
-  const [roundNr, setRoundNr] = useState(1); // BUG fix the naming convention roundNr vs roundId
+  const roundId = useRef(null);
+  const [roundNr, setRoundNr] = useState(1);
   const [playersChoices, setPlayersChoices] = useState(null);  // cards that were played in this round
   const [roundWinner, setRoundWinner] = useState(null);
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
@@ -161,15 +162,14 @@ const GameView = () => {
       */
 
       // will look something like this:
-      roundNumberVariable.current = response.data.roundId; // TODO wait for backend to actually send roundNr
+      roundId.current = response.data.roundId;
       blackCardVariable.current = response.data.blackCard;
       if (blackCard == null) { 
         setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
-        setRoundNr(roundNumberVariable.current);
       }
       setPlayersChoices(response.data.playedCards);
       // isFinal.current = response.data.isFinal; //TODO - uncomment after endpoint is there
-      playersWhoPlayed.current = ["Diego", "Ege"]; //TODO - to be adjusted after endpoint is there - we might get this data from Round or Game endpoint
+      playersWhoPlayed.current = ["ghsdrtxdf", "Egdgfgjhjfghe"]; // TODO delete dummy data when endpoint is ready
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -177,18 +177,16 @@ const GameView = () => {
 
 
   /*
-  This useInterval is used to fetch the latest round winner and the opponent names
+  This useInterval is used to fetch the latest round winner, the opponent names and the roundNr
   */
   useInterval(() => {
     async function fetchGameInformation() {
       try {
         const response = await api.get(`/games/${gameId}`);
-        // TESTME - update the roundWinner and the winningCardText (will trigger useEffect when changing)
         setRoundWinner(response.data.latestRoundWinner);
         setRoundWinningCardText(response.data.latestWinningCardText);
-        // TODO look at as soon as the opponentNames are actually received
-        // setOpponentNames(response.data.opponentNames)
-        setOpponentNames(["Alex", "Diego", "Ege"]); // TESTME - just for testing purposes
+        roundNumberVariable.current = response.data.currentGameRoundIndex;
+        setOpponentNames(response.data.playerNames)
       } catch (error) {
         catchError(history, error, 'fetching the winner data');
       }
@@ -255,7 +253,7 @@ const GameView = () => {
   const playCard = async () => {
     try {
       const requestBody = JSON.stringify({'cardId' : chosenCard}); // chosenCard = id of the card 
-      await api.post(`/${roundNr}/white`, requestBody); // TODO - roundNr should replaced with roundId after we receive it from the backend 
+      await api.post(`/${roundId.current}/white`, requestBody);
       console.log("Player submitted a card: ", chosenCard); 
       /*
       after successfully playing a card, change cardsPlayed so that the useEffect is triggered
@@ -272,7 +270,7 @@ const GameView = () => {
   const chooseRoundWinner = async () => {
     try {
       const requestBody = JSON.stringify({'cardId' : chosenWinner});// chosenWinner = id of the card 
-      await api.post(`/${roundNr}/roundWinner`, requestBody); // TODO - roundNr should replaced with roundId after we receive it from the backend 
+      await api.post(`/${roundId.current}/roundWinner`, requestBody);
       console.log("Card Czar picked a card: ", chosenWinner); 
       setCardsPlayed(cardsPlayed + 1); // to make the submit button disabled after submission
     } catch (error) {
@@ -307,8 +305,8 @@ const GameView = () => {
           {player.cardCzar === true && <p>You are a Card Czar this round - pick played card that you think is best!</p>}
         </div>
         
-        //COMMENT - displaying which Player has already made a choice
-        // TESTME - should be tested once the endpoint is ready 
+        {/* // COMMENT - displaying which Player has already made a choice
+        // TESTME - should be tested once the endpoint is ready  */}
         <div className="gameView opponentSection center"> 
           {Object.keys(opponentNames).length > 0 && (!(playersWhoPlayed.current.includes(opponentNames[0]))) && <h2>{opponentNames[0]}</h2>}
           {Object.keys(opponentNames).length > 0 && (playersWhoPlayed.current.includes(opponentNames[0])) && <h2 style={{color: 'green'}}>{opponentNames[0]}</h2>}
