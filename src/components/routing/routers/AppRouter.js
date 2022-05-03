@@ -1,4 +1,5 @@
-import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Redirect, Route, Switch, useRouteMatch} from "react-router-dom";
+import React, { Fragment } from 'react'
 import {LobbyGuard} from "components/routing/routeProtectors/LobbyGuard";
 import LobbyRouter from "components/routing/routers/LobbyRouter";
 import {LoginGuard} from "components/routing/routeProtectors/LoginGuard";
@@ -13,7 +14,7 @@ import SideBar from "components/views/SideBar";
 import GameView from "components/views/GameView";
 import { GameGuard } from "../routeProtectors/GameGuard";
 import EndGameView from "components/views/EndGameView";
-import { EndGameGuard } from "../routeProtectors/EndGameGuard";
+// import { FitToViewport } from "react-fit-to-viewport";
 
 /**
  * Main router of your application.
@@ -24,10 +25,14 @@ import { EndGameGuard } from "../routeProtectors/EndGameGuard";
  * /game renders a Router that contains other sub-routes that render in turn other react components
  * Documentation about routing in React: https://reacttraining.com/react-router/web/guides/quick-start
  */
+
 const AppRouter = () => {
   return (
     <BrowserRouter>
-      <Header height="100"/>
+      {/* <FitToViewport width={window.innerWidth-10} height={window.innerHeight-110} minZoom={0} maxZoom={0.8}> */}
+      <Route path={["/login", "/register", "/home", "/about"]}>
+        <Header height="100"/>
+      </Route>
       <Switch>
         <Route path="/lobby">
           <LobbyGuard>
@@ -54,9 +59,9 @@ const AppRouter = () => {
           </GameGuard>
         </Route>
         <Route path="/endGame/:gameId">
-          <EndGameGuard>
+          <GameGuard>
             <EndGameView/>
-          </EndGameGuard>
+          </GameGuard>
         </Route>
         <Route exact path="/">
           <Redirect to="/home"/>
@@ -64,7 +69,9 @@ const AppRouter = () => {
         <Route path="*">
           <NotFound />
         </Route>
+
       </Switch>
+      {/* </FitToViewport> */}
     </BrowserRouter>
   );
 };

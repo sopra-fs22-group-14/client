@@ -29,7 +29,7 @@ const Header = props => {
     history.push('/about');
   };
 
-  return (
+  let content = (
     <div className="header container" style={{height: props.height}}>
       <CAHLogo width="60px" height="60px"/>
       <div className="header right">
@@ -37,6 +37,12 @@ const Header = props => {
         <Button className="header link" onClick={() => redirectGame()}>Game</Button>
         <Button className="header link" onClick={() => redirectAbout()}>About</Button>
       </div>
+    </div>
+  )
+
+  return (
+    <div>
+      {content}
     </div>
   );
 }

@@ -63,7 +63,7 @@ const WaitingArea = () => {
 
   return (
     <BaseContainer>
-      <div className="waitingArea">
+      <div className="waitingArea base">
         <h2>{gameName}</h2>
         <WaitingLogo/>
         <h3>Waiting for players...</h3>

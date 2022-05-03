@@ -3,9 +3,10 @@
 
 .gameView {
 //  background: yellow;
+
   &.container {
     // background: yellow;
-    padding: 2em;
+    padding: 1.5em;
     width: 100%;
     height: 100%;
   }
@@ -30,14 +31,14 @@
 
   &.roundSection {
     // background-color: green;
-    padding: 0.2em;
     width: 100%;
     font-size:xx-large;
     // change font size of paragraphs inisde roundSection
     p {
       margin-top: 0.2em;
-      margin-bottom: 1em;
+      margin-bottom: 0.3em;
       font-size: large;
+
     }
   }
 
@@ -53,8 +54,8 @@
 
     // BLACK CARD: 
     .blackCard {
-      width: 12em;
-      height: 16em;
+      width: 8em;
+      height: 12em;
       padding: 5px;
       background-color: black;
       color: white;
@@ -65,6 +66,7 @@
       border-radius: 0.8rem;
       box-shadow: $dropShadowGame;
       position: relative;
+      font-size: 14px;
       &::before,
       &::after {
         content: "";
@@ -102,7 +104,6 @@
   // OPPONENTS CARD DECKS 
   &.opponentSection {
     // background-color: red;
-    padding: 0.5em;
     width: 40%;
     height: 100%;
     display: flex;
@@ -110,33 +111,26 @@
     justify-content: center;
     & h2{
       transform: rotate(-45deg);
-      margin: 3em;
-      margin-left: -120px;
+      margin: 3.5em 0em 1.5em 3.5em;
+      margin-left: -100px;
       text-shadow: $dropShadowGame;
     }
     &.center {
       flex-basis: 100%;
-      margin-bottom: 20px;
+      margin-bottom: .5em;
       // background-color: aqua;
     }
 
     &.tile{
-      width: 100px;
-      height: 140px;
+      width: 5em;
+      height: 7em;
       background-color: white;
       display: block;
-      margin-top: 80px;
-      margin-left: -80px;
-      box-shadow: 10px -10px 0 -3px white, 10px -10px black,
-            20px -20px 0 -3px white, 20px -20px black,
-            30px -30px 0 -3px white, 30px -30px black,
-            40px -40px 0 -3px white, 40px -40px black,
-            50px -50px 0 -3px white, 50px -50px black,
-            60px -60px 0 -3px white, 60px -60px black,
-            70px -70px 0 -3px white, 70px -70px black,
-            80px -80px 0 -3px white, 80px -80px black,
-            80px -80px 0 -3px white, 80px -80px black,
-            80px -80px 0 -3px white, 80px -80px black;
+      margin-top: 1em;
+      margin-left: 2em;
+      box-shadow: 2.5px -2.5px 0 -3px white, 2.5px -2.5px black,
+            5px -5px 0 -3px white, 5px -5px black,
+            7.5px -7.5px 0 -3px white, 7.5px -7.5px black;
       border-radius: 0.8rem;
       border-style: solid;
       border-color: black;
@@ -195,7 +189,8 @@
     height: 100%;
     width: 100%;
     margin-top: 1VH;
-    padding: .5em;
+    padding: .3em;
+    font-size: 14px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -205,8 +200,8 @@
   // SECTION for Card Czar to pick his favourite choice 
   &.choiceSection {
     // background-color: aqua;
-    padding: 0.5em;
-    width: 40%;
+    padding: 0.1em;
+    width: 35%;
     height: 100%;
     h2{
       margin: 0.1em;
@@ -233,8 +228,8 @@
       justify-content: center;
     }
     .cards>button{
-      width: 9em;
-      height: 13em;
+      width: 8em;
+      height: 12em;
       margin: 0.3em;
     }
   }
@@ -248,7 +243,7 @@
     // box-shadow: $dropShadowGame;
     padding: 0.1em;
     margin-left: 0.1em;
-    width: 60%;
+    width: 65%;
     height: 100%;
     h2{
       margin: 0.2em;
@@ -276,8 +271,8 @@
       }
     }
     .whiteCardSection>button{
-      width: 9em;
-      height: 13em;
+      width: 8em;
+      height: 12em;
       margin: 0.2em;
     }
   }

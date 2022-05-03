@@ -11,6 +11,10 @@
     font-size: 24px;
   }
 
+  &.base {
+    padding-top: 5em;
+  }
+
   &.h2_1 {
     color: red;
     transition: color 1s ease;

@@ -4,6 +4,7 @@ import GameCreation from "components/views/GameCreation";
 import WaitingArea from "components/views/WaitingArea";
 import PropTypes from 'prop-types';
 import NotFound from "components/views/NotFound";
+import Header from "components/views/Header";
 
 const LobbyRouter = props => {
   /**
@@ -11,6 +12,9 @@ const LobbyRouter = props => {
    */
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
+      <Route exact path={[props.base, `${props.base}/create`]}>
+        <Header height="100"/>
+      </Route>
       <Switch>
         <Route exact path={`${props.base}`}>
           <Lobby/>
