@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useInterval} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
-import {useHistory, useParams, useLocation} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
 import {Confetti} from 'components/ui/Confetti';
 import 'styles/views/GameView.scss';
@@ -26,7 +26,9 @@ const GameView = () => {
   const [roundWinner, setRoundWinner] = useState(null);
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
   const [countdown, setCountdown] = useState(0);
-  const isFinal = useRef(false); // if round is final then after countdown push to gameEndView screen 
+  const isFinal = useRef(false); // if round is final then after countdown push to gameEndView screen
+  const [playingCountdown, setPlayingCountdown] = useState(null);
+  const [choosingCountdown, setChoosingCountdown] = useState(null);
   
   // COMMENT Game data:
   const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
@@ -232,7 +234,7 @@ const GameView = () => {
       // if the countdown is at 0 or we are in first round, trigger the confetti
       } else if (existingCountdown == 0 || !firstRoundDone) {
         setCountdown(15);
-      // if we re-renderet, don't show the countdown
+      // if we re-rendered, don't show the countdown
       } else {
         sessionStorage.setItem('winnerCountdown', 0);
       }
@@ -272,25 +274,94 @@ const GameView = () => {
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
       setBlackCard(blackCardVariable.current);
       setCardsPlayed(0); //enable the submit button again
-      if(isFinal.current == true){
+      // startPlayingCountdown(); TODO Diego: start the countdown for the next round
+      
+      if (isFinal.current) {
         console.log("Going to end game screen");
         history.push(`/endGame/${gameId}`);
       }
     }
-  }, [countdown]) 
+  }, [countdown])
 
+
+  // ------------------------------ DIEGO: WORK IN PROGRESS ---------------------------------
+
+  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ PLAYING COUNTDOWN ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  // Method to start the playingCountdown
+  // const startPlayingCountdown = async () => {
+  //   return;
+  //   // TODO if (cardczarmode AND normal player) OR (communitymode)
+  //   // setPlayingCountdown(45); // start the playingCountdown for the next round
+  // }
+
+  // useEffect that is used for the playingCountdown
+  // useEffect(() => {
+  //   try {
+  //     // just update the counter
+  //     if (playingCountdown > 0) {
+  //       setTimeout(() => {
+  //         setPlayingCountdown(playingCountdown - 1);
+  //         sessionStorage.setItem('playingCountdown', playingCountdown - 1);
+  //       }, 1000);
+  //     } else if (playingCountdown == 0) {
+  //       // only reached if playingCountdown ends
+  //       if (chosenCard == null) return; // TODO submit random card
+  //       else return; // TODO submit chosenCard
+  //     }
+  //   } catch (error) {
+  //     catchError(history, error, 'updating the playingCountdown');
+  //   }
+  // }, [playingCountdown]);
+
+  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ CHOOSING COUNTDOWN ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  // useEffect when the playerChoices change, in order to trigger the choosingCountdown
+  // useEffect(() => {
+  //   if (playersChoices.length == 3 && player.cardCzar) {
+  //     startChoosingCountdown();
+  //   }
+  //   // TODO for community game mode, if it is 4
+  // }, [playersChoices]);
+
+  // Method to start the choosingCountdown
+  // const startChoosingCountdown = async () => {
+  //   return;
+  //   // TODO if (cardczarmode AND normal player) OR (communitymode)
+  //   // setPlayingCountdown(45); // start the countdown for the next round
+  // }
+
+  // useEffect that is used for the choosingCountdown
+  // useEffect(() => {
+  //   try {
+  //     if (choosingCountdown > 0) {
+  //       setTimeout(() => {
+  //         setChoosingCountdown(choosingCountdown - 1);
+  //         sessionStorage.setItem('choosingCountdown', choosingCountdown - 1);
+  //       }, 1000);
+  //     } else if (choosingCountdown == 0) {
+  //       // only reached if choosingCountdown ends
+  //       if (chosenWinner == null) return; // TODO submit random winningCard
+  //       else return; // TODO submit chosenWinner
+  //     }
+  //   } catch (error) {
+  //     catchError(history, error, 'updating the choosingCountdown');
+  //   }
+  // }, [choosingCountdown]);
+
+  // ------------------------------ DIEGO: WORK IN PROGRESS ---------------------------------
 
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
       const requestBody = JSON.stringify({'cardId' : chosenCard}); // chosenCard = id of the card 
       await api.post(`/${roundId.current}/white`, requestBody);
-      console.log("Player submitted a card: ", chosenCard); 
+      console.log("Player submitted a card: ", chosenCard);
       /*
       after successfully playing a card, change cardsPlayed so that the useEffect is triggered
       to fetch the playerData. This will then update the white cards (only 9 left)
       */
-      setCardsPlayed(cardsPlayed + 1);
+     setCardsPlayed(cardsPlayed + 1);
+     // TODO Diego: setPlayingCountdown(-1);
+     // TODO Diego: sessionStorage.setItem('playingCountdown', -1);
     } catch (error) {
       catchError(history, error, 'playing a white card');
     }
@@ -304,6 +375,8 @@ const GameView = () => {
       await api.post(`/${roundId.current}/roundWinner`, requestBody);
       console.log("Card Czar picked a card: ", chosenWinner); 
       setCardsPlayed(cardsPlayed + 1); // to make the submit button disabled after submission
+      // TODO Diego: setChoosingCountdown(-1);
+      // TODO Diego: sessionStorage.setItem('choosingCountdown', -1);
     } catch (error) {
       catchError(history, error, 'choosing the winning card');
     }
