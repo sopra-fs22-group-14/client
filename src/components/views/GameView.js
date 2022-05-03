@@ -14,7 +14,6 @@ const GameView = () => {
   const { gameId } = useParams();
   const history = useHistory();
   const didMount = useRef(false);
-  const location = useLocation();
 
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
@@ -22,7 +21,7 @@ const GameView = () => {
   // COMMENT Round data: 
   const [blackCard, setBlackCard] = useState(null);
   const roundId = useRef(null);
-  const [roundNr, setRoundNr] = useState(1);
+  const [roundNr, setRoundNr] = useState(null);
   const [playersChoices, setPlayersChoices] = useState(null);  // cards that were played in this round
   const [roundWinner, setRoundWinner] = useState(null);
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
@@ -35,6 +34,8 @@ const GameView = () => {
   const playersWhoPlayed= useRef(null);
   // const [scores, setScores] = useState(null); 
 
+  // state to stop the polling when needed
+  const [pollingActive, setPollingActive] = useState(true);
 
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
@@ -116,10 +117,20 @@ const GameView = () => {
   //   event.returnValue = ''
   // }
   
-  // useEffect to initially get the round data - at the page load, so that we can display blackCard
+  // useEffects to initially get the round data - at the page load, so that we can display blackCard
   // fist this one is called then fetchData for player then other fetchData with didMount
   useEffect(() => {
+
+    // initially, set countdown to 0
+    if (!sessionStorage.getItem('winnerCountdown')) {
+      sessionStorage.setItem('winnerCountdown', 0);
+    // or to -1 on page-refreshing
+    } else if (sessionStorage.getItem('winnerCountdown') == 0) {
+      sessionStorage.setItem('winnerCountdown', -1);
+    }
+
     fetchRoundData();
+    
   }, []);
 
   /*
@@ -148,7 +159,15 @@ const GameView = () => {
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
-  }, 1500);
+  }, pollingActive ? 1500 : null);
+
+
+  /*
+  This useInterval is used to fetch the latest round winner, the opponent names and the roundNr
+  */
+  useInterval(() => {
+    fetchGameInformation();
+  }, pollingActive ? 1500 : null);
 
 
   const fetchRoundData = async () => {
@@ -175,24 +194,20 @@ const GameView = () => {
     }
   }
 
-
-  /*
-  This useInterval is used to fetch the latest round winner, the opponent names and the roundNr
-  */
-  useInterval(() => {
-    async function fetchGameInformation() {
-      try {
-        const response = await api.get(`/games/${gameId}`);
-        setRoundWinner(response.data.latestRoundWinner);
-        setRoundWinningCardText(response.data.latestWinningCardText);
-        roundNumberVariable.current = response.data.currentGameRoundIndex;
-        setOpponentNames(response.data.playerNames)
-      } catch (error) {
-        catchError(history, error, 'fetching the winner data');
+  const fetchGameInformation = async () => {
+    try {
+      const response = await api.get(`/games/${gameId}`);
+      roundNumberVariable.current = response.data.currentGameRoundIndex;
+      if (roundNr == null) {
+        setRoundNr(roundNumberVariable.current);
       }
+      setRoundWinner(response.data.latestRoundWinner);
+      setRoundWinningCardText(response.data.latestWinningCardText);
+      setOpponentNames(response.data.playerNames)
+    } catch (error) {
+      catchError(history, error, 'fetching the winner data');
     }
-    fetchGameInformation();
-  }, 1500);
+  }
 
 
   /*
@@ -208,7 +223,19 @@ const GameView = () => {
       setCardsPlayed(0); //enable the submit button again
     } else {
       // this will trigger the useEffect for the countdown
-      setCountdown(15);
+      let existingCountdown = sessionStorage.getItem('winnerCountdown');
+      let firstRoundDone = sessionStorage.getItem('firstRoundDone');
+      
+      // if a countdown is still going, keep going where it was
+      if (existingCountdown > 0) {
+        setCountdown(existingCountdown);
+      // if the countdown is at 0 or we are in first round, trigger the confetti
+      } else if (existingCountdown == 0 || !firstRoundDone) {
+        setCountdown(15);
+      // if we re-renderet, don't show the countdown
+      } else {
+        sessionStorage.setItem('winnerCountdown', 0);
+      }
       setChosenCard(null);
       setChosenWinner(null);
     }
@@ -223,7 +250,7 @@ const GameView = () => {
   useEffect(() => {
     if (opponentNames == null) return;
     if (opponentNames.length != 3) {
-      leaveGame(); // if not exactly 3 opponents -> leave the game automatically
+      kick();
     }
   }, [opponentNames])
 
@@ -235,7 +262,11 @@ const GameView = () => {
   useEffect(() => {
     if (countdown > 0) {
       // for 15 seconds, just count down
-      setTimeout(() => setCountdown(countdown - 1), 1000);
+      setTimeout(() => {
+        sessionStorage.setItem('firstRoundDone', true); // not first round anymore
+        setCountdown(countdown - 1);
+        sessionStorage.setItem('winnerCountdown', countdown - 1)
+      }, 1000);
     } else {
       // after 15 seconds, update the states from the new round data
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
@@ -278,14 +309,29 @@ const GameView = () => {
     }
   }
 
-
   // method for players to leave an ongoing game
   const leaveGame = async () => {
     try {
+      // TODO give player a choice to not leave (alert-style)
+      setPollingActive(false);
       await api.put('/leave/'+gameId);
+      sessionStorage.clear();
       history.push('/lobby');
     } catch (error) {
       catchError(history, error, 'leaving the game');
+    }
+  }
+
+  // method for players to be kicked out
+  const kick = async () => {
+    try {
+      setPollingActive(false);
+      alert("Someone left the game, therefore you can not keep playing :-(")
+      await api.put('/leave/'+gameId);
+      sessionStorage.clear();
+      history.push('/lobby');
+    } catch (error) {
+      catchError(history, error, 'being kicket out of the game');
     }
   }
 

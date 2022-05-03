@@ -14,7 +14,6 @@ const WaitingArea = () => {
   const history = useHistory();
   const [playerCount, setPlayerCount] = useState(1);
   const [gameName, setGameName] = useState(0);
-  const [delay, setDelay] = useState(1000); //NOTE - for pausing the polling 
   const [isLastPlayerLeaving, setIsLastPlayerLeaving] = useState(false); //NOTE - for pausing the polling 
 
   const getPlayerCount = async () => {
@@ -42,7 +41,7 @@ const WaitingArea = () => {
 
   useInterval( async () => {
     getPlayerCount();
-  }, isLastPlayerLeaving ? null : delay) //NOTE - for pausing the polling 
+  }, isLastPlayerLeaving ? null : 1000) //NOTE - for pausing the polling 
 
 
   const leaveGame = async () => {
