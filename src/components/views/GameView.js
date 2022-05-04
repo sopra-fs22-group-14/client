@@ -245,7 +245,7 @@ const GameView = () => {
         setCountdown(existingCountdown);
       // if the countdown is at 0 or we are in first round, trigger the confetti
       } else if (existingCountdown == 0 || !firstRoundDone) {
-        setCountdown(15);
+        setCountdown(5);
       // if we re-rendered, don't show the countdown
       } else {
         sessionStorage.setItem('winnerCountdown', 0);
