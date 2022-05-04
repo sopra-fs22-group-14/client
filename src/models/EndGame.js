@@ -2,7 +2,7 @@
  class EndGame {
     constructor(data = {}) {
       this.playersNames = null; 
-      this.playersRoundsWon = null;
+      this.playersNumbersOfPicked = null;
       this.winnersNames = null; 
       this.winnersIds = null;
       Object.assign(this, data);

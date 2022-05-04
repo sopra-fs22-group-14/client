@@ -601,27 +601,29 @@ const GameView = () => {
           <div className="gameView topSection leaderboard">
             <h4>Leaderboard</h4>
             <table className = "gameView leaderboardtable">
-              <tr>
-                <th>Player name</th>
-                <th>Rounds won</th>
-              </tr>
-              <tr>
-                <td>Szymon</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>Ege</td>
-                <td>3</td>
-              </tr>
-              <tr>
-                <td>Alex</td>
-                <td>2</td>
-              </tr>
-              <tr>
-                <td>Diego</td>
-                <td>1</td>
-              </tr>
-              {/* {getSummary()} "gameView topSection playerStats" */}
+              <tbody>
+                <tr>
+                  <th>Player name</th>
+                  <th>Rounds won</th>
+                </tr>
+                <tr>
+                  <td>Szymon</td>
+                  <td>5</td>
+                </tr>
+                <tr>
+                  <td>Ege</td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <td>Alex</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>Diego</td>
+                  <td>1</td>
+                </tr>
+                {/* {getSummary()} "gameView topSection playerStats" */}
+              </tbody>
             </table>
           </div>
         </div>

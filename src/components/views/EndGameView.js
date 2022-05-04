@@ -28,9 +28,10 @@ const EndGameView = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        // const response = await api.post(`/${gameId}/gameEnd`);
+        // const response = await api.get(`/${gameId}/gameEnd`);
         // const endGame = new EndGame(response.data);
         // setEndGame(endGame);
+        // console.log(endGame);
         // TESTME - just for testing 
         var dict = {
           playersNames: ["Alex", "Diego", "Szymek", "Ege"],
@@ -88,12 +89,25 @@ const EndGameView = () => {
     }));
     dict_players.sort((a, b) => b.roundsWon - a.roundsWon);
     // console.log(dict_players[0]["userName"]);
-    return ( dict_players.map(player => (
-            <tr key = {player["userName"]} className = "endGameView gameSummary playerStats">
-                <td>{player["userName"]}</td>
-                <td>{player["roundsWon"]}</td>
-            </tr>
-    )))
+
+    const element = dict_players.map(player => (
+        <tr key = {player["userName"]} className = "endGameView gameSummary playerStats">
+            <td>{player["userName"]}</td>
+            <td>{player["roundsWon"]}</td>
+        </tr>));
+
+    const summaryTable = (   
+    <table className = "endGameView gameSummary table">
+      <tbody>
+        <tr>
+          <th>Player name</th>
+          <th>Rounds won</th>
+        </tr>
+        {element}
+      </tbody>
+    </table>);
+    
+    return summaryTable;
   }
 
   // -------------------------------- SPINNER --------------------------------
@@ -113,13 +127,7 @@ const EndGameView = () => {
         </div>
         <div className = "endGameView gameSummary">
           <h1>Game Summary</h1>
-          <table className = "endGameView gameSummary table">
-            <tr>
-              <th>Player name</th>
-              <th>Rounds won</th>
-            </tr>
-            {getSummary()} {/* "endGameView gameSummary playerStats" */}
-          </table>
+          {getSummary()}
         </div>
         <div className = "endGameView buttonsSection">
             <Button
