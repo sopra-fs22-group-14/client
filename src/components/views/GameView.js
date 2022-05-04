@@ -245,7 +245,7 @@ const GameView = () => {
         setCountdown(existingCountdown);
       // if the countdown is at 0 or we are in first round, trigger the confetti
       } else if (existingCountdown == 0 || !firstRoundDone) {
-        setCountdown(15);
+        setCountdown(5);
       // if we re-rendered, don't show the countdown
       } else {
         sessionStorage.setItem('winnerCountdown', 0);
@@ -590,23 +590,58 @@ const GameView = () => {
         
         {/* // COMMENT - displaying which Player has already made a choice
         // TESTME - should be tested once the endpoint is ready  */}
-        <div className="gameView opponentSection center"> 
-          {Object.keys(opponentNames).length > 0 && (!(playersWhoPlayed.current.includes(opponentNames[0]))) && <h2>{opponentNames[0]}</h2>}
-          {Object.keys(opponentNames).length > 0 && (playersWhoPlayed.current.includes(opponentNames[0])) && <h2 style={{color: 'green'}}>{opponentNames[0]}</h2>}
-          <div className="gameView opponentSection tile"></div>
+        <div className="gameView topSection">
+          <div className="gameView topSection leaderboard"></div>
+          <div className="gameView topSection center"> 
+            <div className="gameView tile">
+              {Object.keys(opponentNames).length > 0 && (!(playersWhoPlayed.current.includes(opponentNames[0]))) && <h2>{opponentNames[0]}</h2>}
+              {Object.keys(opponentNames).length > 0 && (playersWhoPlayed.current.includes(opponentNames[0])) && <h2 style={{color: 'green'}}>{opponentNames[0]}</h2>}
+            </div>
+          </div>
+          <div className="gameView topSection leaderboard">
+            <h4>Leaderboard</h4>
+            <table className = "gameView leaderboardtable">
+              <tr>
+                <th>Player name</th>
+                <th>Rounds won</th>
+              </tr>
+              <tr>
+                <td>Szymon</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>Ege</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>Alex</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Diego</td>
+                <td>1</td>
+              </tr>
+              {/* {getSummary()} "gameView topSection playerStats" */}
+            </table>
+          </div>
         </div>
-        <div className="gameView opponentSection"> 
-          {Object.keys(opponentNames).length > 1 && (!(playersWhoPlayed.current.includes(opponentNames[1]))) && <h2>{opponentNames[1]}</h2>}
-          {Object.keys(opponentNames).length > 1 && (playersWhoPlayed.current.includes(opponentNames[1])) && <h2 style={{color: 'green'}}>{opponentNames[1]}</h2>}
-          <div className="gameView opponentSection tile"></div>
-        </div>
-        <div className="gameView blackCardSection">
-          <Card isBlack={true} isChoice={false} key={blackCard.cardId} text={blackCard.cardText} role={player.cardCzar}/>
-        </div>
-        <div className="gameView opponentSection"> 
-          {Object.keys(opponentNames).length > 2 && (!(playersWhoPlayed.current.includes(opponentNames[2]))) && <h2>{opponentNames[2]}</h2>}
-          {Object.keys(opponentNames).length > 2 && (playersWhoPlayed.current.includes(opponentNames[2])) && <h2 style={{color: 'green'}}>{opponentNames[2]}</h2>}
-          <div className="gameView opponentSection tile"></div>
+
+        <div className="gameView middleSection">
+          <div className="gameView middleSection opponentSection"> 
+            <div className="gameView tile">
+              {Object.keys(opponentNames).length > 1 && (!(playersWhoPlayed.current.includes(opponentNames[1]))) && <h2>{opponentNames[1]}</h2>}
+              {Object.keys(opponentNames).length > 1 && (playersWhoPlayed.current.includes(opponentNames[1])) && <h2 style={{color: 'green'}}>{opponentNames[1]}</h2>}
+            </div>
+          </div>
+          <div className="gameView middleSection blackCardSection">
+            <Card isBlack={true} isChoice={false} key={blackCard.cardId} text={blackCard.cardText} role={player.cardCzar}/>
+          </div>
+          <div className="gameView middleSection opponentSection"> 
+            <div className="gameView tile">
+              {Object.keys(opponentNames).length > 2 && (!(playersWhoPlayed.current.includes(opponentNames[2]))) && <h2>{opponentNames[2]}</h2>}
+              {Object.keys(opponentNames).length > 2 && (playersWhoPlayed.current.includes(opponentNames[2])) && <h2 style={{color: 'green'}}>{opponentNames[2]}</h2>}
+            </div>
+          </div>
         </div>
 
         {/* Displaying of the roundWinner (small and all the time)*/}

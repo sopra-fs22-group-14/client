@@ -43,103 +43,163 @@
   }
 
   // MIDDLE BLACK CARD 
-  &.blackCardSection {
-    // background-color: lightcoral;
-    display: flex;
-    justify-content: center;
-    padding: 0.5em;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-    opacity: 100%;
-
-    // BLACK CARD: 
-    .blackCard {
-      min-width: 10em;
-      max-width: 10em;
-      min-height: 14em;
-      max-height: 14em;
-      font-size: 0.8em;
-      word-wrap: break-word;
-      padding: 5px;
-      background-color: black;
-      color: white;
-      border-style: solid;
-      border-color: white;
-      border-width: 2px;
-      transition:.2s all; 
-      border-radius: 0.8rem;
-      box-shadow: $dropShadowGame;
-      position: relative;
-      &::before,
-      &::after {
-        content: "";
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        z-index: -1;
-        border: 2px solid black;
-        transition: all .25s ease-out;
-        border-radius: 0.8rem;
-      }
-      &::before {
-        background-color: black;
-        top: -15px;
-        left: -15px;
-      }
-      &::after {
-        bottom: -15px;
-        right: -15px;
-      }
-      &:hover {
-        &::before {
-          top: 15px;
-          left: 15px;
-        }
-        &::after {
-          bottom: 15px;
-          right: 15px;
-        }
-      }
-    }
-  }
 
 
   // OPPONENTS CARD DECKS 
-  &.opponentSection {
-    // background-color: red;
-    width: 40%;
-    height: 100%;
+  &.tile{
+    width: 5em;
+    height: 7em;
+    background-color: white;
+    display: block;
+    // margin-top: 1em;
+    // margin-left: 2em;
+    box-shadow: 2.5px -2.5px 0 -3px white, 2.5px -2.5px black,
+                5px -5px 0 -3px white, 5px -5px black,
+                7.5px -7.5px 0 -3px white, 7.5px -7.5px black;
+    border-radius: 0.8rem;
+    border-style: solid;
+    border-color: black;
+    border-width: 3px;
+  }
+  
+  &.topSection{
+    // background-color: blue;
+    padding: 0.5em;
+    width: 100%;
     display: flex;
+    align-items: strech;
+    justify-content: space-between;
+    flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
-    & h2{
-      transform: rotate(-45deg);
-      margin: 3.5em 0em 1.5em 3.5em;
-      margin-left: -100px;
-      text-shadow: $dropShadowGame;
-    }
     &.center {
-      flex-basis: 100%;
-      margin-bottom: .5em;
+      justify-content: center;
+      align-items: center;
+      width: 30%;
+      margin: 0.1em;
       // background-color: aqua;
+      & h2{
+        text-align: center;
+        margin-top: 1em;
+        margin-left: -9em;
+        transform: rotate(-45deg);
+        word-wrap: break-word;
+        // background-color: yellow;
+        max-width: 10em;
+      }
     }
-
-    &.tile{
-      width: 5em;
-      height: 7em;
-      background-color: white;
-      display: block;
-      margin-top: 1em;
-      margin-left: 2em;
-      box-shadow: 2.5px -2.5px 0 -3px white, 2.5px -2.5px black,
-            5px -5px 0 -3px white, 5px -5px black,
-            7.5px -7.5px 0 -3px white, 7.5px -7.5px black;
-      border-radius: 0.8rem;
-      border-style: solid;
-      border-color: black;
-      border-width: 3px;
+    &.leaderboard{
+      width: 30%;
+      margin: 0.1em;
+      // background-color: brown; 
+      align-items: center;
+      justify-content: center;
+    }
+    & h4{
+      margin: 0;
+      letter-spacing: 10px;
+    }
+    & table{
+      text-shadow: $dropShadowGame;
+      & td{
+        word-wrap: break-word;
+      }
+      table-layout: fixed;
+      margin: 0.1em auto;
+      width: 100%;
+      padding: 0.1em;
     }
   }
+
+
+  &.middleSection{
+    // background-color: yellow;
+    padding: 0.5em;
+    width: 100%;
+    display: flex;
+    align-items: strech;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    &.opponentSection {
+      width: 30%;
+      margin: 0.1em;
+      // background-color: red;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      & h2{
+        text-align: center;
+        margin-top: 1em;
+        margin-left: -9em;
+        transform: rotate(-45deg);
+        word-wrap: break-word;
+        // background-color: yellow;
+        max-width: 10em;
+      }
+    }
+
+    &.blackCardSection {
+      width: 30%;
+      margin: 0.1em;
+      // background-color: lightcoral;
+      padding: 0.5em;
+      margin-left: 0.5em;
+      margin-right: 0.5em;
+      opacity: 100%;
+      // BLACK CARD: 
+      .blackCard {
+        min-width: 10em;
+        max-width: 10em;
+        min-height: 14em;
+        max-height: 14em;
+        font-size: 0.8em;
+        word-wrap: break-word;
+        padding: 0.3em;
+        background-color: black;
+        color: white;
+        border-style: solid;
+        border-color: white;
+        border-width: 2px;
+        transition:.2s all; 
+        border-radius: 0.8rem;
+        box-shadow: $dropShadowGame;
+        position: relative;
+        &::before,
+        &::after {
+          content: "";
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          z-index: -1;
+          border: 2px solid black;
+          transition: all .25s ease-out;
+          border-radius: 0.8rem;
+        }
+        &::before {
+          background-color: black;
+          top: -15px;
+          left: -15px;
+        }
+        &::after {
+          bottom: -15px;
+          right: -15px;
+        }
+        &:hover {
+          &::before {
+            top: 15px;
+            left: 15px;
+          }
+          &::after {
+            bottom: 15px;
+            right: 15px;
+          }
+        }
+      }
+    }
+  }
+
 
   &.roundWinnerSection {
     font-style: italic;
