@@ -35,7 +35,7 @@ const Lobby = () => {
         <div className="game numberOfRounds">{game.numOfRounds}</div>
         <div className="game numberOfPlayers">{game.numOfPlayersJoined} / 4</div>
         <div className="game cardsType">{game.gameEdition}</div>
-        <div className="game gameMode">{game.cardCzarMode ? "Card Czar" : "Points"}</div>
+        <div className="game gameMode">{game.cardCzarMode ? "Card Czar" : "Community"}</div>
       </div>
   );
   Game.propTypes = {

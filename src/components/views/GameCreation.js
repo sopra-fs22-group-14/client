@@ -95,6 +95,7 @@ const GameCreation = () => {
               value={gameEdition}
               onChange={ge => setGameEdition(ge)}
             />
+            <h1 style = {{color : 'red'}}>ONLY PLAY CARD CZAR MODE FOR BETA TESTING !!!!</h1>
             <FormField
               label="2) Choose Game Mode"
               option1="Card Czar Mode"
@@ -116,12 +117,21 @@ const GameCreation = () => {
               onChange={ro => setNumOfRounds(ro)}
             />
             <div className="gameCreation button-container">
-              <Button
-                width="50%"
-                onClick={() => history.push("/lobby")}
-              >
-                Back
-              </Button>&nbsp;&nbsp;
+              {!isPending && 
+                <Button
+                  width="50%"
+                  onClick={() => history.push("/lobby")}
+                >
+                  Back
+                </Button>}
+              {isPending && 
+                <Button
+                  disabled
+                  width="50%"
+                >
+                  Back
+                </Button>}
+              &nbsp;&nbsp;
               {!isPending && 
                 <Button
                   disabled = {!gameName}
@@ -134,7 +144,7 @@ const GameCreation = () => {
               {isPending && 
                 <Button
                   disabled
-                  width="100%"
+                  width="50%"
                 >
                   Creating...
                 </Button>}

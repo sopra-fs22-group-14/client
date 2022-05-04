@@ -54,8 +54,12 @@
 
     // BLACK CARD: 
     .blackCard {
-      width: 8em;
-      height: 12em;
+      min-width: 10em;
+      max-width: 10em;
+      min-height: 14em;
+      max-height: 14em;
+      font-size: 0.8em;
+      word-wrap: break-word;
       padding: 5px;
       background-color: black;
       color: white;
@@ -66,7 +70,6 @@
       border-radius: 0.8rem;
       box-shadow: $dropShadowGame;
       position: relative;
-      font-size: 14px;
       &::before,
       &::after {
         content: "";
@@ -201,7 +204,7 @@
   &.choiceSection {
     // background-color: aqua;
     padding: 0.1em;
-    width: 35%;
+    width: 25%;
     height: 100%;
     h2{
       margin: 0.1em;
@@ -223,13 +226,18 @@
     .cards {
       display: flex;
       // background-color: rgb(88, 255, 171);
+      flex-wrap: wrap;
       width: 100%;
       height: 80%;
       justify-content: center;
     }
     .cards>button{
-      width: 8em;
-      height: 12em;
+      min-width: 8em;
+      max-width: 8em;
+      min-height: 12em;
+      max-height: 12em;
+      font-size: 0.8em;
+      word-wrap: break-word;
       margin: 0.3em;
     }
   }
@@ -243,7 +251,7 @@
     // box-shadow: $dropShadowGame;
     padding: 0.1em;
     margin-left: 0.1em;
-    width: 65%;
+    width: 80%;
     height: 100%;
     h2{
       margin: 0.2em;
@@ -271,8 +279,12 @@
       }
     }
     .whiteCardSection>button{
-      width: 8em;
-      height: 12em;
+      min-width: 8em;
+      max-width: 8em;
+      min-height: 12em;
+      max-height: 12em;
+      font-size: 0.8em;
+      word-wrap: break-word;
       margin: 0.2em;
     }
   }
@@ -327,3 +339,60 @@
 }
 
 
+
+.vibrate {
+	-webkit-animation: vibrate 0.5s 2s 8 both;
+	        animation: vibrate 0.5s 2s 8 both;
+}
+@-webkit-keyframes vibrate {
+  0% {
+    -webkit-transform: translate(0);
+            transform: translate(0);
+  }
+  20% {
+    -webkit-transform: translate(-2px, 2px);
+            transform: translate(-2px, 2px);
+  }
+  40% {
+    -webkit-transform: translate(-2px, -2px);
+            transform: translate(-2px, -2px);
+  }
+  60% {
+    -webkit-transform: translate(2px, 2px);
+            transform: translate(2px, 2px);
+  }
+  80% {
+    -webkit-transform: translate(2px, -2px);
+            transform: translate(2px, -2px);
+  }
+  100% {
+    -webkit-transform: translate(0);
+            transform: translate(0);
+  }
+}
+@keyframes vibrate {
+  0% {
+    -webkit-transform: translate(0);
+            transform: translate(0);
+  }
+  20% {
+    -webkit-transform: translate(-2px, 2px);
+            transform: translate(-2px, 2px);
+  }
+  40% {
+    -webkit-transform: translate(-2px, -2px);
+            transform: translate(-2px, -2px);
+  }
+  60% {
+    -webkit-transform: translate(2px, 2px);
+            transform: translate(2px, 2px);
+  }
+  80% {
+    -webkit-transform: translate(2px, -2px);
+            transform: translate(2px, -2px);
+  }
+  100% {
+    -webkit-transform: translate(0);
+            transform: translate(0);
+  }
+}

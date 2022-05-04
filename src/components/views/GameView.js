@@ -17,6 +17,7 @@ const GameView = () => {
 
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
+  const [wasCardPlayed, SetWasCardPlayed] = useState(false); // used in connection to sessionStorage.getItem('cardsPlayed')
 
   // COMMENT Round data: 
   const [blackCard, setBlackCard] = useState(null);
@@ -31,9 +32,10 @@ const GameView = () => {
   const [choosingCountdown, setChoosingCountdown] = useState(null);
   
   // COMMENT Game data:
-  const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
+  // const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   const [opponentNames, setOpponentNames] = useState(null);
   const playersWhoPlayed= useRef(null);
+  const isCardCzarMode= useRef(null);
   // const [scores, setScores] = useState(null); 
 
   // state to stop the polling when needed
@@ -131,6 +133,11 @@ const GameView = () => {
       sessionStorage.setItem('winnerCountdown', -1);
     }
 
+    // initially, set cardsPlayed to 0
+    if (!sessionStorage.getItem('cardsPlayed')) {
+      sessionStorage.setItem('cardsPlayed', 0);
+    }
+
     fetchRoundData();
     
   }, []);
@@ -150,7 +157,7 @@ const GameView = () => {
       }
     }
     fetchData();
-  }, [roundNr, cardsPlayed]);
+  }, [roundNr, wasCardPlayed]);
 
 
   /*
@@ -203,9 +210,15 @@ const GameView = () => {
       if (roundNr == null) {
         setRoundNr(roundNumberVariable.current);
       }
+      isCardCzarMode.current = response.data.cardCzarMode; 
       setRoundWinner(response.data.latestRoundWinner);
       setRoundWinningCardText(response.data.latestWinningCardText);
-      setOpponentNames(response.data.playerNames)
+      setOpponentNames(response.data.playerNames);
+      // console.log(sessionStorage.getItem('cardsPlayed', 0));
+      // console.log(isCardCzarMode.current);
+      // console.log(response.data);
+      // console.log('chosenCard', chosenCard);
+      // console.log('chosenWinner', chosenWinner);
     } catch (error) {
       catchError(history, error, 'fetching the winner data');
     }
@@ -222,7 +235,6 @@ const GameView = () => {
       didMount.current = true;
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the player data
       setBlackCard(blackCardVariable.current);
-      setCardsPlayed(0); //enable the submit button again
     } else {
       // this will trigger the useEffect for the countdown
       let existingCountdown = sessionStorage.getItem('winnerCountdown');
@@ -240,6 +252,7 @@ const GameView = () => {
       }
       setChosenCard(null);
       setChosenWinner(null);
+      // TODO set session storage to 0 after the round is over, maybe also wasCardPlayed to null
     }
   }, [roundWinningCardText]); // use roundWinningCardText to ensure change
 
@@ -269,11 +282,11 @@ const GameView = () => {
         setCountdown(countdown - 1);
         sessionStorage.setItem('winnerCountdown', countdown - 1)
       }, 1000);
+      sessionStorage.setItem('cardsPlayed', 0); // enable the submit button again
     } else {
       // after 15 seconds, update the states from the new round data
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
       setBlackCard(blackCardVariable.current);
-      setCardsPlayed(0); //enable the submit button again
       // startPlayingCountdown(); TODO Diego: start the countdown for the next round
       
       if (isFinal.current) {
@@ -352,14 +365,18 @@ const GameView = () => {
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
-      const requestBody = JSON.stringify({'cardId' : chosenCard}); // chosenCard = id of the card 
+      const requestBody = JSON.stringify({'cardId' : chosenCard, 'gameId': gameId}); // chosenCard = id of the card 
       await api.post(`/${roundId.current}/white`, requestBody);
       console.log("Player submitted a card: ", chosenCard);
+      if(isCardCzarMode.current === false){
+        setChosenCard(null); // TODO not needed after we display only cards that were not played by the player
+      }
       /*
       after successfully playing a card, change cardsPlayed so that the useEffect is triggered
       to fetch the playerData. This will then update the white cards (only 9 left)
       */
-     setCardsPlayed(cardsPlayed + 1);
+      sessionStorage.setItem('cardsPlayed', 1);
+      SetWasCardPlayed(true);
      // TODO Diego: setPlayingCountdown(-1);
      // TODO Diego: sessionStorage.setItem('playingCountdown', -1);
     } catch (error) {
@@ -371,10 +388,15 @@ const GameView = () => {
   // method that is used when the Card Czar chooses a round winner
   const chooseRoundWinner = async () => {
     try {
-      const requestBody = JSON.stringify({'cardId' : chosenWinner});// chosenWinner = id of the card 
+      const requestBody = JSON.stringify({'cardId' : chosenWinner, 'gameId': gameId});// chosenWinner = id of the card 
       await api.post(`/${roundId.current}/roundWinner`, requestBody);
       console.log("Card Czar picked a card: ", chosenWinner); 
-      setCardsPlayed(cardsPlayed + 1); // to make the submit button disabled after submission
+      if(isCardCzarMode.current){
+        sessionStorage.setItem('cardsPlayed', 1); // to make the submit button disabled after submission in CardCzar mode
+      }
+      else{
+        sessionStorage.setItem('cardsPlayed', 2); // to make the submit button disabled after submission in Community mode
+      }
       // TODO Diego: setChoosingCountdown(-1);
       // TODO Diego: sessionStorage.setItem('choosingCountdown', -1);
     } catch (error) {
@@ -408,6 +430,153 @@ const GameView = () => {
     }
   }
 
+  const displayRoundSection = (roundNr, player, isCardCzarMode) => {
+    if(isCardCzarMode.current === false){
+      const container = (<div className="gameView roundSection">
+                        {"Round "+roundNr}
+                        {player.cardCzar === false && <p className = "vibrate">Submit a card from your hand, then pick your favourite from round's played cards!</p>}
+                      </div>);
+      return container;
+    }
+    else{
+      const container = (<div className="gameView roundSection">
+        {"Round "+roundNr}
+        {player.cardCzar === false && <p className = "vibrate">You are a normal player this round - pick card from hand!</p>}
+        {player.cardCzar === true && <p className = "vibrate" >You are a Card Czar this round - pick played card that you think is best!</p>}
+      </div>);
+      return container;
+    }
+  }
+
+  const displayPlayedCards = (playersChoices, player, isCardCzarMode) => {
+    if(isCardCzarMode.current === true){
+      return (
+        <div className="gameView choiceSection cards">
+          <div className="gameView choiceSection cards">
+            {(sessionStorage.getItem('cardsPlayed') == 1) && 
+              playersChoices.map(choice => (
+              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
+            ))}
+          </div> 
+          {(sessionStorage.getItem('cardsPlayed') == 0) && 
+            <div className="gameView choiceSection cards">
+              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
+              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar}/>}
+              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar}/>}
+            </div> 
+          }
+      </div>
+      );
+    }else{
+      // it is not a CardCzar mode so normal player should be able to send CHOICE after he/she submitted a card
+      return (
+        <div className="gameView choiceSection cards">
+          <div className="gameView choiceSection cards">
+            {(sessionStorage.getItem('cardsPlayed') != 1) && 
+              playersChoices.map(choice => (
+              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
+            ))}
+          </div> 
+          {/* Played cards are clickable only when player already submitted a choice */}
+          {(sessionStorage.getItem('cardsPlayed') == 1) && 
+            <div className="gameView choiceSection cards">
+              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={true}/>}
+              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true}/>}
+              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true}/>}
+            </div> 
+          }
+      </div>
+      );
+    }
+  }
+
+
+  const displayButtons = (player, isCardCzarMode, chosenCard, playersChoices) => {
+    if((isCardCzarMode.current === true && player.cardCzar === false) || (isCardCzarMode.current === false && sessionStorage.getItem('cardsPlayed') == 0)){
+      // We are a normal player - works for submission of cards from hand in both game modes:
+      return (
+              <div className="gameView bottomSection">
+                <Button
+                    width="100%"
+                    onClick={() => leaveGame()}
+                  >
+                  🥺 Leave game...
+                </Button>
+                <Button
+                    disabled = {!chosenCard || (sessionStorage.getItem('cardsPlayed') > 0)}
+                    width="100%"
+                    // onClick={() => window.location.reload(false)}
+                    onClick={() => setChosenCard(null)}
+                  >
+                  🔁 Reset choice
+                </Button>
+                <Button
+                    disabled = {!chosenCard || (sessionStorage.getItem('cardsPlayed') > 0)}
+                    width="100%"
+                    onClick={() => playCard()}
+                  >
+                  ✔️ Submit
+                </Button>
+              </div>);
+    }
+
+    if(player.cardCzar === true){
+        // We are a Card Czar:
+        return (
+                <div className="gameView bottomSection">
+                  <Button
+                      width="100%"
+                      onClick={() => leaveGame()}
+                    >
+                    🥺 Leave game...
+                  </Button>
+                  <Button
+                      disabled = {!chosenWinner || (sessionStorage.getItem('cardsPlayed') > 0)}
+                      width="100%"
+                      // onClick={() => window.location.reload(false)}
+                      onClick={() => setChosenWinner(null)}
+                    >
+                    🔁 Reset choice
+                  </Button>
+                  <Button
+                      disabled = {!chosenWinner || (Object.keys(playersChoices).length != 3) || (sessionStorage.getItem('cardsPlayed') > 0)}
+                      width="100%"
+                      onClick={() => chooseRoundWinner()}
+                    >
+                    ✔️ Submit
+                  </Button>
+                </div>);
+    }
+
+    if((isCardCzarMode.current === false && sessionStorage.getItem('cardsPlayed') > 0)){
+      // Player in second game mode, when he/she submitted a card from hand - now needs to choose a winner:
+      return (
+        <div className="gameView bottomSection">
+          <Button
+              width="100%"
+              onClick={() => leaveGame()}
+            >
+            🥺 Leave game...
+          </Button>
+          <Button
+              disabled = {!chosenWinner || (sessionStorage.getItem('cardsPlayed') == 2)}
+              width="100%"
+              // onClick={() => window.location.reload(false)}
+              onClick={() => setChosenWinner(null)}
+            >
+            🔁 Reset choice
+          </Button>
+          <Button
+              disabled = {!chosenWinner || (Object.keys(playersChoices).length < 3) || (sessionStorage.getItem('cardsPlayed') == 2)} //BUG - after Ege filters change "<3" to "!=3"
+              width="100%"
+              onClick={() => chooseRoundWinner()}
+            >
+            ✔️ Submit
+          </Button>
+        </div>);
+    }
+    
+  }
   // blurr background if countdown is active 
   const mainClass = countdown === 0 ? 'gameView main' : 'gameView blurryMain';
 
@@ -417,12 +586,7 @@ const GameView = () => {
   if (player != null && blackCard != null && playersChoices != null && roundNr != null && opponentNames != null && opponentNames != playersWhoPlayed) {
     content = (
       <div className = {mainClass}>
-
-        <div className="gameView roundSection">
-          {"Round "+roundNr}
-          {player.cardCzar === false && <p>You are a normal player this round - pick card from hand!</p>}
-          {player.cardCzar === true && <p>You are a Card Czar this round - pick played card that you think is best!</p>}
-        </div>
+        {displayRoundSection(roundNr, player, isCardCzarMode)}
         
         {/* // COMMENT - displaying which Player has already made a choice
         // TESTME - should be tested once the endpoint is ready  */}
@@ -450,42 +614,27 @@ const GameView = () => {
           {roundWinner == null && <h3>Last round was won by: {roundWinner}</h3>}
         </div> */}
 
+
         <div className="gameView cardsSection">
-          {/* COMMENT - choice section for Card Czar */}
+          {/* COMMENT - choice section for PLAYED CARDS */}
           <div className="gameView choiceSection">
             <h2>Round's played cards:</h2>
-            <div className="gameView choiceSection cards">
-              {/* COMMENT - makes the card not clickable after submitting */}
-              <div className="gameView choiceSection cards">
-                {(cardsPlayed > 0) && 
-                  playersChoices.map(choice => (
-                  <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
-                ))}
-              </div> 
-              {(cardsPlayed == 0) && 
-                <div className="gameView choiceSection cards">
-                  {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
-                  {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar}/>}
-                  {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar}/>}
-                </div> 
-              }
-              </div>
+            {displayPlayedCards(playersChoices, player, isCardCzarMode)}
           </div>
-
 
           {/* COMMENT - choice section for normal players */}
           <div className="gameView handSection">
             <h2>Your hand:</h2>
             <div className="gameView whiteCardSection">
-              {/* COMMENT - makes the card not clickable after submitting */}
-              {(cardsPlayed > 0) && 
+              {/* COMMENT - cardsPlayed makes the card not clickable after submitting */}
+              {(sessionStorage.getItem('cardsPlayed') > 0) && 
                 <div className="gameView whiteCardSection">
                   {player.cardsOnHands.map(card => (
                     <Card isBlack={false} isChoice={true} key={card.cardId} cardId={card.cardId} text={card.cardText} role={false}/>
                   ))}
                 </div> 
               }
-              {(cardsPlayed == 0) && 
+              {(sessionStorage.getItem('cardsPlayed') == 0) && 
                 <div className="gameView whiteCardSection">
                   {player.cardsOnHands.map(card => (
                     <Card isBlack={false} isChoice={false} key={card.cardId} cardId={card.cardId} text={card.cardText} role={player.cardCzar}/>
@@ -495,61 +644,8 @@ const GameView = () => {
             </div>
           </div>
         </div>
-
-
-        {/* COMMENT - SECTION - if you are normal Player */}
-        {player.cardCzar == false && 
-          <div className="gameView bottomSection">
-            <Button
-                width="100%"
-                onClick={() => leaveGame()}
-              >
-              🥺 Leave game...
-            </Button>
-            <Button
-                disabled = {!chosenCard || (cardsPlayed > 0)}
-                width="100%"
-                // onClick={() => window.location.reload(false)}
-                onClick={() => setChosenCard(null)}
-              >
-              🔁 Reset choice
-            </Button>
-            <Button
-                disabled = {!chosenCard || (cardsPlayed > 0)}
-                width="100%"
-                onClick={() => playCard()}
-              >
-              ✔️ Submit
-            </Button>
-          </div>
-        } 
-
-        {/*COMMENT - SECTION - if you are Card Czar */}
-        {player.cardCzar == true && 
-          <div className="gameView bottomSection">
-            <Button
-                width="100%"
-                onClick={() => leaveGame()}
-              >
-              🥺 Leave game...
-            </Button>
-            <Button
-                disabled = {!chosenWinner || (cardsPlayed > 0)}
-                width="100%"
-                // onClick={() => window.location.reload(false)}
-                onClick={() => setChosenWinner(null)}
-              >
-              🔁 Reset choice
-            </Button>
-            <Button
-                disabled = {!chosenWinner || (Object.keys(playersChoices).length != 3) || (cardsPlayed > 0)}
-                width="100%"
-                onClick={() => chooseRoundWinner()}
-              >
-              ✔️ Submit
-            </Button>
-          </div>
-        } 
+        {/* BUTTONS SECTION */}
+        {displayButtons(player, isCardCzarMode, chosenCard, playersChoices)}
       </div>
     );
   } 
