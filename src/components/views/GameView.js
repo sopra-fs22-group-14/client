@@ -9,6 +9,7 @@ import 'styles/views/GameView.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
+import EndGame from 'models/EndGame';
 
 const GameView = () => {
   const { gameId } = useParams();
@@ -36,6 +37,7 @@ const GameView = () => {
   const [opponentNames, setOpponentNames] = useState(null);
   const playersWhoPlayed= useRef(null);
   const isCardCzarMode= useRef(null);
+  const [endGame, setEndGame] = useState(null); // leaderboard table during the game
   // const [scores, setScores] = useState(null); 
 
   // state to stop the polling when needed
@@ -159,7 +161,45 @@ const GameView = () => {
     fetchData();
   }, [roundNr, wasCardPlayed]);
 
-
+  // COMMENT - fetch EndGame data:
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await api.get(`/${gameId}/gameEnd`);
+        const endGame = new EndGame(response.data);
+        setEndGame(endGame);
+        console.log("EndGame data received"); 
+      } catch (error) {
+        catchError(history, error, 'fetching the EndGame data');
+      }
+    }
+    fetchData();
+  }, [roundNr]);
+  // COMMENT - display GAME SUMMARY based on EndGame data:
+  const getSummary = () => {
+    // create a dict out of two lists and sort it - most round wins at the top
+    const dict_players = endGame.playersNames.map((userName, i) => ({
+      userName,
+      roundsWon: endGame.playersNumbersOfPicked[i]
+    }));
+    dict_players.sort((a, b) => b.roundsWon - a.roundsWon);
+    const element = dict_players.map(player => (
+        <tr key = {player["userName"]} className = "gameView gameSummary playerStats">
+            <td>{player["userName"]}</td>
+            <td>{player["roundsWon"]}</td>
+        </tr>));
+    const summaryTable = (   
+    <table className = "gameView leaderboardtable">
+      <tbody>
+        <tr>
+          <th>Player name</th>
+          <th>Rounds won</th>
+        </tr>
+        {element}
+      </tbody>
+    </table>);
+    return summaryTable;
+  }
   /*
   This useInterval is used to periodically fetch data regarding the rounds of the game. 
   This includes things such as the played cards, (so that the played cards from all 
@@ -600,31 +640,7 @@ const GameView = () => {
           </div>
           <div className="gameView topSection leaderboard">
             <h4>Leaderboard</h4>
-            <table className = "gameView leaderboardtable">
-              <tbody>
-                <tr>
-                  <th>Player name</th>
-                  <th>Rounds won</th>
-                </tr>
-                <tr>
-                  <td>Szymon</td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <td>Ege</td>
-                  <td>3</td>
-                </tr>
-                <tr>
-                  <td>Alex</td>
-                  <td>2</td>
-                </tr>
-                <tr>
-                  <td>Diego</td>
-                  <td>1</td>
-                </tr>
-                {/* {getSummary()} "gameView topSection playerStats" */}
-              </tbody>
-            </table>
+            {getSummary()} 
           </div>
         </div>
 

@@ -8,9 +8,6 @@ import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
 /*
 Upon completion of the game, the each player is forwarded to the EndGameView page and the {gameId}/gamewinner is called. 
-*What exactly should this endpoint contain?*
-    ---> List/dict PlayerNames & how many rounds they won - there is Java class dictionary 
-    ---> List/dict PlayerNames & PlayerIds that won/draw --> 1 < len(list) < 4
 *When the game is deleted?*
     ---> When last player leaves the game 
 *What button should be avaialable in the EndGameView?*
@@ -28,21 +25,20 @@ const EndGameView = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        // const response = await api.get(`/${gameId}/gameEnd`);
-        // const endGame = new EndGame(response.data);
-        // setEndGame(endGame);
-        // console.log(endGame);
-        // TESTME - just for testing 
-        var dict = {
-          playersNames: ["Alex", "Diego", "Szymek", "Ege"],
-          playersRoundsWon: [2,3,15,10],
-          winnersNames: ["Diego", "Alex"],
-          winnersIds: [2]
-        };
-        const endGame = new EndGame(dict);
-        setEndGame(dict);
-        console.log(endGame);
+        const response = await api.get(`/${gameId}/gameEnd`);
+        const endGame = new EndGame(response.data);
+        setEndGame(endGame);
         console.log("EndGame data received"); 
+        // ------------ just for testing:
+        // var dict = {
+        //   playersNames: ["Alex", "Diego", "Szymek", "Ege"],
+        //   playersNumbersOfPicked: [2,3,15,10],
+        //   winnersNames: ["Diego", "Alex"],
+        //   winnersIds: [2]
+        // };
+        // const endGame = new EndGame(dict);
+        // setEndGame(dict);
+        // console.log(endGame);
       } catch (error) {
         catchError(history, error, 'fetching the EndGame data');
       }
@@ -85,7 +81,7 @@ const EndGameView = () => {
     // create a dict out of two lists and sort it - most round wins at the top
     const dict_players = endGame.playersNames.map((userName, i) => ({
       userName,
-      roundsWon: endGame.playersRoundsWon[i]
+      roundsWon: endGame.playersNumbersOfPicked[i]
     }));
     dict_players.sort((a, b) => b.roundsWon - a.roundsWon);
     // console.log(dict_players[0]["userName"]);
