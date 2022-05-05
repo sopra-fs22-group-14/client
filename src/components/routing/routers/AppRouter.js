@@ -14,6 +14,9 @@ import SideBar from "components/views/SideBar";
 import GameView from "components/views/GameView";
 import { GameGuard } from "../routeProtectors/GameGuard";
 import EndGameView from "components/views/EndGameView";
+
+import ProfileOverview from "components/views/ProfileOverview";
+import { ProfileGuard } from "../routeProtectors/ProfileGuard";
 // import { FitToViewport } from "react-fit-to-viewport";
 
 /**
@@ -30,7 +33,7 @@ const AppRouter = () => {
   return (
     <BrowserRouter>
       {/* <FitToViewport width={window.innerWidth-10} height={window.innerHeight-110} minZoom={0} maxZoom={0.8}> */}
-      <Route path={["/login", "/register", "/home", "/about"]}>
+      <Route path={["/login", "/register", "/home", "/about", "/profile/:loggedInUserID"]}>
         <Header height="100"/>
       </Route>
       <Switch>
@@ -53,6 +56,17 @@ const AppRouter = () => {
         <Route exact path="/about">
           <About/>
         </Route>
+
+
+        <Route path="/profile/:loggedInUserID">
+          <ProfileGuard>
+            <ProfileOverview/>
+          </ProfileGuard>
+        </Route>
+
+
+
+
         <Route path="/game/:gameId">
           <GameGuard>
             <GameView/>

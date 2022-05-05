@@ -16,6 +16,7 @@ const FormFieldText = props => {
       </label>
       <input
         className="register inputUsername"
+        maxlength="15"
         placeholder="Username"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}

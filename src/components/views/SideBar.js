@@ -13,13 +13,10 @@ const SideBar = props => {
   };
   
   const redirectProfile = () => {
-    history.push('/profile');
+    const loggedInUserID = localStorage.getItem('loggedInUserID');
+    history.push(`/profile/${loggedInUserID}`);
   };
   
-  const redirectOverview = () => {
-    history.push('/profile/overview');
-  };
-
   const redirectRecords = () => {
     history.push('/profile/records');
   };
@@ -52,9 +49,9 @@ const SideBar = props => {
       <div className="sidebar lobby" onClick={() => redirectLobby()}>🎮 Lobby</div>
       <div className="sidebar profile" onClick={() => redirectProfile()}>📸 Profile</div>
       <ul className = "sidebar buttonsList">
-        <li className = "listElement" onClick={() => redirectOverview()}>📝 Overview</li>
+        <li className = "listElement" onClick={() => redirectProfile()}>📝 Overview</li>
         <li className = "listElement" onClick={() => redirectRecords()}>🏆 Records</li>
-        <li className = "listElement" onClick={() => redirectFriends()}>🥰 Friends</li>
+        <li className = "listElement" onClick={() => redirectFriends()}>🥰 Other players</li>
         {!linkCopied && <li className = "listElement" onClick={() => inviteFriends()}>✉️ Invite friends</li>}
         {linkCopied && <li className = "listElementLink" onClick={() => inviteFriends()}>🖤 Link copied!</li>}
       </ul>
