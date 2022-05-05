@@ -1,12 +1,12 @@
-import React from "react";
+import React, {useState} from 'react';
 import PropTypes from "prop-types";
 import "styles/views/SideBar.scss";
 import { useHistory } from "react-router-dom";
 import {api, updateApi, catchError} from 'helpers/api';
 
 const SideBar = props => {
-
-  const history = useHistory()
+  const history = useHistory();
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const redirectLobby = () => {
     history.push('/lobby');
@@ -26,6 +26,11 @@ const SideBar = props => {
 
   const redirectFriends = () => {
     history.push('/profile/friends');
+  };
+
+  const inviteFriends = () => {
+    navigator.clipboard.writeText('https://sopra-fs22-group-14-client.herokuapp.com/login');
+    setLinkCopied(!linkCopied);
   };
 
   const logout = async () => {
@@ -50,6 +55,8 @@ const SideBar = props => {
         <li className = "listElement" onClick={() => redirectOverview()}>📝 Overview</li>
         <li className = "listElement" onClick={() => redirectRecords()}>🏆 Records</li>
         <li className = "listElement" onClick={() => redirectFriends()}>🥰 Friends</li>
+        {!linkCopied && <li className = "listElement" onClick={() => inviteFriends()}>✉️ Invite friends</li>}
+        {linkCopied && <li className = "listElementLink" onClick={() => inviteFriends()}>🖤 Link copied!</li>}
       </ul>
       <div className="sidebar logout" onClick={() => logout()}>👋 Logout</div>
     </div>
