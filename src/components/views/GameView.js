@@ -36,9 +36,8 @@ const GameView = () => {
   // const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   const [opponentNames, setOpponentNames] = useState(null);
   const playersWhoPlayed= useRef(null);
-  const isCardCzarMode= useRef(null);
+  const isCardCzarMode = useRef(null);
   const [endGame, setEndGame] = useState(null); // leaderboard table during the game
-  // const [scores, setScores] = useState(null); 
 
   // state to stop the polling when needed
   const [pollingActive, setPollingActive] = useState(true);
@@ -161,22 +160,25 @@ const GameView = () => {
     fetchData();
   }, [roundNr, wasCardPlayed]);
 
-  // COMMENT - fetch EndGame data:
+  // COMMENT - fetch LeaderBoard data when the roundNr changes
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await api.get(`/${gameId}/gameEnd`);
-        const endGame = new EndGame(response.data);
-        setEndGame(endGame);
-        console.log("EndGame data received"); 
-      } catch (error) {
-        catchError(history, error, 'fetching the EndGame data');
-      }
-    }
-    fetchData();
+    fetchLeaderboardData();
   }, [roundNr]);
+
+  // method to fetch the leaderboard data
+  async function fetchLeaderboardData() {
+    try {
+      const response = await api.get(`/${gameId}/gameEnd`);
+      const endGame = new EndGame(response.data);
+      setEndGame(endGame);
+      console.log("EndGame data received"); 
+    } catch (error) {
+      catchError(history, error, 'fetching the EndGame data');
+    }
+  }
+
   // COMMENT - display GAME SUMMARY based on EndGame data:
-  const getSummary = () => {
+  const getSummary = (displayHeaders) => {
     // create a dict out of two lists and sort it - most round wins at the top
     const dict_players = endGame.playersNames.map((userName, i) => ({
       userName,
@@ -184,22 +186,24 @@ const GameView = () => {
     }));
     dict_players.sort((a, b) => b.roundsWon - a.roundsWon);
     const element = dict_players.map(player => (
-        <tr key = {player["userName"]} className = "gameView gameSummary playerStats">
-            <td>{player["userName"]}</td>
-            <td>{player["roundsWon"]}</td>
-        </tr>));
+      <tr key = {player["userName"]} className = "gameView gameSummary playerStats">
+        <td>{player["userName"]}</td>
+        <td>{player["roundsWon"]}</td>
+      </tr>));
     const summaryTable = (   
     <table className = "gameView leaderboardtable">
       <tbody>
+        {displayHeaders &&
         <tr>
           <th>Player name</th>
           <th>Rounds won</th>
-        </tr>
+        </tr>}
         {element}
       </tbody>
     </table>);
     return summaryTable;
   }
+
   /*
   This useInterval is used to periodically fetch data regarding the rounds of the game. 
   This includes things such as the played cards, (so that the played cards from all 
@@ -211,9 +215,7 @@ const GameView = () => {
   }, pollingActive ? 1500 : null);
 
 
-  /*
-  This useInterval is used to fetch the latest round winner, the opponent names and the roundNr
-  */
+  // This useInterval is used to fetch the latest round winner, the opponent names and the roundNr
   useInterval(() => {
     fetchGameInformation();
   }, pollingActive ? 1500 : null);
@@ -221,15 +223,11 @@ const GameView = () => {
 
   const fetchRoundData = async () => {
     try {
-      console.log("Fetch round data");
+      // console.log("Fetch round data");
       const response = await api.get(`/${gameId}/gameround`);
       // console.log(response.data);
-      /*
-      in case a new round started, save the important things in variables for now.
-      The corresponding states will only be updated after a countdown (see useEffect of the roundWinner)
-      */
 
-      // will look something like this:
+      // in case a new round started, save the important things in useRefs for now.
       roundId.current = response.data.roundId;
       blackCardVariable.current = response.data.blackCard;
       if (blackCard == null) { 
@@ -237,6 +235,7 @@ const GameView = () => {
       }
       setPlayersChoices(response.data.playedCards);
       // isFinal.current = response.data.isFinal; //TODO - uncomment after endpoint is there
+
       playersWhoPlayed.current = ["ghsdrtxdf", "Egdgfgjhjfghe"]; // TODO delete dummy data when endpoint is ready
     } catch (error) {
       catchError(history, error, 'fetching the round data');
@@ -267,7 +266,7 @@ const GameView = () => {
 
   /*
   As soon as the roundWinner is determined (and therefore, roundWinningCardText changes),
-  a countdown of 15 seconds will start
+  a countdown of 15 seconds will start. This value even changes for the community game mode!
   */
   useEffect(() => {
     // DO NOT include 15 second countown when mounting (render immediately)
@@ -279,6 +278,8 @@ const GameView = () => {
       // this will trigger the useEffect for the countdown
       let existingCountdown = sessionStorage.getItem('winnerCountdown');
       let firstRoundDone = sessionStorage.getItem('firstRoundDone');
+      // in the community mode, the leaderboard data needs to be updated for the round overview
+      if (!isCardCzarMode.current) fetchLeaderboardData();
       
       // if a countdown is still going, keep going where it was
       if (existingCountdown > 0) {
@@ -286,7 +287,7 @@ const GameView = () => {
       // if the countdown is at 0 or we are in first round, trigger the confetti
       } else if (existingCountdown == 0 || !firstRoundDone) {
         setCountdown(5);
-      // if we re-rendered, don't show the countdown
+      // if we re-rendered, don't show the countdown, but set it to 0 so it shows when it needs to
       } else {
         sessionStorage.setItem('winnerCountdown', 0);
       }
@@ -311,20 +312,20 @@ const GameView = () => {
 
 
   /*
-  useEffect for the 15 second countdown before new round starts.
+  useEffect for the countdown before new round starts.
   After that, the information of the new round will be rendered!
   */
   useEffect(() => {
     if (countdown > 0) {
-      // for 15 seconds, just count down
+      sessionStorage.setItem('firstRoundDone', true); // not first round anymore
+      // just count down
       setTimeout(() => {
-        sessionStorage.setItem('firstRoundDone', true); // not first round anymore
         setCountdown(countdown - 1);
         sessionStorage.setItem('winnerCountdown', countdown - 1)
       }, 1000);
       sessionStorage.setItem('cardsPlayed', 0); // enable the submit button again
     } else {
-      // after 15 seconds, update the states from the new round data
+      // after the countdown, update the states from the new round data
       setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
       setBlackCard(blackCardVariable.current);
       // startPlayingCountdown(); TODO Diego: start the countdown for the next round
@@ -503,6 +504,7 @@ const GameView = () => {
               {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
               {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar}/>}
               {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar}/>}
+              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={player.cardCzar}/>}
             </div> 
           }
       </div>
@@ -523,13 +525,13 @@ const GameView = () => {
               {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={true}/>}
               {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true}/>}
               {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true}/>}
+              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={true}/>}
             </div> 
           }
       </div>
       );
     }
   }
-
 
   const displayButtons = (player, isCardCzarMode, chosenCard, playersChoices) => {
     if((isCardCzarMode.current === true && player.cardCzar === false) || (isCardCzarMode.current === false && sessionStorage.getItem('cardsPlayed') == 0)){
@@ -545,7 +547,6 @@ const GameView = () => {
                 <Button
                     disabled = {!chosenCard || (sessionStorage.getItem('cardsPlayed') > 0)}
                     width="100%"
-                    // onClick={() => window.location.reload(false)}
                     onClick={() => setChosenCard(null)}
                   >
                   🔁 Reset choice
@@ -573,7 +574,6 @@ const GameView = () => {
                   <Button
                       disabled = {!chosenWinner || (sessionStorage.getItem('cardsPlayed') > 0)}
                       width="100%"
-                      // onClick={() => window.location.reload(false)}
                       onClick={() => setChosenWinner(null)}
                     >
                     🔁 Reset choice
@@ -601,13 +601,12 @@ const GameView = () => {
           <Button
               disabled = {!chosenWinner || (sessionStorage.getItem('cardsPlayed') == 2)}
               width="100%"
-              // onClick={() => window.location.reload(false)}
               onClick={() => setChosenWinner(null)}
             >
             🔁 Reset choice
           </Button>
           <Button
-              disabled = {!chosenWinner || (Object.keys(playersChoices).length < 3) || (sessionStorage.getItem('cardsPlayed') == 2)} //BUG - after Ege filters change "<3" to "!=3"
+              disabled = {!chosenWinner || (Object.keys(playersChoices).length < 4) || (sessionStorage.getItem('cardsPlayed') == 2)} //BUG - after Ege filters change "<3" to "!=3"
               width="100%"
               onClick={() => chooseRoundWinner()}
             >
@@ -617,6 +616,45 @@ const GameView = () => {
     }
     
   }
+
+  /* 
+  Include countdown until new round starts 
+  and display the roundWinner in a fancy way while countdown is active
+  */
+  const displayEndRoundView = () => {
+
+    // countdownView is the same for both gamemodes
+    let countdownView = (
+      <div className="gameView countdownSection">
+        {isFinal.current && <p>The Game overview is displayed in: {countdown}</p>}
+        {!isFinal.current && <p>Next round starts in: {countdown}</p>}
+      </div>
+    );
+
+    if (isCardCzarMode.current) {
+      return (
+        <div>
+          {countdownView}
+          <div className="gameView countdownSection roundWinner">
+            <p>This round was won by: {roundWinner} with the following card:<br/>
+            {roundWinningCardText}</p> 
+          </div>
+          <Confetti/>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          {countdownView}
+          <div className="gameView countdownSection roundLeaderboard">
+            <p>The current status of the game is:<br/>{getSummary(false)}</p>
+          </div>
+          <Confetti/>
+        </div>
+      );
+    }
+  }
+
   // blurr background if countdown is active 
   const mainClass = countdown === 0 ? 'gameView main' : 'gameView blurryMain';
 
@@ -640,7 +678,7 @@ const GameView = () => {
           </div>
           <div className="gameView topSection leaderboard">
             <h4>Leaderboard</h4>
-            {getSummary()} 
+            {getSummary(true)} 
           </div>
         </div>
 
@@ -661,12 +699,6 @@ const GameView = () => {
             </div>
           </div>
         </div>
-
-        {/* Displaying of the roundWinner (small and all the time)*/}
-        {/* <div className="gameView roundWinnerSection">
-          {roundWinner == null && <h3>Last round was won by: {roundWinner}</h3>}
-        </div> */}
-
 
         <div className="gameView cardsSection">
           {/* COMMENT - choice section for PLAYED CARDS */}
@@ -705,23 +737,7 @@ const GameView = () => {
   // -------------------------------- RETURN --------------------------------
   return (
     <BaseContainer className="gameView container">
-      {/* Include countdown until new round starts 
-      and display the roundWinner in a fancy way while countdown is active*/}
-      {countdown != 0 && 
-      <div>
-        <div className="gameView countdownSection">
-          {isFinal.current && <p>Game end screen displayed in: {countdown}</p>}
-          {!isFinal.current && <p>Next round starts in: {countdown}</p>}
-          {/* <p>Next round starts in: {countdown}</p> */}
-        </div>
-        <div className="gameView countdownSection roundWinner">
-          <p>
-            This round was won by: {roundWinner} with the following card:<br/>
-            " {roundWinningCardText} "
-          </p> 
-        </div>
-        <Confetti/>
-      </div>}
+      {countdown != 0 && displayEndRoundView()}
       {content}
     </BaseContainer>
   );

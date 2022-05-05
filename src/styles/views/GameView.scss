@@ -207,41 +207,49 @@
   }
 
   &.countdownSection {
-    z-index: 1;
-    font-size: 40px;
+    width: 13em;
     position: absolute;
+    z-index: 1;
+    font-size: 2em;
     background-color: white;
     border: solid black 5px;
     border-radius: 15px;
-    padding: 0px 20px;
-    margin-top: 100px;
-    top: 10%;
-    left: 50%;
-    transform: translate(-50%, -10%);
+    padding: 0em 0.5em;
+    margin-top: 1em;
+    top: 15%;
+    left: 10%;
 
     &.roundWinner {
-      font-style: italic;
+      // font-style: italic;
       color: darkgreen;
-      font-size: 30px;
+      font-size: 1.5em;
       background-color: white;
       border: solid black 5px;
       border-radius: 15px;
-      padding: 0px 20px;
-      // margin-top: 100px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      padding: 0em 0.5em;
+      text-align: center;
+      justify-items: center;
+      top: 10%;
+      left: 65%
+    }
 
-      // animation: rotation 2s infinite linear alternate;
+    &.roundLeaderboard {
+      // font-style: italic;
+      color: darkgreen;
+      font-size: 1.5em;
+      background-color: white;
+      border: solid black 5px;
+      border-radius: 15px;
+      padding: 0em 0.5em;
+      text-align: center;
+      justify-items: center;
+      top: 10%;
+      left: 65%;
 
-      // @keyframes rotation {
-      //   from {
-      //     transform: rotate(-10deg);
-      //   }
-      //   to {
-      //     transform: rotate(10deg);
-      //   }
-      // }
+      & table {
+        table-layout: fixed;
+        width: 100%;
+      }
     }
   }
 
