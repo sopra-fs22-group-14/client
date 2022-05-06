@@ -93,6 +93,16 @@
       // background-color: brown; 
       align-items: center;
       justify-content: center;
+      text-shadow: $dropShadowGame;
+      & h3 {
+        text-shadow: $dropShadowGame;
+        margin: 0;
+      }
+      & h2 {
+        text-shadow: $dropShadowGame;
+        font-size: 2em;
+        margin: 0;
+      }
     }
     & h4{
       margin: 0;
