@@ -15,6 +15,8 @@ const GameView = () => {
   const { gameId } = useParams();
   const history = useHistory();
   const didMount = useRef(false);
+  const didMountForPlayingCd = useRef(false);
+  const didMountForChoosingCd = useRef(false);
 
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
@@ -367,6 +369,11 @@ const GameView = () => {
   // useEffect that is used for the playingCountdown
   useEffect(() => {
     async function updatePlayingCountdown() {
+      // initial rendering - don't do anything (for refreshing page)
+      if (!didMountForPlayingCd.current) {
+        didMountForPlayingCd.current = true;
+        return;
+      }
       if (playingCountdown != -1) setPollingActive(false); // pause the polling when countdown is active
       try {
         // just update the counter
@@ -431,6 +438,11 @@ const GameView = () => {
 
   // useEffect that is used for the choosingCountdown
   useEffect(() => {
+    // initial rendering - don't do anything (for refreshing page)
+    if (!didMountForChoosingCd.current) {
+      didMountForChoosingCd.current = true;
+      return;
+    }
     if (choosingCountdown != -1) setPollingActive(false); // pause the polling when countdown is active
     try {
       // if winning screen is shown, stop the choosingCountdown
@@ -464,7 +476,6 @@ const GameView = () => {
     }
   }, [choosingCountdown]);
 
-  // ------------------------------ DIEGO: DONE ---------------------------------
 
   // method that is called when a player plays a white card
   const playCard = async () => {
@@ -726,12 +737,6 @@ const GameView = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  // console.log("player: "+player)
-  // console.log("blackCard: "+blackCard)
-  // console.log("playersChoices: "+playersChoices)
-  console.log("roundNr: "+roundNr)
-  console.log("opponentNames: "+opponentNames)
-
   if (player != null && blackCard != null && playersChoices != null && roundNr != null && opponentNames != null && opponentNames != playersWhoPlayed) {
     content = (
       <div className = {mainClass}>
