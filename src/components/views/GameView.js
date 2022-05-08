@@ -40,6 +40,7 @@ const GameView = () => {
   const playersWhoPlayed= useRef(null);
   const isCardCzarMode = useRef(null);
   const [endGame, setEndGame] = useState(null); // leaderboard table during the game
+  const totalRounds = useRef(null);
 
   // state to stop the polling when needed
   const [pollingActive, setPollingActive] = useState(true);
@@ -244,7 +245,7 @@ const GameView = () => {
         setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
       }
       setPlayersChoices(response.data.playedCards);
-      // isFinal.current = response.data.isFinal; //TODO - uncomment after endpoint is there
+      isFinal.current = response.data.final;
 
       playersWhoPlayed.current = ["ghsdrtxdf", "Egdgfgjhjfghe"]; // TODO delete dummy data when endpoint is ready
     } catch (error) {
@@ -260,7 +261,8 @@ const GameView = () => {
       if (roundNr == null) {
         setRoundNr(roundNumberVariable.current);
       }
-      isCardCzarMode.current = response.data.cardCzarMode; 
+      isCardCzarMode.current = response.data.cardCzarMode;
+      totalRounds.current = response.data.numOfRounds;
       setRoundWinner(response.data.latestRoundWinner);
       setRoundWinningCardText(response.data.latestWinningCardText);
       setOpponentNames(response.data.playerNames);
@@ -343,7 +345,8 @@ const GameView = () => {
         // start the countdown for the next round
         if (opponentNames != null) setPlayingCountdown(45);
         setWasCardPlayed(false);
-        if (isFinal.current) {
+        // last round finished
+        if (isFinal.current && playersChoices.length > 0) {
           console.log("Going to end game screen");
           history.push(`/endGame/${gameId}`);
         }
@@ -550,14 +553,14 @@ const GameView = () => {
   const displayRoundSection = (roundNr, player, isCardCzarMode) => {
     if(isCardCzarMode.current === false){
       const container = (<div className="gameView roundSection">
-                        {"Round "+roundNr}
+                        {"Round "+roundNr+" / "+totalRounds.current}
                         {player.cardCzar === false && <p className = "vibrate">Submit a card from your hand, then pick your favourite from round's played cards!</p>}
                       </div>);
       return container;
     }
     else{
       const container = (<div className="gameView roundSection">
-        {"Round "+roundNr}
+        {"Round "+roundNr+" / "+totalRounds.current}
         {player.cardCzar === false && <p className = "vibrate">You are a normal player this round - pick card from hand!</p>}
         {player.cardCzar === true && <p className = "vibrate" >You are a Card Czar this round - pick played card that you think is best!</p>}
       </div>);
@@ -698,12 +701,17 @@ const GameView = () => {
   and display the roundWinner in a fancy way while countdown is active
   */
   const displayEndRoundView = () => {
+    let text;
+    if (isFinal.current && playersChoices.length > 0) {
+      text = <p>The Game overview is displayed in: {countdown}</p>
+    } else {
+      text = <p>Next round starts in: {countdown}</p>
+    }
 
     // countdownView is the same for both gamemodes
     let countdownView = (
       <div className="gameView countdownSection">
-        {isFinal.current && <p>The Game overview is displayed in: {countdown}</p>}
-        {!isFinal.current && <p>Next round starts in: {countdown}</p>}
+        {text}
       </div>
     );
 
