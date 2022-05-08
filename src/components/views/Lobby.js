@@ -14,6 +14,7 @@ import SideBar from "components/views/SideBar";
 const Lobby = () => {
   const history = useHistory();
   const [games, setGames] = useState(null);
+  sessionStorage.clear();
 
   // -------------------------------- Joining game --------------------------------
   const joinGame = async (gameId) => {
