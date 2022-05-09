@@ -10,6 +10,7 @@ import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
+import { useSpeechSynthesis } from 'react-speech-kit';
 
 const GameView = () => {
   const { gameId } = useParams();
@@ -17,6 +18,10 @@ const GameView = () => {
   const didMount = useRef(false);
   const didMountForPlayingCd = useRef(false);
   const didMountForChoosingCd = useRef(false);
+
+  // TEXT-TO-SPEECH
+  const textToBeRead = useRef("This is an example text to be read out loud.");
+  const { speak } = useSpeechSynthesis();
 
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
@@ -829,6 +834,9 @@ const GameView = () => {
     <BaseContainer className="gameView container">
       {countdown != 0 && displayEndRoundView()}
       {content}
+      <Button onClick={() => speak({ text: textToBeRead.current })}>
+        📣 Play
+      </Button>
     </BaseContainer>
   );
 };
