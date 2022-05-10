@@ -95,7 +95,6 @@ const GameCreation = () => {
               value={gameEdition}
               onChange={ge => setGameEdition(ge)}
             />
-            <h1 style = {{color : 'red'}}>ONLY PLAY CARD CZAR MODE FOR BETA TESTING !!!!</h1>
             <FormField
               label="2) Choose Game Mode"
               option1="Card Czar Mode"

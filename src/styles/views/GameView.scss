@@ -284,16 +284,25 @@
     padding: 0.1em;
     width: 25%;
     height: 100%;
-    h2{
-      margin: 0.1em;
+    h2 {
+      margin: 0.2em;
     }
 
     &:hover .card{
-      filter:blur(1px);
+      filter:blur(0.5px);
       opacity:.5;
-      transform: scale(.90);
+      transform: scale(.95);
       box-shadow:none;
     }
+    &:hover .notActiveCard {
+      &.own {
+        filter:blur(0.5px);
+        opacity:.5;
+        transform: scale(.95);
+        box-shadow:none;
+      }
+    }
+
     &:hover .card:hover{
       transform:scale(1);
       filter:blur(0px);
@@ -331,7 +340,7 @@
     margin-left: 0.1em;
     width: 80%;
     height: 100%;
-    h2{
+    h2 {
       margin: 0.2em;
     }
     .whiteCardSection {
@@ -344,9 +353,9 @@
       flex-wrap: wrap;
       justify-content: center;
       &:hover .card{
-        filter:blur(1px);
+        filter:blur(0.5px);
         opacity:.5;
-        transform: scale(.90);
+        transform: scale(.95);
         box-shadow:none;
       }
       &:hover .card:hover{
@@ -401,7 +410,7 @@
 }
 
 
-.notActiveCard{
+.notActiveCard {
   padding: 5px;
   margin-left: 0.1em;
   margin-right: 0.1em;
@@ -414,6 +423,10 @@
   transition:.2s all; 
   border-radius: 0.8rem;
   box-shadow: $dropShadowGame;
+
+  &.own {
+    color: red;
+  }
 }
 
 

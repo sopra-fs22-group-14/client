@@ -73,12 +73,20 @@ const GameView = () => {
       );
     }
     // WHITE CARD
-    if(props.isChoice && props.role === true){
-      return(
-        <button className={className} onClick={() => setChosenWinner(props.cardId)}>
-        {props.text}
-        </button>
-      );
+    if(props.isChoice && props.role === true) {
+      if (props.choosable === false) {
+        return(
+          <button className="notActiveCard own" disabled>
+          {props.text}
+          </button>
+        );
+      } else {
+        return(
+          <button className={className} onClick={() => setChosenWinner(props.cardId)}>
+          {props.text}
+          </button>
+        );
+      }
     }
     else if(props.isChoice && props.role === false){
       return(
@@ -497,6 +505,7 @@ const GameView = () => {
       else requestBody = JSON.stringify({'cardId' : chosenCard, 'gameId': gameId}); // chosenCard = id of the card 
       await api.post(`/${roundId.current}/white`, requestBody);
       console.log("Player submitted a card: ", chosenCard);
+      fetchRoundData(); // fetch round data to immediately display the own choice
     } catch (error) {
       catchError(history, error, 'playing a white card');
     }
@@ -568,46 +577,44 @@ const GameView = () => {
   }
 
   const displayPlayedCards = (playersChoices, player, isCardCzarMode) => {
-    if(isCardCzarMode.current === true){
-      return (
-        <div className="gameView choiceSection cards">
+    if(isCardCzarMode.current === true) {
+      if (sessionStorage.getItem('cardsPlayed') == 1) {
+        return (
           <div className="gameView choiceSection cards">
-            {(sessionStorage.getItem('cardsPlayed') == 1) && 
-              playersChoices.map(choice => (
-              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
+            {playersChoices.map(choice => (
+            <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} choosable={false} role={true}/>
             ))}
-          </div> 
-          {(sessionStorage.getItem('cardsPlayed') == 0) && 
-            <div className="gameView choiceSection cards">
-              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={player.cardCzar}/>}
-            </div> 
-          }
-      </div>
-      );
-    }else{
+          </div>
+        );
+      } else if (sessionStorage.getItem('cardsPlayed') == 0) {
+        return (
+          <div className="gameView choiceSection cards">
+            {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} choosable={true} role={player.cardCzar}/>}
+            {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} choosable={true} role={player.cardCzar}/>}
+            {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} choosable={true} role={player.cardCzar}/>}
+          </div>
+        );
+      }
+    } else {
       // it is not a CardCzar mode so normal player should be able to send CHOICE after he/she submitted a card
-      return (
-        <div className="gameView choiceSection cards">
+      if (sessionStorage.getItem('cardsPlayed') != 1) {
+        return (
           <div className="gameView choiceSection cards">
-            {(sessionStorage.getItem('cardsPlayed') != 1) && 
-              playersChoices.map(choice => (
-              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
+            {playersChoices.map(choice => (
+            <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} choosable={choice.canBeChoosen} role={true}/>
             ))}
-          </div> 
-          {/* Played cards are clickable only when player already submitted a choice */}
-          {(sessionStorage.getItem('cardsPlayed') == 1) &&
-            <div className="gameView choiceSection cards">
-              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={true}/>}
-              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true}/>}
-              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true}/>}
-              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={true}/>}
-            </div> 
-          }
-      </div>
-      );
+          </div>
+        );
+      } else if (sessionStorage.getItem('cardsPlayed') == 1) {
+        return (
+          <div className="gameView choiceSection cards">
+            {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} choosable={playersChoices[0].canBeChoosen} role={true}/>}
+            {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} choosable={playersChoices[1].canBeChoosen} role={true}/>}
+            {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} choosable={playersChoices[2].canBeChoosen} role={true}/>}
+            {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} choosable={playersChoices[3].canBeChoosen} role={true}/>}
+          </div>
+        );
+      }
     }
   }
 
