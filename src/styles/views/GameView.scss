@@ -388,6 +388,22 @@
     flex-direction: row;
     justify-content: space-evenly;
   }
+
+  &.cardCzarHint {
+    position: absolute;
+    margin-top: 2.5em;
+    margin-left: 1em;
+    margin-right: 1em;
+    background-color: rgb(197, 197, 197);
+    border-radius: 1em;
+    border: solid black 2px;
+    h2 {
+      z-index: 1;
+      color: black;
+      font-size: x-large;
+      padding: 0.5em;
+    }
+  }
 }
 
 

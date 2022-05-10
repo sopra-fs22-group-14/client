@@ -801,6 +801,10 @@ const GameView = () => {
           <div className="gameView choiceSection">
             <h2>Round's played cards:</h2>
             {displayPlayedCards(playersChoices, player, isCardCzarMode)}
+            {/* {!player.cardCzar &&
+            <div className="gameView cardCzarHint">
+              <h2>You are a regular player this round!</h2>
+            </div> } */}
           </div>
 
           {/* COMMENT - choice section for normal players */}
@@ -820,8 +824,13 @@ const GameView = () => {
                   {player.cardsOnHands.map(card => (
                     <Card isBlack={false} isChoice={false} key={card.cardId} cardId={card.cardId} text={card.cardText} role={player.cardCzar}/>
                   ))}
-                </div> 
+                </div>
               }
+              {/* If player is a card czar, display a hint */}
+              {player.cardCzar &&
+              <div className="gameView cardCzarHint">
+                <h2>You are Card Czar this round!</h2>
+              </div> }
             </div>
           </div>
         </div>
