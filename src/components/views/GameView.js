@@ -21,6 +21,7 @@ const GameView = () => {
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
   const [wasCardPlayed, setWasCardPlayed] = useState(false); // used in connection to sessionStorage.getItem('cardsPlayed')
+  const [cardsPlayed, setCardsPlayed] = useState(null); // used only to trigger re-rendering to disable buttons
 
   // COMMENT Round data: 
   const [blackCard, setBlackCard] = useState(null);
@@ -483,21 +484,19 @@ const GameView = () => {
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
+      if (isCardCzarMode.current === false) {
+        setChosenCard(null); // TODO not needed after we display only cards that were not played by the player
+      }
+      // change cardsPlayed so that the useEffect is triggered to fetch the playerData (only 9 cards remaining)
+      sessionStorage.setItem('cardsPlayed', 1);
+      setCardsPlayed(cardsPlayed + 1);   // ensure re-render to disable button
+      setWasCardPlayed(true);
       let requestBody;
       // automatically choose card (in case countdown end is reached)
       if (chosenCard == null) requestBody = JSON.stringify({'cardId' : player.cardsOnHands[0].cardId, 'gameId': gameId});
       else requestBody = JSON.stringify({'cardId' : chosenCard, 'gameId': gameId}); // chosenCard = id of the card 
       await api.post(`/${roundId.current}/white`, requestBody);
       console.log("Player submitted a card: ", chosenCard);
-      if(isCardCzarMode.current === false){
-        setChosenCard(null); // TODO not needed after we display only cards that were not played by the player
-      }
-      /*
-      after successfully playing a card, change cardsPlayed so that the useEffect is triggered
-      to fetch the playerData. This will then update the white cards (only 9 left)
-      */
-      sessionStorage.setItem('cardsPlayed', 1);
-      setWasCardPlayed(true);
     } catch (error) {
       catchError(history, error, 'playing a white card');
     }
@@ -507,18 +506,18 @@ const GameView = () => {
   // method that is used when the Card Czar chooses a round winner
   const chooseRoundWinner = async () => {
     try {
+      if (isCardCzarMode.current) {
+        sessionStorage.setItem('cardsPlayed', 1); // to make the submit button disabled after submission in CardCzar mode
+      } else {
+        sessionStorage.setItem('cardsPlayed', 2); // to make the submit button disabled after submission in Community mode
+      }
+      setCardsPlayed(cardsPlayed + 1);   // ensure re-render to disable button
       let requestBody;
       // automatically choose winner (in case countdown end is reached)
       if (chosenWinner == null) requestBody = JSON.stringify({'cardId' : playersChoices[0].cardId, 'gameId': gameId});
       else requestBody = JSON.stringify({'cardId' : chosenWinner, 'gameId': gameId}); // chosenWinner = id of the card 
       await api.post(`/${roundId.current}/roundWinner`, requestBody);
       console.log("Card Czar picked a card: ", chosenWinner); 
-      if(isCardCzarMode.current){
-        sessionStorage.setItem('cardsPlayed', 1); // to make the submit button disabled after submission in CardCzar mode
-      }
-      else{
-        sessionStorage.setItem('cardsPlayed', 2); // to make the submit button disabled after submission in Community mode
-      }
     } catch (error) {
       catchError(history, error, 'choosing the winning card');
     }
