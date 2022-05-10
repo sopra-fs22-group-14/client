@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {useInterval} from 'helpers/utils';
+import {useInterval, pickRandom} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
 import {useHistory, useParams} from 'react-router-dom';
@@ -74,7 +74,7 @@ const GameView = () => {
     }
     // WHITE CARD
     if(props.isChoice && props.role === true) {
-      if (props.choosable === false) {
+      if (!props.choosable) {
         return(
           <button className="notActiveCard own" disabled>
           {props.text}
@@ -498,16 +498,22 @@ const GameView = () => {
       // change cardsPlayed so that the useEffect is triggered to fetch the playerData (only 9 cards remaining)
       sessionStorage.setItem('cardsPlayed', 1);
       setCardsPlayed(cardsPlayed + 1);   // ensure re-render to disable button
-      setWasCardPlayed(true);
       let requestBody;
       // automatically choose card (in case countdown end is reached)
-      if (chosenCard == null) requestBody = JSON.stringify({'cardId' : player.cardsOnHands[0].cardId, 'gameId': gameId});
-      else requestBody = JSON.stringify({'cardId' : chosenCard, 'gameId': gameId}); // chosenCard = id of the card 
+      if (chosenCard == null) {
+        let randomInt = pickRandom(10);
+        requestBody = JSON.stringify({'cardId' : player.cardsOnHands[randomInt].cardId, 'gameId': gameId});
+      } else {
+        requestBody = JSON.stringify({'cardId' : chosenCard, 'gameId': gameId}); // chosenCard = id of the card 
+      }
       await api.post(`/${roundId.current}/white`, requestBody);
       console.log("Player submitted a card: ", chosenCard);
+      setWasCardPlayed(true);
       fetchRoundData(); // fetch round data to immediately display the own choice
     } catch (error) {
       catchError(history, error, 'playing a white card');
+      sessionStorage.setItem('cardsPlayed', 0);
+      setCardsPlayed(cardsPlayed - 1);
     }
   }
 
@@ -522,13 +528,20 @@ const GameView = () => {
       }
       setCardsPlayed(cardsPlayed + 1);   // ensure re-render to disable button
       let requestBody;
-      // automatically choose winner (in case countdown end is reached)
-      if (chosenWinner == null) requestBody = JSON.stringify({'cardId' : playersChoices[0].cardId, 'gameId': gameId});
-      else requestBody = JSON.stringify({'cardId' : chosenWinner, 'gameId': gameId}); // chosenWinner = id of the card 
+      // automatically choose winner (in case countdown end is reached) - first or second card
+      if (chosenWinner == null) {
+        if (playersChoices[0].canBeChoosen) requestBody = JSON.stringify({'cardId' : playersChoices[0].cardId, 'gameId': gameId});
+        else requestBody = JSON.stringify({'cardId' : playersChoices[1].cardId, 'gameId': gameId});
+      } else {
+        requestBody = JSON.stringify({'cardId' : chosenWinner, 'gameId': gameId}); // chosenWinner = id of the card 
+      }
       await api.post(`/${roundId.current}/roundWinner`, requestBody);
       console.log("Card Czar picked a card: ", chosenWinner); 
     } catch (error) {
       catchError(history, error, 'choosing the winning card');
+      if (isCardCzarMode.current) sessionStorage.setItem('cardsPlayed', 0); // to enable button again if error is encountered
+      else sessionStorage.setItem('cardsPlayed', 1); // to enable button again if error is encountered
+      setCardsPlayed(cardsPlayed - 1); // re-render to make button enabled again
     }
   }
 

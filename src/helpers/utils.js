@@ -20,3 +20,8 @@ export const useInterval = (callback, delay) => {
     }
   }, [callback, delay])
 }
+
+// function to get a random integer
+export const pickRandom = (upperBound) => {
+  return Math.floor(Math.random() * upperBound);
+}
