@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {useInterval} from 'helpers/utils';
+import {useInterval, createText} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
 import {useHistory, useParams} from 'react-router-dom';
@@ -20,8 +20,7 @@ const GameView = () => {
   const didMountForChoosingCd = useRef(false);
 
   // TEXT-TO-SPEECH
-  const textToBeRead = useRef("This is an example text to be read out loud.");
-  const { speak } = useSpeechSynthesis();
+  const { speak, voices } = useSpeechSynthesis();
 
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
@@ -68,6 +67,19 @@ const GameView = () => {
         //  create a css which is marked as green 
     // }
     else className = props.isBlack ? "blackCard" : "card";
+
+    let tts = props.tts && 
+      <button onClick={() => {
+        let speakingVoice;
+        console.log(voices)
+        for (let i=0; i < voices.length; i++) {
+          if (voices[i].lang.includes('en')) {
+            speakingVoice = voices[i];
+          }
+        }
+        speak({text: createText(blackCard.cardText, props.text), voice: speakingVoice})
+      }}>📢</button>
+
     // BLACK CARD
     if (props.isBlack) {
       return (
@@ -80,28 +92,32 @@ const GameView = () => {
     if(props.isChoice && props.role === true){
       return(
         <button className={className} onClick={() => setChosenWinner(props.cardId)}>
-        {props.text}
+          {props.text}
+          {tts}
         </button>
       );
     }
     else if(props.isChoice && props.role === false){
       return(
         <button className="notActiveCard" disabled>
-        {props.text}
+          {props.text}
+          {tts}
         </button>
       );
     }
     else if(!props.isChoice && props.role === true){
       return(
         <button className="notActiveCard" disabled>
-        {props.text}
+          {props.text}
+          {tts}
         </button>
       );
     }
     else if(!props.isChoice && props.role === false){
       return(
         <button className={className} onClick={() => setChosenCard(props.cardId)}>
-        {props.text}
+          {props.text}
+          {tts}
         </button>
       );
     }
@@ -348,7 +364,7 @@ const GameView = () => {
         setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
         setBlackCard(blackCardVariable.current);
         // start the countdown for the next round
-        if (opponentNames != null) setPlayingCountdown(45);
+        if (opponentNames != null) setPlayingCountdown(2000);
         setWasCardPlayed(false);
         // last round finished
         if (isFinal.current && playersChoices.length > 0) {
@@ -367,7 +383,7 @@ const GameView = () => {
   const handlePlayingCountdown = () => {
     // initially, set playingCountdown to 45
     if (!sessionStorage.getItem('playingCountdown')) {
-      setPlayingCountdown(45);
+      setPlayingCountdown(2000);
     // or, if playingCountdown is already running, continue where left off (even if 0)
     } else {
       setPlayingCountdown(sessionStorage.getItem('playingCountdown'));
@@ -580,15 +596,15 @@ const GameView = () => {
           <div className="gameView choiceSection cards">
             {(sessionStorage.getItem('cardsPlayed') == 1) && 
               playersChoices.map(choice => (
-              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
+              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true} tts={true}/>
             ))}
           </div> 
           {(sessionStorage.getItem('cardsPlayed') == 0) && 
             <div className="gameView choiceSection cards">
-              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar}/>}
-              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={player.cardCzar}/>}
+              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={player.cardCzar} tts={true}/>}
+              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={player.cardCzar} tts={true}/>}
+              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={player.cardCzar} tts={true}/>}
+              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={player.cardCzar} tts={true}/>}
             </div> 
           }
       </div>
@@ -600,16 +616,16 @@ const GameView = () => {
           <div className="gameView choiceSection cards">
             {(sessionStorage.getItem('cardsPlayed') != 1) && 
               playersChoices.map(choice => (
-              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true}/>
+              <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} role={true} tts={true}/>
             ))}
           </div> 
           {/* Played cards are clickable only when player already submitted a choice */}
           {(sessionStorage.getItem('cardsPlayed') == 1) &&
             <div className="gameView choiceSection cards">
-              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={true}/>}
-              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true}/>}
-              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true}/>}
-              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={true}/>}
+              {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} role={true} tts={true}/>}
+              {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} role={true} tts={true}/>}
+              {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} role={true} tts={true}/>}
+              {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} role={true} tts={true}/>}
             </div> 
           }
       </div>
@@ -834,9 +850,6 @@ const GameView = () => {
     <BaseContainer className="gameView container">
       {countdown != 0 && displayEndRoundView()}
       {content}
-      <Button onClick={() => speak({ text: textToBeRead.current })}>
-        📣 Play
-      </Button>
     </BaseContainer>
   );
 };
