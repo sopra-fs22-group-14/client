@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {useInterval, pickRandom} from 'helpers/utils';
+import {useInterval, pickRandom, createText} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
 import {useHistory, useParams} from 'react-router-dom';
@@ -10,6 +10,7 @@ import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
+import { useSpeechSynthesis } from 'react-speech-kit';
 
 const GameView = () => {
   const { gameId } = useParams();
@@ -17,6 +18,9 @@ const GameView = () => {
   const didMount = useRef(false);
   const didMountForPlayingCd = useRef(false);
   const didMountForChoosingCd = useRef(false);
+
+  // TEXT-TO-SPEECH
+  const { speak, voices } = useSpeechSynthesis();
 
   // COMMENT Player data:
   const [player, setPlayer] = useState(null);
@@ -64,6 +68,19 @@ const GameView = () => {
         //  create a css which is marked as green 
     // }
     else className = props.isBlack ? "blackCard" : "card";
+
+    let tts = props.tts && 
+      <button onClick={() => {
+        let speakingVoice;
+        console.log(voices)
+        for (let i=0; i < voices.length; i++) {
+          if (voices[i].lang.includes('en')) {
+            speakingVoice = voices[i];
+          }
+        }
+        speak({text: createText(blackCard.cardText, props.text), voice: speakingVoice})
+      }}>📢</button>
+
     // BLACK CARD
     if (props.isBlack) {
       return (
@@ -77,13 +94,15 @@ const GameView = () => {
       if (!props.choosable) {
         return(
           <button className="notActiveCard own" disabled>
-          {props.text}
+            {props.text}
+            {tts}
           </button>
         );
       } else {
         return(
           <button className={className} onClick={() => setChosenWinner(props.cardId)}>
-          {props.text}
+            {props.text}
+            {tts}
           </button>
         );
       }
@@ -91,21 +110,24 @@ const GameView = () => {
     else if(props.isChoice && props.role === false){
       return(
         <button className="notActiveCard" disabled>
-        {props.text}
+          {props.text}
+          {tts}
         </button>
       );
     }
     else if(!props.isChoice && props.role === true){
       return(
         <button className="notActiveCard" disabled>
-        {props.text}
+          {props.text}
+          {tts}
         </button>
       );
     }
     else if(!props.isChoice && props.role === false){
       return(
         <button className={className} onClick={() => setChosenCard(props.cardId)}>
-        {props.text}
+          {props.text}
+          {tts}
         </button>
       );
     }
@@ -352,7 +374,7 @@ const GameView = () => {
         setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
         setBlackCard(blackCardVariable.current);
         // start the countdown for the next round
-        if (opponentNames != null) setPlayingCountdown(45);
+        if (opponentNames != null) setPlayingCountdown(2000);
         setWasCardPlayed(false);
         // last round finished
         if (isFinal.current && playersChoices.length > 0) {
@@ -371,7 +393,7 @@ const GameView = () => {
   const handlePlayingCountdown = () => {
     // initially, set playingCountdown to 45
     if (!sessionStorage.getItem('playingCountdown')) {
-      setPlayingCountdown(45);
+      setPlayingCountdown(2000);
     // or, if playingCountdown is already running, continue where left off (even if 0)
     } else {
       setPlayingCountdown(sessionStorage.getItem('playingCountdown'));
@@ -595,16 +617,16 @@ const GameView = () => {
         return (
           <div className="gameView choiceSection cards">
             {playersChoices.map(choice => (
-            <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} choosable={false} role={true}/>
+            <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} choosable={false} role={true} tts={true}/>
             ))}
           </div>
         );
       } else if (sessionStorage.getItem('cardsPlayed') == 0) {
         return (
           <div className="gameView choiceSection cards">
-            {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} choosable={true} role={player.cardCzar}/>}
-            {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} choosable={true} role={player.cardCzar}/>}
-            {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} choosable={true} role={player.cardCzar}/>}
+            {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} choosable={true} role={player.cardCzar} tts={true}/>}
+            {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} choosable={true} role={player.cardCzar} tts={true}/>}
+            {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} choosable={true} role={player.cardCzar} tts={true}/>}
           </div>
         );
       }
@@ -614,17 +636,17 @@ const GameView = () => {
         return (
           <div className="gameView choiceSection cards">
             {playersChoices.map(choice => (
-            <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} choosable={choice.canBeChoosen} role={true}/>
+            <Card isBlack={false} isChoice={false} key={choice.cardId} text={choice.cardText} choosable={choice.canBeChoosen} role={true} tts={true}/>
             ))}
           </div>
         );
       } else if (sessionStorage.getItem('cardsPlayed') == 1) {
         return (
           <div className="gameView choiceSection cards">
-            {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} choosable={playersChoices[0].canBeChoosen} role={true}/>}
-            {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} choosable={playersChoices[1].canBeChoosen} role={true}/>}
-            {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} choosable={playersChoices[2].canBeChoosen} role={true}/>}
-            {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} choosable={playersChoices[3].canBeChoosen} role={true}/>}
+            {Object.keys(playersChoices).length > 0 && <Card isBlack={false} isChoice={true} cardId={playersChoices[0].cardId} text={playersChoices[0].cardText} choosable={playersChoices[0].canBeChoosen} role={true} tts={true}/>}
+            {Object.keys(playersChoices).length > 1 && <Card isBlack={false} isChoice={true} cardId={playersChoices[1].cardId} text={playersChoices[1].cardText} choosable={playersChoices[1].canBeChoosen} role={true} tts={true}/>}
+            {Object.keys(playersChoices).length > 2 && <Card isBlack={false} isChoice={true} cardId={playersChoices[2].cardId} text={playersChoices[2].cardText} choosable={playersChoices[2].canBeChoosen} role={true} tts={true}/>}
+            {Object.keys(playersChoices).length > 3 && <Card isBlack={false} isChoice={true} cardId={playersChoices[3].cardId} text={playersChoices[3].cardText} choosable={playersChoices[3].canBeChoosen} role={true} tts={true}/>}
           </div>
         );
       }

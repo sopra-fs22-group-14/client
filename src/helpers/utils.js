@@ -21,6 +21,17 @@ export const useInterval = (callback, delay) => {
   }, [callback, delay])
 }
 
+// function to combine the black and white cards text (for TTS)
+export const createText = (black, white) => {
+
+  if (black.includes('_')) {
+    let index = black.indexOf('_');
+    return black.slice(0, index) + white + black.slice(index + 1);
+  } else {
+    return black + " " + white;
+  }
+}
+
 // function to get a random integer
 export const pickRandom = (upperBound) => {
   return Math.floor(Math.random() * upperBound);
