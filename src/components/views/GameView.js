@@ -374,7 +374,7 @@ const GameView = () => {
         setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
         setBlackCard(blackCardVariable.current);
         // start the countdown for the next round
-        if (opponentNames != null) setPlayingCountdown(2000);
+        if (opponentNames != null) setPlayingCountdown(60);
         setWasCardPlayed(false);
         // last round finished
         if (isFinal.current && playersChoices.length > 0) {
@@ -391,9 +391,9 @@ const GameView = () => {
   // ------------------------------ DIEGO: PLAYING COUNTDOWN ---------------------------------
 
   const handlePlayingCountdown = () => {
-    // initially, set playingCountdown to 45
+    // initially, set playingCountdown to 60
     if (!sessionStorage.getItem('playingCountdown')) {
-      setPlayingCountdown(2000);
+      setPlayingCountdown(60);
     // or, if playingCountdown is already running, continue where left off (even if 0)
     } else {
       setPlayingCountdown(sessionStorage.getItem('playingCountdown'));
@@ -454,7 +454,7 @@ const GameView = () => {
 
     // if it is -1, this indicates that the choosingCountdown should start
     if (sessionStorage.getItem('choosingCountdown') == -1) {
-      setChoosingCountdown(30);
+      setChoosingCountdown(45);
     // otherwise, continue where left off (even at 0)
     } else {
       setChoosingCountdown(sessionStorage.getItem('choosingCountdown'));
