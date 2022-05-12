@@ -30,5 +30,9 @@ export const createText = (black, white) => {
   } else {
     return black + " " + white;
   }
+}
 
+// function to get a random integer
+export const pickRandom = (upperBound) => {
+  return Math.floor(Math.random() * upperBound);
 }
