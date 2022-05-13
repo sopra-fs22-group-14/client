@@ -16,6 +16,7 @@ import { GameGuard } from "../routeProtectors/GameGuard";
 import EndGameView from "components/views/EndGameView";
 
 import ProfileOverview from "components/views/ProfileOverview";
+import ProfileRecords from "components/views/ProfileRecords";
 import { ProfileGuard } from "../routeProtectors/ProfileGuard";
 // import { FitToViewport } from "react-fit-to-viewport";
 
@@ -58,11 +59,19 @@ const AppRouter = () => {
         </Route>
 
 
-        <Route path="/profile/:loggedInUserID">
+        <Route exact path="/profile/:userId">
           <ProfileGuard>
             <ProfileOverview/>
           </ProfileGuard>
         </Route>
+
+        {/* TODO - this Guard needs to be changed as it should be acessible by other players and not only by the loggedIn */}
+        <Route exact path="/profile/:userId/records">
+          <ProfileGuard> 
+            <ProfileRecords/>
+          </ProfileGuard>
+        </Route>
+
 
 
 

@@ -7,18 +7,18 @@ import {api, updateApi, catchError} from 'helpers/api';
 const SideBar = props => {
   const history = useHistory();
   const [linkCopied, setLinkCopied] = useState(false);
+  const userId = localStorage.getItem('loggedInUserID');
 
   const redirectLobby = () => {
     history.push('/lobby');
   };
   
   const redirectProfile = () => {
-    const loggedInUserID = localStorage.getItem('loggedInUserID');
-    history.push(`/profile/${loggedInUserID}`);
+    history.push(`/profile/${userId}`);
   };
   
   const redirectRecords = () => {
-    history.push('/profile/records');
+    history.push(`/profile/${userId}/records`);
   };
 
   const redirectFriends = () => {

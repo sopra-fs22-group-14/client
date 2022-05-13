@@ -16,19 +16,18 @@
     justify-content: space-between;
     align-content: center;
   }
+  &.minor:hover{
+    border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
+  }
   &.minor{
     // background: yellow;
     transition: all .4s ease;
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
-
     width: 100%;
     padding: 1.5em;
     display: flex;
     flex-direction: column;
     align-items: center;  
-  }
-  &.minor:hover{
-    border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
   }
 }

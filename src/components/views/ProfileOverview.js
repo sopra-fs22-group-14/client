@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {api, catchError} from 'helpers/api';
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import {Button} from 'components/ui/Button';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import "styles/views/ProfileOverview.scss";
@@ -15,7 +15,7 @@ const FormFieldUsername = props => {
       <input
         className="profile inputUsername"
         placeholder="type new username..."
-        maxlength="15"
+        maxLength="10"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -97,27 +97,27 @@ const ProfileOverview = () => {
   };
 
   // TESTME - when edpoint is ready
-  useEffect(() => {
-    async function fetchUserData() {
-      try {
-        setIsPending(true);
-        const loggedInUserID = localStorage.getItem('loggedInUserID'); // TODO - do not send password back - no point in doing that 
-        const response = await api.get(`/users/${loggedInUserID}`);
-        setUsername(response.data.username);
-        setBirthday(response.data.birthday);
-        console.log('Fetching user data successfull');
-      } catch (error) {
-        setIsPending(false);
-        catchError(history, error, 'fetching the user data');
-      }
-    }
-    fetchUserData();
-  }, [isEditingCompleted]); // fetched on entry, when submitted change data, when pressed cancel 
+  // useEffect(() => {
+  //   async function fetchUserData() {
+  //     try {
+  //       setIsPending(true);
+  //       const loggedInUserID = localStorage.getItem('loggedInUserID'); // TODO - do not send password back - no point in doing that 
+  //       const response = await api.get(`/users/${loggedInUserID}`);
+  //       setUsername(response.data.username);
+  //       setBirthday(response.data.birthday);
+  //       console.log('Fetching user data successfull');
+  //     } catch (error) {
+  //       setIsPending(false);
+  //       catchError(history, error, 'fetching the user data');
+  //     }
+  //   }
+  //   fetchUserData();
+  // }, [isEditingCompleted]); // fetched on entry, when submitted change data, when pressed cancel 
 
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (true) {
+  if (true) { //TODO - change this "true" when endpoint is ready
     content = (
         <div className = "profile main">
           <SideBar height="100"/>
