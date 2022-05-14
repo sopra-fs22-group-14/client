@@ -21,8 +21,8 @@ const SideBar = props => {
     history.push(`/profile/${userId}/records`);
   };
 
-  const redirectFriends = () => {
-    history.push('/profile/friends');
+  const redirectUsers = () => {
+    history.push('/users');
   };
 
   const inviteFriends = () => {
@@ -51,7 +51,7 @@ const SideBar = props => {
       <ul className = "sidebar buttonsList">
         <li className = "listElement" onClick={() => redirectProfile()}>📝 Overview</li>
         <li className = "listElement" onClick={() => redirectRecords()}>🏆 Records</li>
-        <li className = "listElement" onClick={() => redirectFriends()}>🥰 Other players</li>
+        <li className = "listElement" onClick={() => redirectUsers()}>🥰 Other players</li>
         {!linkCopied && <li className = "listElement" onClick={() => inviteFriends()}>✉️ Invite friends</li>}
         {linkCopied && <li className = "listElementLink" onClick={() => inviteFriends()}>🖤 Link copied!</li>}
       </ul>

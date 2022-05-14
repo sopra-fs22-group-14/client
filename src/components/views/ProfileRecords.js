@@ -16,7 +16,6 @@ const ProfileRecords = () => {
   const [gamesPlayed, setGamesPlayed] = useState(null);
   const [pointsEarned, setPointsEarned] = useState(null);
   const [gamesWon, setGamesWon] = useState(null);
-  const [isPending, setIsPending] = useState(false);
   // FOR PAGINATION: 
   const [currentPage, setCurrentPage] = useState(1);
   const [favouriteCombinations, setFavouriteCombinations] = useState([]);
@@ -26,7 +25,6 @@ const ProfileRecords = () => {
   useEffect(() => {
     async function fetchUserRecordsData() {
       try {
-        setIsPending(true);
         // const response = await api.get(`/users/${userId}/records`); // TESTME - when edpoint is ready
                                                                        // BUG endpoint needs to be accessible by all the players 
         const response = [
@@ -57,7 +55,6 @@ const ProfileRecords = () => {
         setPageCount(Math.ceil(combinationsData.length / perPage));
         console.log('Fetching user records data successfull');
       } catch (error) {
-        setIsPending(false);
         catchError(history, error, 'fetching the user records data');
       }
     }
@@ -71,7 +68,7 @@ const ProfileRecords = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (gamesWon != null && username != null && gamesPlayed != null && pointsEarned != null && favouriteCombinations != null) {
+  if (gamesWon != null && username != null && gamesPlayed != null && pointsEarned != null && favouriteCombinations != []) {
     content = (
         <div className = "profile main">
           <SideBar height="100"/>
