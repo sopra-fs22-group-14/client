@@ -1,0 +1,139 @@
+@import 'styles/theme';
+
+// Profile: Overveiw, Records, Users
+.profile {
+  &.container {
+    // background: black;
+    padding: 2em;
+    width: 100%;
+    height: 100%;
+  }
+  &.main{
+    // background: purple;  
+    min-height: 40em;
+    width: 100%;
+    border-radius: $borderRadius;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+  }
+  // &.minor:hover{
+  //   border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
+  // }
+  &.minor{
+    // background: yellow;
+    // transition: all .4s ease;
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+    width: 100%;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+  }
+  & p,h2{
+    margin: 0.5em 0;
+  }
+  & h2{
+    margin: 0;
+  }
+}
+
+// Same as above but for Lobby
+.lobby {
+    &.container {
+      // background: black;
+      padding: 2em;
+      width: 100%;
+      height: 100%;
+    }
+    &.main{
+    //   background: purple;
+      min-height: 40em;
+      width: 100%;
+      border-radius: $borderRadius;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-content: center;
+    }
+    // &.games:hover{
+    //   border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
+    // }
+    &.games{
+      // background: yellow;
+      // transition: all .4s ease;
+      border-radius: $borderRadius;
+      box-shadow: $dropShadowGame;
+      width: 100%;
+      padding: 1.5em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;  
+    }
+    & p,h2{
+        margin: 0.5em 0;
+      }
+    & h2{
+        margin: 0;
+    }
+}
+
+
+// Lobby and Other registered players
+.tableHeader {
+    &.container {
+      flex-direction: row;
+      justify-content: center;
+      height: 1VW;
+      width: 100%;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      font-weight: 900;
+    }
+    &.container > div{
+      width: 50%;
+      margin: 10px;
+    } 
+  }
+  
+
+// Records and Other registered players
+.pagination{
+    // background-color: red;
+    padding: 0;
+    width: 100%;
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: wrap;
+  } 
+  .pagination > li > a{
+    margin: 0.1em;
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+    color: white;
+    background-color: black;
+    padding: 0.8em;
+    cursor: pointer;
+  }
+  .pagination > li > a:hover{
+    background-color: white ;
+    color: black;
+    transition: 0.3s;
+  }
+  
+  .pagination > li:hover{
+    transform: translateY(-3px);
+    transition: 0.1s;
+  }
+  .pagination > .active > a{
+    background-color: white ;
+    color: black;
+    transition: 0.3s;
+  }
+  

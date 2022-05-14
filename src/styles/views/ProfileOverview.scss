@@ -1,43 +1,15 @@
 @import 'styles/theme';
 
 .profile {
-  &.container {
-    // background: black;
-    padding: 2em;
-    width: 100%;
-    height: 100%;
-  }
-  &.main{
-    // background: purple;  
-    width: 100%;
-    border-radius: $borderRadius;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-content: center;
-  }
-  &.minor:hover{
-    border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
-  }
-  &.minor{
-    // background: yellow;
-    transition: all .4s ease;
-    border-radius: $borderRadius;
-    box-shadow: $dropShadowGame;
-    width: 100%;
-    padding: 1.5em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;  
-  }
-
   // FORM STYLING 
   &.form{
+    margin-top: 5em;
     padding: 0.2em;
     // background-color: red;
     // display: flex;
     // flex-direction: column;
     // justify-content: center;
+    // align-content: center;
     width: 60%;
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
@@ -100,6 +72,6 @@
   &.button-container {
     display: flex;
     justify-content: center;
-    margin-top: 2em;
+    margin-top: 4em;
   }
 }

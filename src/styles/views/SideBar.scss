@@ -1,31 +1,23 @@
 @import 'styles/theme';
 
 .sidebar {
-//   overflow: hidden;
-//   padding: 10px 10px;
-
   &.container {
+    // background-color: grey;
     cursor: pointer;
     background-color: #8585853b;
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
-    transition: all .4s ease;
-
     width: 15VW;
     padding-top: 5em;
     padding-bottom: 3em;
     display: flex;
     flex-direction: column;
-    // background-color: grey;
     text-align: left;
-
+    // transition: all .4s ease;
   }
-
-  &.container:hover{
-    border-radius: 0% 0% 50% 50% / 0% 0% 5% 5% ;
-  }
-
-
+  // &.container:hover{
+  //   border-radius: 0% 0% 50% 50% / 0% 0% 5% 5% ;
+  // }
   &.lobby{
     border-radius: $borderRadius;
     padding: 1em;
@@ -40,27 +32,25 @@
     padding: 1em;
   }
 
-
   // HOVERING OVER DIVs
   &.lobby:hover{
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
     background-color: rgb(255, 255, 255);
-    transition: all 0.7s ease;
+    transition: all 0.2s ease;
   }
   &.profile:hover{
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
     background-color: rgb(255, 255, 255);
-    transition: all 0.7s ease;
+    transition: all 0.2s ease;
   }
   &.logout:hover{
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame; 
     background-color: rgb(255, 255, 255);
-    transition: all 0.7s ease;
+    transition: all 0.2s ease;
   }
-
 
   // LIST 
   &.buttonsList{
@@ -75,13 +65,12 @@
     width: 9VW;
     margin: 0.6em;
     border-radius: $borderRadius;
-    // border-radius: 25px;
   } 
   &.buttonsList > li:hover{
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
     background-color: rgb(255, 255, 255);
-    transition: all 0.7s ease;
+    transition: all 0.2s ease;                    // Hovering 
   }
 }
 

@@ -5,8 +5,9 @@ import {Button} from 'components/ui/Button';
 import {useHistory, useParams} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
-import "styles/views/ProfileOverview.scss";
 import SideBar from "components/views/SideBar";
+import "styles/views/ProfileOverview.scss";
+import "styles/views/ProfileLobbyCommon.scss";
 
 // -------------------------------- FORMS --------------------------------
 const FormFieldUsername = props => {
@@ -120,7 +121,7 @@ const ProfileOverview = () => {
   if (true) { //TODO - change this "true" when endpoint is ready
     content = (
         <div className = "profile main">
-          <SideBar height="100"/>
+          <SideBar/>
           <div className="profile minor">
               <h2>Overview</h2>
               <div className="profile form">

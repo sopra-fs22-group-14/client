@@ -4,7 +4,7 @@ import "styles/views/SideBar.scss";
 import { useHistory } from "react-router-dom";
 import {api, updateApi, catchError} from 'helpers/api';
 
-const SideBar = props => {
+const SideBar = () => {
   const history = useHistory();
   const [linkCopied, setLinkCopied] = useState(false);
   const userId = localStorage.getItem('loggedInUserID');
@@ -45,7 +45,7 @@ const SideBar = props => {
   }
 
   return (
-    <div className="sidebar container" style={{height: props.height}}>
+    <div className="sidebar container">
       <div className="sidebar lobby" onClick={() => redirectLobby()}>🎮 Lobby</div>
       <div className="sidebar profile" onClick={() => redirectProfile()}>📸 Profile</div>
       <ul className = "sidebar buttonsList">
@@ -59,9 +59,5 @@ const SideBar = props => {
     </div>
   );
 }
-
-SideBar.propTypes = {
-  height: PropTypes.string
-};
 
 export default SideBar;

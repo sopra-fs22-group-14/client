@@ -1,49 +1,13 @@
 @import 'styles/theme';
 
 .lobby {
-
-  &.container {
-    padding: 2em;
-    width: 100%;
-    height: 100%;
-    // background: black;
-  }
-  &.main{
-    width: 100%;
-    // background: purple;
-    border-radius: $borderRadius;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-content: center;
-  }
-
-  &.games:hover{
-    border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
-    // box-shadow: 10px 10px rgba(0,0,0,.25);
-  }
   &.games{
-    // background: yellow;
-
-    // FRAME: 
-    // position: relative;
-    // border-radius: 0% 0% 0% 0% / 0% 0% 0% 0% ;
-    // box-shadow: 20px 20px rgba(0,0,0,.15);
-    transition: all .4s ease;
-    border-radius: $borderRadius;
-    box-shadow: $dropShadowGame;
-
-    width: 100%;
-    padding: 1.5em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;  
-
     .buttons{
       width: 100%;
       // background-color: blue;
     }
   }
+
   &.games-list {
     list-style: none;
     padding-left: 0;
@@ -55,35 +19,6 @@
     align-items: center;
     justify-content: center;
   }
-  & p,h2{
-    margin: 0.5em 0;
-  }
-  & h2{
-    margin: 0;
-  }
-}
-
-
-
-.tableHeader {
-  &.container {
-    flex-direction: row;
-    justify-content: center;
-    height: 1VW;
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    font-weight: 900;
-    // background: lighten($background, 5);
-    // border-radius: $borderRadius;
-    // background: yellow;
-    // box-shadow: $dropShadow;
-  }
-  &.container > div{
-    width: 50%;
-    margin: 10px;
-  } 
 }
 
 

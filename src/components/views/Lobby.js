@@ -6,8 +6,9 @@ import {useHistory} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import {useInterval} from 'helpers/utils';
-import "styles/views/Lobby.scss";
 import SideBar from "components/views/SideBar";
+import "styles/views/Lobby.scss";
+import "styles/views/ProfileLobbyCommon.scss";
 
 
 // -------------------------------- LOBBY --------------------------------
@@ -66,7 +67,7 @@ const Lobby = () => {
   if (games) {
     content = (
       <div className = "lobby main">
-        <SideBar height="100"/>
+        <SideBar/>
         <div  className="lobby games">
           <h2>Games</h2>
           <h5>Join by clicking on the game!</h5>

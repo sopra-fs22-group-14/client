@@ -3,9 +3,10 @@ import {api, catchError} from 'helpers/api';
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import {useHistory, useParams} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
-import "styles/views/ProfileRecords.scss";
 import SideBar from "components/views/SideBar";
 import ReactPaginate from 'react-paginate';
+import "styles/views/ProfileRecords.scss";
+import "styles/views/ProfileLobbyCommon.scss";
 
 
 // -------------------------------- ProfileRecords --------------------------------
@@ -71,7 +72,7 @@ const ProfileRecords = () => {
   if (gamesWon != null && username != null && gamesPlayed != null && pointsEarned != null && favouriteCombinations != []) {
     content = (
         <div className = "profile main">
-          <SideBar height="100"/>
+          <SideBar/>
           <div className="profile minor">
               <h2>Records</h2>
               <h3 className = "animatedH3">{username}</h3>
@@ -92,7 +93,6 @@ const ProfileRecords = () => {
                 </tbody>
             </table>
             <div className = "profile combinations">
-                  
                   <div className = "profile combinations list"> 
                     <h4>Favourite combinations</h4>
                       {favouriteCombinations}
