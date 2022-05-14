@@ -1,0 +1,105 @@
+@import 'styles/theme';
+
+.profile {
+  &.container {
+    // background: black;
+    padding: 2em;
+    width: 100%;
+    height: 100%;
+  }
+  &.main{
+    // background: purple;  
+    width: 100%;
+    border-radius: $borderRadius;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+  }
+  &.minor:hover{
+    border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
+  }
+  &.minor{
+    // background: yellow;
+    transition: all .4s ease;
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+    width: 100%;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+  }
+
+  // FORM STYLING 
+  &.form{
+    padding: 0.2em;
+    // background-color: red;
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: center;
+    width: 60%;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  &.formTable{
+    // background-color: aqua;
+    width: 100%;
+    table-layout: fixed;
+    text-align: left;
+    font-size: large;
+    // padding: 0.5em;
+    td{
+      padding: 0.5em;
+      text-shadow: $dropShadowGame;
+    }
+  }
+  &.formField {
+    // background-color: green;
+    width: 100%;
+    text-align: center;
+  }
+  &.inputUsername {
+    padding: 0.5em;
+    height: 2em;
+    width: 100%;
+    text-align: center;
+    border: none;
+    border-radius: $borderRadius;
+    background: #d6d6d6;
+    color: $textColor;
+  }
+  &.inputUsername:hover {
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
+  }
+  &.inputPassword{
+    padding: 0.5em;
+    height: 2em;
+    width: 100%;
+    text-align: center;
+    border: none;
+    border-radius: $borderRadius;
+    background: #d6d6d6;
+    color: $textColor;
+  }
+  &.inputPassword:hover {
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
+  }
+  &.inputBirthday{
+    padding: 0.5em;
+    height: 2em;
+    width: 100%;
+    text-align: center;
+    border: none;
+    border-radius: $borderRadius;
+    background: #d6d6d6;
+    color: $textColor;
+  }
+  &.inputBirthday:hover {
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
+  }
+  &.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2em;
+  }
+}

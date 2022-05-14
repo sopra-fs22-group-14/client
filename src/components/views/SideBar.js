@@ -7,25 +7,22 @@ import {api, updateApi, catchError} from 'helpers/api';
 const SideBar = props => {
   const history = useHistory();
   const [linkCopied, setLinkCopied] = useState(false);
+  const userId = localStorage.getItem('loggedInUserID');
 
   const redirectLobby = () => {
     history.push('/lobby');
   };
   
   const redirectProfile = () => {
-    history.push('/profile');
+    history.push(`/profile/${userId}`);
   };
   
-  const redirectOverview = () => {
-    history.push('/profile/overview');
-  };
-
   const redirectRecords = () => {
-    history.push('/profile/records');
+    history.push(`/profile/${userId}/records`);
   };
 
-  const redirectFriends = () => {
-    history.push('/profile/friends');
+  const redirectUsers = () => {
+    history.push('/users');
   };
 
   const inviteFriends = () => {
@@ -52,9 +49,9 @@ const SideBar = props => {
       <div className="sidebar lobby" onClick={() => redirectLobby()}>🎮 Lobby</div>
       <div className="sidebar profile" onClick={() => redirectProfile()}>📸 Profile</div>
       <ul className = "sidebar buttonsList">
-        <li className = "listElement" onClick={() => redirectOverview()}>📝 Overview</li>
+        <li className = "listElement" onClick={() => redirectProfile()}>📝 Overview</li>
         <li className = "listElement" onClick={() => redirectRecords()}>🏆 Records</li>
-        <li className = "listElement" onClick={() => redirectFriends()}>🥰 Friends</li>
+        <li className = "listElement" onClick={() => redirectUsers()}>🥰 Other players</li>
         {!linkCopied && <li className = "listElement" onClick={() => inviteFriends()}>✉️ Invite friends</li>}
         {linkCopied && <li className = "listElementLink" onClick={() => inviteFriends()}>🖤 Link copied!</li>}
       </ul>
