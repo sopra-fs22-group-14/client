@@ -53,6 +53,7 @@ const GameView = () => {
   // keep track of which card was selected - ID of the card
   // COMMENT they have to be reset to null when a new round starts! -> see "if (didMount.current) {...}"
   const [chosenCard, setChosenCard] = useState(null);     // id of the selected card
+  const chosenCardText = useRef(null);
   const [chosenWinner, setChosenWinner] = useState(null); // id of the selected card
 
   // variables to temporarily store information of a new round
@@ -125,7 +126,9 @@ const GameView = () => {
     }
     else if(!props.isChoice && props.role === false){
       return(
-        <button className={className} onClick={() => setChosenCard(props.cardId)}>
+        <button className={className} onClick={() => {
+          setChosenCard(props.cardId)
+          chosenCardText.current = props.text}}>
           {props.text}
           {tts}
         </button>
@@ -335,6 +338,7 @@ const GameView = () => {
         sessionStorage.setItem('winnerCountdown', 0);
       }
       setChosenCard(null);
+      chosenCardText.current = null;
       setChosenWinner(null);
       // TODO set session storage to 0 after the round is over, maybe also wasCardPlayed to null
     }
@@ -516,6 +520,7 @@ const GameView = () => {
     try {
       if (isCardCzarMode.current === false) {
         setChosenCard(null); // TODO not needed after we display only cards that were not played by the player
+        chosenCardText.current = null;
       }
       // change cardsPlayed so that the useEffect is triggered to fetch the playerData (only 9 cards remaining)
       sessionStorage.setItem('cardsPlayed', 1);
@@ -524,9 +529,11 @@ const GameView = () => {
       // automatically choose card (in case countdown end is reached)
       if (chosenCard == null) {
         let randomInt = pickRandom(10);
-        requestBody = JSON.stringify({'cardId' : player.cardsOnHands[randomInt].cardId, 'gameId': gameId});
+        let combination = createText(blackCard.cardText, player.cardsOnHands[randomInt].cardText)
+        requestBody = JSON.stringify({'cardId' : player.cardsOnHands[randomInt].cardId, 'gameId': gameId, 'currentCombination' : combination});
       } else {
-        requestBody = JSON.stringify({'cardId' : chosenCard, 'gameId': gameId}); // chosenCard = id of the card 
+        let combination = createText(blackCard.cardText, chosenCardText.current)
+        requestBody = JSON.stringify({'cardId' : chosenCard, 'gameId': gameId, 'currentCombination' : combination}); // chosenCard = id of the card 
       }
       await api.post(`/${roundId.current}/white`, requestBody);
       console.log("Player submitted a card: ", chosenCard);
@@ -667,7 +674,9 @@ const GameView = () => {
                 <Button
                     disabled = {!chosenCard || (sessionStorage.getItem('cardsPlayed') > 0)}
                     width="100%"
-                    onClick={() => setChosenCard(null)}
+                    onClick={() => {
+                      setChosenCard(null)
+                      chosenCardText.current = null}}
                   >
                   🔁 Reset choice
                 </Button>
