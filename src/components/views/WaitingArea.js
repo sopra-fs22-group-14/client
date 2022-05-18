@@ -66,7 +66,6 @@ const WaitingArea = () => {
       <div className="waitingArea base">
         <h2>{gameName}</h2>
         <SpinnerSquares/> {/* <WaitingLogo/> */}
-        <h3>Waiting for players...</h3>
         <h2 className={hname}>{playerCount}/4</h2>
         <div className="waitingArea progress">
           <div className={bname} />

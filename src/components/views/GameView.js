@@ -35,8 +35,7 @@ const GameView = () => {
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
   const [countdown, setCountdown] = useState(0);
   const isFinal = useRef(false); // if round is final then after countdown push to gameEndView screen
-  // const [playingCountdown, setPlayingCountdown] = useState(sessionStorage.getItem('playingCountdown') ?? 60);
-  const isChoosing = useRef(sessionStorage.getItem('isChoosing') ?? false);
+  const [isChoosing, setIsChoosing] = useState(sessionStorage.getItem('isChoosing') ?? false);
   
   // COMMENT Game data:
   // const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
@@ -234,13 +233,13 @@ const GameView = () => {
   useInterval(() => {
     // if new round data is available, display the new data
     fetchRoundData();
-  }, pollingActive ? 2000 : null);
+  }, pollingActive ? 1000 : null);
 
 
   // This useInterval is used to fetch the latest round winner, the opponent names and the roundNr
   useInterval(() => {
     fetchGameInformation();
-  }, pollingActive ? 2000 : null);
+  }, pollingActive ? 1000 : null);
 
 
   const fetchRoundData = async () => {
@@ -353,7 +352,7 @@ const GameView = () => {
         // start the countdown for the next round
         if (opponentNames != null) {
           sessionStorage.setItem('playingCountdown', 60);
-          isChoosing.current = false;
+          setIsChoosing(false);
           sessionStorage.setItem('isChoosing', false);
         }
         setWasCardPlayed(false);
@@ -373,7 +372,7 @@ const GameView = () => {
 
   const handleTimerFinish = () => {
     // ----- PLAY card -----
-    if (!isChoosing.current) {
+    if (!isChoosing) {
       // if you have already played or don't need to play, then don't do anything
       if (player.cardCzar || (sessionStorage.getItem('cardsPlayed') == 1)) return;
       playCard();
@@ -393,8 +392,8 @@ const GameView = () => {
     if (playersChoices == null) return;
     if ((isCardCzarMode.current && playersChoices.length == 3) || (!isCardCzarMode.current && playersChoices.length == 4)) {
       // handleChoosingCountdown();
-      if (isChoosing.current) return;
-      isChoosing.current = true;
+      if (isChoosing) return;
+      setIsChoosing(true);
       sessionStorage.setItem('isChoosing', true);
       sessionStorage.setItem('playingCountdown', 45);
     }
@@ -691,10 +690,10 @@ const GameView = () => {
         <div className="gameView topSection">
           <div className="gameView topSection leaderboard">
             {/* COUNTDOWN */}
-            { !isChoosing.current &&
+            { !isChoosing &&
               <div><h3>Time left to play a card:</h3><br/><Countdown onFinish={handleTimerFinish} /></div>}
-            { isChoosing.current &&
-              <div><h3>Time left to play a card:</h3><br/><Countdown onFinish={handleTimerFinish} /></div>}
+            { isChoosing &&
+              <div><h3>Time left to pick a favourite:</h3><br/><Countdown onFinish={handleTimerFinish} /></div>}
           </div>
           <div className="gameView topSection center"> 
             <div className="gameView tile">
@@ -731,10 +730,6 @@ const GameView = () => {
           <div className="gameView choiceSection">
             <h2>Round's played cards:</h2>
             {displayPlayedCards(playersChoices, player, isCardCzarMode)}
-            {/* {!player.cardCzar &&
-            <div className="gameView cardCzarHint">
-              <h2>You are a regular player this round!</h2>
-            </div> } */}
           </div>
 
           {/* COMMENT - choice section for normal players */}
@@ -757,23 +752,26 @@ const GameView = () => {
                 </div>
               }
               {/* If player is a card czar, display a hint */}
-              {player.cardCzar &&
-              <div className="gameView cardCzarHint">
-                <h2>You are Card Czar this round!</h2>
-              </div> }
+              {player.cardCzar && <div className="gameView cardCzarHint"><h2>You are Card Czar this round!</h2></div> }
             </div>
           </div>
         </div>
-        {/* BUTTONS SECTION */}
-        {displayButtons(player, isCardCzarMode, chosenCard, playersChoices)}
       </div>
     );
   }
+  // ------------------------------- IF for Buttons -----------------------------
+  let buttons = null;
+  if (player != null && blackCard != null && playersChoices != null && roundNr != null && opponentNames != null && opponentNames != playersWhoPlayed) {
+    buttons = displayButtons(player, isCardCzarMode, chosenCard, playersChoices);
+  }
+
   // -------------------------------- RETURN --------------------------------
   return (
     <BaseContainer className="gameView container">
       {countdown != 0 && displayEndRoundView()}
       {content}
+      {/* Have the buttons clickable (for leaving) also during the confetti phase */}
+      {buttons}
     </BaseContainer>
   );
 };

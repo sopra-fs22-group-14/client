@@ -28,7 +28,7 @@ const Countdown = props => {
         }
       }, 1000);
 
-      if (playingCountdown === 0) return <h3>submitting...</h3>
+      if (playingCountdown === 0) return <h2>submitting...</h2>
       else if (playingCountdown === -1) return <div></div>
       else return <h2>{playingCountdown}</h2>;
 
