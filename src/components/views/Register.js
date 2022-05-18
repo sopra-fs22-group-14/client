@@ -20,6 +20,8 @@ const FormFieldText = props => {
         placeholder="Username"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
+        onKeyPress={event => {
+          if (event.key === 'Enter' && props.value && props.password) props.onKeyPress()}}
       />
     </div>
   );
@@ -37,6 +39,8 @@ const FormFieldPassword = props => {
         placeholder="Password"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
+        onKeyPress={event => {
+          if (event.key === 'Enter' && props.username && props.value) props.onKeyPress()}}
       />
     </div>
   );
@@ -95,14 +99,16 @@ const Register = () => {
         <div className="register form">
           <h2>Register</h2>
           <FormFieldText
-            //label="Username"
             value={username}
             onChange={un => setUsername(un)}
+            onKeyPress={doRegister}
+            password={password}
           />
           <FormFieldPassword
-            //label="Password"
             value={password}
             onChange={pw => setPassword(pw)}
+            onKeyPress={doRegister}
+            username={username}
           />
 
           <div className="register button-container">

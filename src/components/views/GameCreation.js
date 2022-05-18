@@ -14,9 +14,12 @@ const FormField = props => {
         {props.label}
       </label>
       <select
+        disabled={props.disabled}
         className="gameCreation select"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
+        onKeyPress={event => {
+          if (event.key === 'Enter' && props.gamename) props.onKeyPress()}}
       >
         <option value={props.value1}>{props.option1}</option>
         <option value={props.value2}>{props.option2}</option>
@@ -38,6 +41,8 @@ const FormFieldInput = props => {
         maxLength="20"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
+        onKeyPress={event => {
+          if (event.key === 'Enter' && props.value) props.onKeyPress()}}
       />
     </div>
   );
@@ -83,9 +88,9 @@ const GameCreation = () => {
           <div className="gameCreation form">
             <h2>Create a new game</h2>
             <FormFieldInput
-              // label="1) Choose a name"
               value={gameName}
               onChange={gn => setGameName(gn)}
+              onKeyPress={createGame}
             />
             <FormField
               label="1) Choose Card Type"
@@ -95,6 +100,9 @@ const GameCreation = () => {
               value2="family"
               value={gameEdition}
               onChange={ge => setGameEdition(ge)}
+              onKeyPress={createGame}
+              gamename={gameName}
+              disabled={isPending}
             />
             <FormField
               label="2) Choose Game Mode"
@@ -104,6 +112,9 @@ const GameCreation = () => {
               value2="false"
               value={cardCzarMode}
               onChange={czm => setCardCzarMode(czm)}
+              onKeyPress={createGame}
+              gamename={gameName}
+              disabled={isPending}
             />
             <FormField
               label="3) Choose Number of Rounds"
@@ -115,6 +126,9 @@ const GameCreation = () => {
               value3={16}
               value={numOfRounds}
               onChange={ro => setNumOfRounds(ro)}
+              onKeyPress={createGame}
+              gamename={gameName}
+              disabled={isPending}
             />
             <div className="gameCreation button-container">
               {!isPending && 

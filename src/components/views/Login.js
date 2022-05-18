@@ -24,6 +24,8 @@ const FormField = props => {
         placeholder="Username"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
+        onKeyPress={event => {
+          if (event.key === 'Enter' && props.value && props.password) props.onKeyPress()}}
       />
     </div>
   );
@@ -41,6 +43,8 @@ const FormFieldPassword = props => {
         placeholder="Password"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
+        onKeyPress={event => {
+          if (event.key === 'Enter' && props.username && props.value) props.onKeyPress()}}
       />
     </div>
   );
@@ -59,6 +63,7 @@ FormFieldPassword.propTypes = {
 };
 
 const Login = props => {
+
   const history = useHistory();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -96,14 +101,16 @@ const Login = props => {
         <div className="login form">
         <h2>Login</h2>
           <FormField
-            // label="Username"
             value={username}
             onChange={un => setUsername(un)}
+            onKeyPress={doLogin}
+            password={password}
           />
           <FormFieldPassword
-            // label="Password"
             value={password}
             onChange={n => setPassword(n)}
+            onKeyPress={doLogin}
+            username={username}
           />
 
           <div className="login button-container">
