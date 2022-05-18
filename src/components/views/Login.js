@@ -60,8 +60,8 @@ FormFieldPassword.propTypes = {
 
 const Login = props => {
   const history = useHistory();
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [isPending, setIsPending] = useState(false);
 
   const doLogin = async () => {

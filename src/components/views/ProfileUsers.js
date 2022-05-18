@@ -20,9 +20,9 @@ const ProfileUsers = () => {
 
   // -------------------------------- container for each USER --------------------------------
   const User = ({user}) => (
-    <div className="user container" onClick={() => visitProfile(user.userId)}>    
-      <div className="user name">{user.userName}</div>
-      <div className="user status">{user.userStatus ? "Online🟢" : "Offline🔴"}</div>
+    <div className="user container" onClick={() => visitProfile(user.id)}>    
+      <div className="user name">{user.username}</div>
+      <div className="user status">{user.status == "OFFLINE" && "Offline🔴"} {user.status == "ONLINE" && "Online🟢"}</div>
     </div>
   );
   User.propTypes = {user: PropTypes.object};
@@ -30,36 +30,14 @@ const ProfileUsers = () => {
   useEffect(() => {
     async function fetchListOfUsers() {
       try {
-        // const response = await api.get(`/users`); // TESTME - when edpoint is ready
-                                                     // BUG endpoint needs to be accessible by all the players 
-                                                     // BUG - endpoint needs to return all users except user who made the request
-        const response = [ 
-            { userId: 1, userName: "SuperCrazhingsOut", userStatus: true},
-            { userId: 2, userName: "ChupapiMuñañyo", userStatus: false},
-            { userId: 3, userName: "Ohyesdaddy", userStatus: true},
-            { userId: 4, userName: "Alex", userStatus: true},
-            { userId: 5, userName: "Diego", userStatus: true},
-            { userId: 6, userName: "Ege", userStatus: true},
-            { userId: 7, userName: "Tom", userStatus: false},
-            { userId: 8, userName: "Jerry", userStatus: false},
-            { userId: 9, userName: "Ege1", userStatus: true},
-            { userId: 10, userName: "Ege2", userStatus: true},
-            { userId: 11, userName: "Ege3", userStatus: true},
-            { userId: 12, userName: "Ege4", userStatus: true},
-            { userId: 13, userName: "Ege5", userStatus: true},
-            { userId: 14, userName: "Ege6", userStatus: true},
-            { userId: 15, userName: "Ege7", userStatus: true},
-            { userId: 16, userName: "Ege8", userStatus: true},
-            { userId: 17, userName: "Ege9", userStatus: true},
-            { userId: 18, userName: "Ege10", userStatus: true},
-        ];
-        response.sort((a,b) => b.userStatus - a.userStatus); // sorting based on online status
+        const response = (await api.get(`/users`)).data;
+        console.log(response);
+        response.sort((a,b) => (a.status < b.status) ? 1 : ((b.status < a.status) ? -1 : 0)) // sorting based on online status
         const slice = response.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
-        console.log(slice);
         const postSliceData =(
           <ul className="profile users-list">
             {slice.map(user => (
-              <User user={user} key={user.userId}/>
+              <User user={user} key={user.id}/>
             ))}
           </ul>)               
         setUsers(postSliceData);
@@ -76,8 +54,8 @@ const ProfileUsers = () => {
     setCurrentPage(e.selected + 1)
   };
 
-  const visitProfile = async (userId) => { 
-    history.push(`/profile/${userId}/records`);
+  const visitProfile = async (id) => { 
+    history.push(`/profile/${id}/records`);
   }
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;

@@ -14,8 +14,8 @@ const ProfileRecords = () => {
   const { userId } = useParams();
   const history = useHistory(); // history.push(`/profile/${userId}/records`);
   const [username, setUsername] = useState(null);
-  const [gamesPlayed, setGamesPlayed] = useState(null);
-  const [pointsEarned, setPointsEarned] = useState(null);
+  const [roundsWon, setRoundsWon] = useState(null);       // for Card Czar  
+  const [pointsEarned, setPointsEarned] = useState(null); // for Community
   const [gamesWon, setGamesWon] = useState(null);
   // FOR PAGINATION: 
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,33 +26,43 @@ const ProfileRecords = () => {
   useEffect(() => {
     async function fetchUserRecordsData() {
       try {
-        // const response = await api.get(`/users/${userId}/records`); // TESTME - when edpoint is ready
-                                                                       // BUG endpoint needs to be accessible by all the players 
-        const response = [
-          { username: "John Doe" },
-          { gamesPlayed: 10 },
-          { pointsEarned: 56 },
-          { gamesWon: 2 },
-          { favouriteCombinations: [
-            { combinationId: 1 , combinationText: "SuperCrazyFreackingFancyMysteriousGreatAndAwesomeAsWellAsLegendaryAndStupidOrWellThoughtStringJustToTestThingsOut"},
-            { combinationId: 2 , combinationText: "Chupapi Muñañyo"},
-            { combinationId: 3 , combinationText: "Oh yes daddy 🤪"},
-            { combinationId: 4 , combinationText: "Oh wow this design is super ugly"},
-            { combinationId: 5 , combinationText: "You know what also is ugly? Yo mama!"},
-            { combinationId: 6 , combinationText: "Why is life so hard guys?"}
-          ]},
-        ];
-        const combinationsData = response[4].favouriteCombinations;
+        const response = await api.get(`/users/${userId}/records`);
+        const combinationsData = response.data.bestCombinations;
         const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
         const postData = slice.map(combination => 
           <div key={combination.combinationId}>
               <p>{combination.combinationText}</p>
           </div>)
         setFavouriteCombinations(postData);
-        setUsername(response[0].username);
-        setGamesPlayed(response[1].gamesPlayed);
-        setPointsEarned(response[2].pointsEarned);
-        setGamesWon(response[3].gamesWon);
+        setUsername(response.data.username);
+        setRoundsWon(response.data.totalRoundWon); // for Card Czar 
+        setPointsEarned(response.data.timesPicked);  // for Community
+        setGamesWon(response.data.totalGameWon);
+        // const response = [
+        //   { username: "John Doe" },
+        //   { roundsWon: 10 },
+        //   { pointsEarned: 56 },
+        //   { gamesWon: 2 },
+        //   { favouriteCombinations: [
+        //     { combinationId: 1 , combinationText: "SuperCrazyFreackingFancyMysteriousGreatAndAwesomeAsWellAsLegendaryAndStupidOrWellThoughtStringJustToTestThingsOut"},
+        //     { combinationId: 2 , combinationText: "Chupapi Muñañyo"},
+        //     { combinationId: 3 , combinationText: "Oh yes daddy 🤪"},
+        //     { combinationId: 4 , combinationText: "Oh wow this design is super ugly"},
+        //     { combinationId: 5 , combinationText: "You know what also is ugly? Yo mama!"},
+        //     { combinationId: 6 , combinationText: "Why is life so hard guys?"}
+        //   ]},
+        // ];
+        // const combinationsData = response[4].favouriteCombinations;
+        // const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
+        // const postData = slice.map(combination => 
+        //   <div key={combination.combinationId}>
+        //       <p>{combination.combinationText}</p>
+        //   </div>)
+        // setFavouriteCombinations(postData);
+        // setUsername(response[0].username);
+        // setRoundsWon(response[1].roundsWon);
+        // setPointsEarned(response[2].pointsEarned);
+        // setGamesWon(response[3].gamesWon);
         setPageCount(Math.ceil(combinationsData.length / perPage));
         console.log('Fetching user records data successfull');
       } catch (error) {
@@ -69,7 +79,7 @@ const ProfileRecords = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (gamesWon != null && username != null && gamesPlayed != null && pointsEarned != null && favouriteCombinations != []) {
+  if (gamesWon != null && username != null && roundsWon != null && pointsEarned != null && favouriteCombinations != []) {
     content = (
         <div className = "profile main">
           <SideBar/>
@@ -79,16 +89,16 @@ const ProfileRecords = () => {
               <table className = "profile statsTable">
                 <tbody>
                     <tr>
-                      <td>🎮 Games played</td>
-                      <td>{gamesPlayed}</td>
+                      <td>🏆Games won</td>
+                      <td>{gamesWon}</td>
                     </tr>
                     <tr>
-                      <td>⭐Points earned</td>
+                      <td>⭐Points earned (Community mode)</td>
                       <td>{pointsEarned}</td>
                     </tr>
                     <tr>
-                      <td>🏆Games won</td>
-                      <td>{gamesWon}</td>
+                      <td>🥊Rounds won (Card Czar mode)</td>
+                      <td>{roundsWon}</td>
                     </tr>
                 </tbody>
             </table>

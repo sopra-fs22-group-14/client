@@ -110,7 +110,7 @@ const ProfileOverview = () => {
       cancelEdit();
     } catch (error) {
       setIsPending(false);
-      catchError(history, error, 'changing user password');
+      catchError(history, error, 'changing user password', true);
     }
   };
 
@@ -127,7 +127,7 @@ const ProfileOverview = () => {
       cancelEdit();
     } catch (error) {
       setIsPending(false);
-      catchError(history, error, 'changing user data');
+      catchError(history, error, 'changing user data', true);
     }
   };
 
