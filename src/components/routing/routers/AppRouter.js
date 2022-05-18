@@ -1,25 +1,23 @@
 import {BrowserRouter, Redirect, Route, Switch, useRouteMatch} from "react-router-dom";
 import React, { Fragment } from 'react'
-import {LobbyGuard} from "components/routing/routeProtectors/LobbyGuard";
 import LobbyRouter from "components/routing/routers/LobbyRouter";
-import {LoginGuard} from "components/routing/routeProtectors/LoginGuard";
 import Header from "components/views/Header";
 import Login from "components/views/Login";
 import Register from "components/views/Register";
 import Home from "components/views/Home";
 import About from "components/views/About";
 import NotFound from "components/views/NotFound";
-import WaitingArea from "components/views/WaitingArea";
-import SideBar from "components/views/SideBar";
 import GameView from "components/views/GameView";
-import { GameGuard } from "../routeProtectors/GameGuard";
 import EndGameView from "components/views/EndGameView";
 import ProfileOverview from "components/views/ProfileOverview";
 import ProfileRecords from "components/views/ProfileRecords";
 import ProfileUsers from "components/views/ProfileUsers";
+import {LoginGuard} from "components/routing/routeProtectors/LoginGuard";
+import {LobbyGuard} from "components/routing/routeProtectors/LobbyGuard";
+import { GameGuard } from "../routeProtectors/GameGuard";
 import { ProfileGuard } from "../routeProtectors/ProfileGuard";
+import { ProfileOverviewGuard } from "../routeProtectors/ProfileOverviewGuard";
 // import { FitToViewport } from "react-fit-to-viewport";
-
 /**
  * Main router of your application.
  * In the following class, different routes are rendered. In our case, there is a Login Route with matches the path "/login"
@@ -29,7 +27,6 @@ import { ProfileGuard } from "../routeProtectors/ProfileGuard";
  * /game renders a Router that contains other sub-routes that render in turn other react components
  * Documentation about routing in React: https://reacttraining.com/react-router/web/guides/quick-start
  */
-
 const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -57,32 +54,21 @@ const AppRouter = () => {
         <Route exact path="/about">
           <About/>
         </Route>
-
-
-        <Route exact path="/profile/:userId">
-          <ProfileGuard>
+        <Route exact path="/profile/:userId" children = {<ProfileOverviewGuard/>}>
+          <ProfileOverviewGuard>
             <ProfileOverview/>
-          </ProfileGuard>
+          </ProfileOverviewGuard>
         </Route>
-
-        {/* TODO - this Guard needs to be changed as it should be acessible by other players and not only by the loggedIn */}
         <Route exact path="/profile/:userId/records">
           <ProfileGuard> 
             <ProfileRecords/>
           </ProfileGuard>
         </Route>
-
         <Route exact path="/users">
           <ProfileGuard> 
             <ProfileUsers/>
           </ProfileGuard>
         </Route>
-
-
-
-
-
-
         <Route path="/game/:gameId">
           <GameGuard>
             <GameView/>

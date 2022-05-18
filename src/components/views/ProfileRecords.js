@@ -103,20 +103,22 @@ const ProfileRecords = () => {
                         <p>User does not have any favourite combinations yet!</p>
                       }
                   </div>
-                  {favouriteCombinations.length != 0 &&                   
-                    <ReactPaginate
-                      previousLabel={"←"}
-                      nextLabel={"→"}
-                      breakLabel={"..."}
-                      breakClassName={"break-me"}
-                      pageCount={pageCount}
-                      marginPagesDisplayed={2}
-                      pageRangeDisplayed={5}
-                      onPageChange={onPageClick}
-                      containerClassName={"pagination"}
-                      subContainerClassName={"pages pagination"}
-                      activeClassName={"active"}/>}
             </div>
+            <div> 
+              {favouriteCombinations.length != 0 &&                   
+                      <ReactPaginate
+                        previousLabel={"←"}
+                        nextLabel={"→"}
+                        breakLabel={"..."}
+                        breakClassName={"break-me"}
+                        pageCount={pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={onPageClick}
+                        containerClassName={"pagination"}
+                        subContainerClassName={"pages pagination"}
+                        activeClassName={"active"}/>}
+            </div> 
           </div>  
         </div>
     );

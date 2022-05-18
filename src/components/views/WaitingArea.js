@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
-import {WaitingLogo} from "components/ui/WaitingLogo";
+// import {WaitingLogo} from "components/ui/WaitingLogo";
 import {api, catchError} from 'helpers/api';
 import 'styles/views/WaitingArea.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import {useInterval} from 'helpers/utils';
+import {SpinnerSquares} from 'components/ui/SpinnerSquares';
 
 const WaitingArea = () => {
   const { gameId } = useParams(); // in case we want to pass it as param
@@ -64,7 +65,7 @@ const WaitingArea = () => {
     <BaseContainer>
       <div className="waitingArea base">
         <h2>{gameName}</h2>
-        <WaitingLogo/>
+        <SpinnerSquares/> {/* <WaitingLogo/> */}
         <h3>Waiting for players...</h3>
         <h2 className={hname}>{playerCount}/4</h2>
         <div className="waitingArea progress">

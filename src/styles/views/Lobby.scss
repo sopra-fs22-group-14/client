@@ -48,4 +48,15 @@
   &.empty {
     width: 100%;
   }
+  &.name{
+    word-wrap: break-word;
+    max-width: 15%;
+  }
+}
+
+.tableHeader {
+  &.name{
+    max-width: 15%;
+    margin: 10px;
+  } 
 }

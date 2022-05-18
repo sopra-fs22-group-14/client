@@ -50,7 +50,7 @@ const SideBar = () => {
       <div className="sidebar profile" onClick={() => redirectProfile()}>📸 Profile</div>
       <ul className = "sidebar buttonsList">
         <li className = "listElement" onClick={() => redirectProfile()}>📝 Overview</li>
-        <li className = "listElement" onClick={() => redirectRecords()}>🏆 Records</li>
+        <li className = "listElement" onClick={() => redirectRecords()}>🏆 My records</li>
         <li className = "listElement" onClick={() => redirectUsers()}>🥰 Other players</li>
         {!linkCopied && <li className = "listElement" onClick={() => inviteFriends()}>✉️ Invite friends</li>}
         {linkCopied && <li className = "listElementLink" onClick={() => inviteFriends()}>🖤 Link copied!</li>}

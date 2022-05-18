@@ -7,7 +7,8 @@
     background-color: #8585853b;
     border-radius: $borderRadius;
     box-shadow: $dropShadowGame;
-    width: 15VW;
+    // width: 15VW;
+    min-width: 20%;
     padding-top: 5em;
     padding-bottom: 3em;
     display: flex;
@@ -59,6 +60,7 @@
     text-align: left;
     list-style-position: inside;
     background-color: #83838338;
+    word-wrap: break-word;
   }
   &.buttonsList > li{
     padding: 0.3em;

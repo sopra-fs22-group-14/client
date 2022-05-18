@@ -49,7 +49,7 @@
       height: 100%;
     }
     &.main{
-    //   background: purple;
+      // background: purple;
       min-height: 40em;
       width: 100%;
       border-radius: $borderRadius;
@@ -66,7 +66,7 @@
       // transition: all .4s ease;
       border-radius: $borderRadius;
       box-shadow: $dropShadowGame;
-      width: 100%;
+      min-width: 80%;
       padding: 1.5em;
       display: flex;
       flex-direction: column;

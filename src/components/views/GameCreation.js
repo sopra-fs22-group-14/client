@@ -34,7 +34,8 @@ const FormFieldInput = props => {
       </label>
       <input
         className="gameCreation inputName"
-        placeholder="Name the game"
+        placeholder="Name the game..."
+        maxLength="20"
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />

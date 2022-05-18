@@ -98,22 +98,24 @@ const ProfileOverview = () => {
   };
 
   // TESTME - when edpoint is ready
-  // useEffect(() => {
-  //   async function fetchUserData() {
-  //     try {
-  //       setIsPending(true);
-  //       const loggedInUserID = localStorage.getItem('loggedInUserID'); // TODO - do not send password back - no point in doing that 
-  //       const response = await api.get(`/users/${loggedInUserID}`);
-  //       setUsername(response.data.username);
-  //       setBirthday(response.data.birthday);
-  //       console.log('Fetching user data successfull');
-  //     } catch (error) {
-  //       setIsPending(false);
-  //       catchError(history, error, 'fetching the user data');
-  //     }
-  //   }
-  //   fetchUserData();
-  // }, [isEditingCompleted]); // fetched on entry, when submitted change data, when pressed cancel 
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        setIsPending(true);
+        // const loggedInUserID = localStorage.getItem('loggedInUserID'); 
+        // const response = await api.get(`/users/${loggedInUserID}`);
+        // setUsername(response.data.username);
+        // setBirthday(response.data.birthday);
+        setUsername("Sopra_username");
+        setBirthday("1970-01-18");
+        console.log('Fetching user data successfull');
+      } catch (error) {
+        setIsPending(false);
+        catchError(history, error, 'fetching the user data');
+      }
+    }
+    fetchUserData();
+  }, [isEditingCompleted]); // fetched on entry, when submitted change data, when pressed cancel 
 
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
@@ -131,7 +133,7 @@ const ProfileOverview = () => {
                       <td>Username</td>
                       <td>          
                         <FormFieldUsername
-                        // value={username} // TESTME - when edpoint is ready
+                        value={username} 
                         onChange={un => setUsername(un)}
                         />
                       </td>
@@ -140,7 +142,7 @@ const ProfileOverview = () => {
                       <td>Birthday</td>
                       <td>      
                         <FormFieldBirthday
-                          // value={birthday} // TESTME - when edpoint is ready
+                          value={birthday} // TESTME - when edpoint is ready
                           onChange={un => setBirthday(un)}
                           />
                       </td>

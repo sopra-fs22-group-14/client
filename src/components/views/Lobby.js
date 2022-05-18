@@ -72,7 +72,7 @@ const Lobby = () => {
           <h2>Games</h2>
           <h5>Join by clicking on the game!</h5>
           <div className="tableHeader container">
-            <div>Name</div>
+            <div className = "tableHeader name">Name</div>
             <div>Number of rounds</div>
             <div>Players</div>
             <div>Cards</div>

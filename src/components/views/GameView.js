@@ -770,7 +770,7 @@ const GameView = () => {
         <div>
           {countdownView}
           <div className="gameView countdownSection roundWinner">
-            <p>This round was won by: {roundWinner} with the following card:<br/>
+            <p>This round was won by "{roundWinner}" with the following card:<br/>
             {roundWinningCardText}</p> 
           </div>
           <Confetti/>

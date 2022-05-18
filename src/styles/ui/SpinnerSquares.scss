@@ -2,16 +2,16 @@
 
 .square {
     display: inline-block;
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     position: relative;
-    perspective: 200px;
+    perspective: 400px;
   }
   .square div {
     position: absolute;
     top: 0;
-    height: 50px;
-    width: 50px;
+    height: 100px;
+    width: 100px;
     background: black;
     animation: flip 2s linear infinite;
     transform-origin: right bottom;

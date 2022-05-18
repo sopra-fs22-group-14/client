@@ -90,25 +90,27 @@ const ProfileUsers = () => {
             <h2>Other registered players</h2>
             {pageCount != 0 && <h5>Click to see the profile!</h5>}
             {pageCount != 0 &&  
-              <div className="tableHeader container">
-                <div>Username</div>
-                <div>Status</div>
-              </div>}
-            {pageCount == 0 && <p>No other users yet 🥺</p>}
-            {users}
-            {pageCount != 0 &&                    
-                    <ReactPaginate
-                      previousLabel={"←"}
-                      nextLabel={"→"}
-                      breakLabel={"..."}
-                      breakClassName={"break-me"}
-                      pageCount={pageCount}
-                      marginPagesDisplayed={2}
-                      pageRangeDisplayed={5}
-                      onPageChange={onPageClick}
-                      containerClassName={"pagination"}
-                      subContainerClassName={"pages pagination"}
-                      activeClassName={"active"}/>}
+                <div className="tableHeader container">
+                  <div>Username</div>
+                  <div>Status</div>
+                </div>}
+              {pageCount == 0 && <p>No other users yet 🥺</p>}
+            <div className="profile users-container">
+              {users}
+            </div>
+              {pageCount != 0 &&                    
+                      <ReactPaginate
+                        previousLabel={"←"}
+                        nextLabel={"→"}
+                        breakLabel={"..."}
+                        breakClassName={"break-me"}
+                        pageCount={pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={onPageClick}
+                        containerClassName={"pagination"}
+                        subContainerClassName={"pages pagination"}
+                        activeClassName={"active"}/>}
           </div>  
         </div>
     );
