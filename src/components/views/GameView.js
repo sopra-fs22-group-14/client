@@ -3,7 +3,6 @@ import {useInterval, pickRandom, createText} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
 import {useHistory, useParams} from 'react-router-dom';
-import {Button} from 'components/ui/Button';
 import {Confetti} from 'components/ui/Confetti';
 import 'styles/views/GameView.scss';
 import BaseContainer from "components/ui/BaseContainer";
@@ -11,13 +10,13 @@ import PropTypes from "prop-types";
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
 import { useSpeechSynthesis } from 'react-speech-kit';
+import Countdown from 'components/ui/Countdown';
+import {Button} from 'components/ui/Button';
 
 const GameView = () => {
   const { gameId } = useParams();
   const history = useHistory();
   const didMount = useRef(false);
-  const didMountForPlayingCd = useRef(false);
-  const didMountForChoosingCd = useRef(false);
 
   // TEXT-TO-SPEECH
   const { speak, voices } = useSpeechSynthesis();
@@ -36,8 +35,8 @@ const GameView = () => {
   const [roundWinningCardText, setRoundWinningCardText] = useState(null);
   const [countdown, setCountdown] = useState(0);
   const isFinal = useRef(false); // if round is final then after countdown push to gameEndView screen
-  const [playingCountdown, setPlayingCountdown] = useState(null);
-  const [choosingCountdown, setChoosingCountdown] = useState(null);
+  // const [playingCountdown, setPlayingCountdown] = useState(sessionStorage.getItem('playingCountdown') ?? 60);
+  const isChoosing = useRef(sessionStorage.getItem('isChoosing') ?? false);
   
   // COMMENT Game data:
   // const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
@@ -144,21 +143,6 @@ const GameView = () => {
   };
   // ---------------------------------------------------------------------------
 
-  // TODO handle the case of leaving page
-  // useEffect(() => {
-  //   window.addEventListener('beforeunload', alertUser)
-  //   window.addEventListener('unload', leaveGame())
-  //   return () => {
-  //     window.removeEventListener('beforeunload', alertUser)
-  //     window.addEventListener('unload', leaveGame())
-  //   }
-  // }, [])
-
-  // const alertUser = event => {
-  //   event.preventDefault()
-  //   event.returnValue = ''
-  // }
-
   // useEffect to set some sessionstorage and to initially get the round & player data - at the page load
   useEffect(() => {
 
@@ -175,14 +159,7 @@ const GameView = () => {
       sessionStorage.setItem('cardsPlayed', 0);
     }
 
-    // initially, set choosingCountdown to -1
-    if (!sessionStorage.getItem('choosingCountdown')) {
-      sessionStorage.setItem('choosingCountdown', -1);
-      setChoosingCountdown(-1);
-    }
-
     fetchRoundData();
-    handlePlayingCountdown();
     
   }, []);
 
@@ -275,11 +252,10 @@ const GameView = () => {
       // in case a new round started, save the important things in useRefs for now.
       roundId.current = response.data.roundId;
       blackCardVariable.current = response.data.blackCard;
-      if (blackCard == null) { 
-        setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
-      }
-      setPlayersChoices(response.data.playedCards);
-      isFinal.current = response.data.final;
+      if (blackCard == null) setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
+      // only re-render on actual change
+      if (JSON.stringify(response.data.playedCards) != JSON.stringify(playersChoices))
+        setPlayersChoices(response.data.playedCards);
 
       playersWhoPlayed.current = ["ghsdrtxdf", "Egdgfgjhjfghe"]; // TODO delete dummy data when endpoint is ready
     } catch (error) {
@@ -297,14 +273,12 @@ const GameView = () => {
       }
       isCardCzarMode.current = response.data.cardCzarMode;
       totalRounds.current = response.data.numOfRounds;
-      setRoundWinner(response.data.latestRoundWinner);
-      setRoundWinningCardText(response.data.latestWinningCardText);
-      setOpponentNames(response.data.playerNames);
-      // console.log(sessionStorage.getItem('cardsPlayed', 0));
-      // console.log(isCardCzarMode.current);
-      // console.log(response.data);
-      // console.log('chosenCard', chosenCard);
-      // console.log('chosenWinner', chosenWinner);
+      if (JSON.stringify(response.data.latestRoundWinner) != JSON.stringify(roundWinner))
+        setRoundWinner(response.data.latestRoundWinner);
+      if (JSON.stringify(response.data.latestWinningCardText) != JSON.stringify(roundWinningCardText))
+        setRoundWinningCardText(response.data.latestWinningCardText);
+      if (JSON.stringify(response.data.playerNames) != JSON.stringify(opponentNames))
+        setOpponentNames(response.data.playerNames);
     } catch (error) {
       catchError(history, error, 'fetching the winner data');
     }
@@ -365,8 +339,7 @@ const GameView = () => {
       // as soon as the countdown somehow changes, reset choosingCountdown
       if (countdown > 0) {
         sessionStorage.setItem('firstRoundDone', true); // not first round anymore
-        sessionStorage.setItem('choosingCountdown', -1);
-        setChoosingCountdown(-1);
+        sessionStorage.setItem('playingCountdown', -1);
         // just count down
         setTimeout(() => {
           setCountdown(countdown - 1);
@@ -378,7 +351,11 @@ const GameView = () => {
         setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
         setBlackCard(blackCardVariable.current);
         // start the countdown for the next round
-        if (opponentNames != null) setPlayingCountdown(60);
+        if (opponentNames != null) {
+          sessionStorage.setItem('playingCountdown', 60);
+          isChoosing.current = false;
+          sessionStorage.setItem('isChoosing', false);
+        }
         setWasCardPlayed(false);
         // last round finished
         if (isFinal.current && playersChoices.length > 0) {
@@ -392,127 +369,36 @@ const GameView = () => {
   }, [countdown])
 
 
-  // ------------------------------ DIEGO: PLAYING COUNTDOWN ---------------------------------
+  // ------------------------------ DIEGO: GAME COUNTDOWN ---------------------------------
 
-  const handlePlayingCountdown = () => {
-    // initially, set playingCountdown to 60
-    if (!sessionStorage.getItem('playingCountdown')) {
-      setPlayingCountdown(60);
-    // or, if playingCountdown is already running, continue where left off (even if 0)
-    } else {
-      setPlayingCountdown(sessionStorage.getItem('playingCountdown'));
+  const handleTimerFinish = () => {
+    // ----- PLAY card -----
+    if (!isChoosing.current) {
+      // if you have already played or don't need to play, then don't do anything
+      if (player.cardCzar || (sessionStorage.getItem('cardsPlayed') == 1)) return;
+      playCard();
+      return;
     }
-  };
-
-  // useEffect that is used for the playingCountdown
-  useEffect(() => {
-    async function updatePlayingCountdown() {
-      // initial rendering - don't do anything (for refreshing page)
-      if (!didMountForPlayingCd.current) {
-        didMountForPlayingCd.current = true;
-        return;
-      }
-      if (playingCountdown != -1) setPollingActive(false); // pause the polling when countdown is active
-      try {
-        // just update the counter
-        if (playingCountdown > 0) {
-
-          // if choosingCountdown is active, stop with the playingCountdown
-          if (choosingCountdown > 0) {
-            setPlayingCountdown(-1);
-            sessionStorage.setItem('playingCountdown', -1);
-            return;
-          }
-
-          setTimeout(() => {
-            setPlayingCountdown(playingCountdown - 1);
-            sessionStorage.setItem('playingCountdown', playingCountdown - 1);
-            // POLLING (every 2 seconds)
-            if (playingCountdown % 2 === 0) {
-              fetchRoundData();
-              fetchGameInformation();
-            }
-          }, 1000);
-        } else if (playingCountdown == 0) {
-          // only reached if playingCountdown ends
-          setPollingActive(true);
-          // if you have already played or don't need to play, then don't do anything
-          if (player.cardCzar || (sessionStorage.getItem('cardsPlayed') == 1)) return;
-          // otherwise, automatically play a card
-          playCard();
-        }
-      } catch (error) {
-        catchError(history, error, 'updating the playingCountdown');
-      }
-    }
-    updatePlayingCountdown();
-  }, [playingCountdown]);
-
-  // ------------------------------ DIEGO: CHOOSING COUNTDOWN ---------------------------------
-
-  // method to start or continue the choosingCountdown
-  const handleChoosingCountdown = () => {
-    // clear playingCountdown
-    setPlayingCountdown(-1);
-    sessionStorage.setItem('playingCountdown', -1);
-
-    // if it is -1, this indicates that the choosingCountdown should start
-    if (sessionStorage.getItem('choosingCountdown') == -1) {
-      setChoosingCountdown(45);
-    // otherwise, continue where left off (even at 0)
-    } else {
-      setChoosingCountdown(sessionStorage.getItem('choosingCountdown'));
-    }
+    // ----- CHOOSE card -----
+    // if you are no card czar or have already submitted, don't submit again
+    if ((isCardCzarMode.current && !player.cardCzar) || 
+      (isCardCzarMode.current && player.cardCzar && sessionStorage.getItem('cardsPlayed') == 1) ||
+      (!isCardCzarMode.current && (sessionStorage.getItem('cardsPlayed') == 2))) return;
+    chooseRoundWinner(); // otherwise, automatically submit
   }
+
 
   // useEffect when the playerChoices change, in order to trigger the choosingCountdown
   useEffect(() => {
     if (playersChoices == null) return;
     if ((isCardCzarMode.current && playersChoices.length == 3) || (!isCardCzarMode.current && playersChoices.length == 4)) {
-      handleChoosingCountdown();
+      // handleChoosingCountdown();
+      if (isChoosing.current) return;
+      isChoosing.current = true;
+      sessionStorage.setItem('isChoosing', true);
+      sessionStorage.setItem('playingCountdown', 45);
     }
   }, [playersChoices]);
-
-
-  // useEffect that is used for the choosingCountdown
-  useEffect(() => {
-    // initial rendering - don't do anything (for refreshing page)
-    if (!didMountForChoosingCd.current) {
-      didMountForChoosingCd.current = true;
-      return;
-    }
-    if (choosingCountdown != -1) setPollingActive(false); // pause the polling when countdown is active
-    try {
-      // if winning screen is shown, stop the choosingCountdown
-      if (countdown > 0) {
-        setChoosingCountdown(-1);
-        sessionStorage.setItem('choosingCountdown', -1);
-        setPollingActive(true);
-        return;
-      }
-      // just update the counter
-      if (choosingCountdown > 0) {
-        setTimeout(() => {
-          setChoosingCountdown(choosingCountdown - 1);
-          sessionStorage.setItem('choosingCountdown', choosingCountdown - 1);
-          // POLLING (every 2 seconds)
-          if (choosingCountdown % 2 === 0) {
-            fetchRoundData();
-            fetchGameInformation();
-          }
-        }, 1000);
-      } else if (choosingCountdown == 0) {
-        // only reached if choosingCountdown ends
-        setPollingActive(true);
-        // if you are no card czar or have already submitted, don't submit again
-        if ((isCardCzarMode.current && !player.cardCzar) ||
-          (!isCardCzarMode.current && (sessionStorage.getItem('cardsPlayed') == 2))) return;
-        chooseRoundWinner(); // otherwise, automatically submit
-      }
-    } catch (error) {
-      catchError(history, error, 'updating the choosingCountdown');
-    }
-  }, [choosingCountdown]);
 
 
   // method that is called when a player plays a white card
@@ -596,7 +482,7 @@ const GameView = () => {
       sessionStorage.clear();
       history.push('/lobby');
     } catch (error) {
-      catchError(history, error, 'being kicket out of the game');
+      catchError(history, error, 'being kicked out of the game');
     }
   }
 
@@ -805,10 +691,10 @@ const GameView = () => {
         <div className="gameView topSection">
           <div className="gameView topSection leaderboard">
             {/* COUNTDOWN */}
-            {((playingCountdown != -1) && (playingCountdown != null)) && 
-            <div><h3>Time left to play a card:</h3><br/><h2>{playingCountdown}</h2></div>}
-            {((choosingCountdown != -1) && (choosingCountdown != null)) && 
-            <div><h3>Time left to pick a favourite:</h3><br/><h2>{choosingCountdown}</h2></div>}
+            { !isChoosing.current &&
+              <div><h3>Time left to play a card:</h3><br/><Countdown onFinish={handleTimerFinish} /></div>}
+            { isChoosing.current &&
+              <div><h3>Time left to play a card:</h3><br/><Countdown onFinish={handleTimerFinish} /></div>}
           </div>
           <div className="gameView topSection center"> 
             <div className="gameView tile">
@@ -882,7 +768,7 @@ const GameView = () => {
         {displayButtons(player, isCardCzarMode, chosenCard, playersChoices)}
       </div>
     );
-  } 
+  }
   // -------------------------------- RETURN --------------------------------
   return (
     <BaseContainer className="gameView container">
