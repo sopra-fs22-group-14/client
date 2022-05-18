@@ -19,7 +19,7 @@ const ProfileRecords = () => {
   const [gamesWon, setGamesWon] = useState(null);
   // FOR PAGINATION: 
   const [currentPage, setCurrentPage] = useState(1);
-  const [favouriteCombinations, setFavouriteCombinations] = useState([]);
+  const [favouriteCombinations, setFavouriteCombinations] = useState(null);
   const [perPage] = useState(5);
   const [pageCount, setPageCount] = useState(0);
 
@@ -79,7 +79,7 @@ const ProfileRecords = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (gamesWon != null && username != null && roundsWon != null && pointsEarned != null && favouriteCombinations != []) {
+  if (gamesWon != null && username != null && roundsWon != null && pointsEarned != null && favouriteCombinations != null) {
     content = (
         <div className = "profile main">
           <SideBar/>

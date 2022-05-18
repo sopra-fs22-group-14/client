@@ -4,14 +4,12 @@
   &.container {
     // background: yellow;
     padding: 1em;
-    width: 100%;
-    height: 100%;
+    width: 80%;
     // display: flex;
     // flex-wrap: wrap;
     // justify-content: center;
     // align-items: center;
   }
-
   &.main{
     // background: green;
     padding: 1em;
@@ -19,13 +17,10 @@
     box-shadow: $dropShadowGame;
   }
 
-
-
   // PERSONALISED MESSAGE ------------------------------
   &.personalisedMessage{
     // background: red;
-    padding: 0.5em;
-
+    // padding: 0.5em;
     &.winners > h2{
       background: linear-gradient(yellow, red);
       background-clip: text;
@@ -34,13 +29,10 @@
     }
   }
 
-
-
   // GAME SUMMARY ------------------------------
   &.gameSummary{
     // background: greenyellow;
     padding: 0.5em;
-
     &.table{
       // background-color: aqua;
       margin: 0.1em auto;
@@ -52,24 +44,83 @@
   &.gameSummary > h1{
     letter-spacing: 10px;
   } 
-
-
-
   // BUTTONS SECTION ------------------------------
   &.buttonsSection{
     // background: pink;
-    margin-top: 5VH;
+    margin-top: 0.5em;
     padding: 0.5em;
     width: 100%;
-    height: 10VH;
-    
+    height: 5em;
     // for alignment of buttons 
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
   }
+  &.combinationsContainer{
+    padding: 0.5em;
+  }
+
+  &.combinations-list {
+    list-style: none;
+    padding-left: 0;
+    max-width: 100%;
+  }
+  &.combinations-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
+.combination {
+  &.nothosenCombination:hover {
+    background-color: #000000;
+    color: white;
+    cursor: pointer;
+  }
+  &.chosenCombination:hover {
+    cursor: pointer;
+  }
+  &.nothosenCombination {
+    background: lighten($background, 5);
+    color: black;
+  }
+  &.chosenCombination {
+    background: #000000;
+    color: white;
+  }
+  &.chosenCombination{
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0 0 1em;
+    width: 100%;
+    padding: 0.6em;
+    display: flex;
+    align-items: center;
+  }
+  &.nothosenCombination {
+    border-radius: $borderRadius;
+    box-shadow: $dropShadowGame;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0 0 1em;
+    width: 100%;
+    padding: 0.6em;
+    display: flex;
+    align-items: center;
+  }
+  &.chosenCombination > div{
+    max-width: 100%;
+    word-wrap: break-word;
+  } 
+  &.nothosenCombination > div{
+    max-width: 100%;
+    word-wrap: break-word;
+  } 
+}
 
 .winners {
   animation: winners 0.8s ease-in-out both;

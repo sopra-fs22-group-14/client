@@ -14,7 +14,7 @@ const ProfileUsers = () => {
   const history = useHistory(); 
   // FOR PAGINATION: 
   const [currentPage, setCurrentPage] = useState(1);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(null);
   const [perPage] = useState(5);
   const [pageCount, setPageCount] = useState(0);
 
@@ -31,7 +31,6 @@ const ProfileUsers = () => {
     async function fetchListOfUsers() {
       try {
         const response = (await api.get(`/users`)).data;
-        console.log(response);
         response.sort((a,b) => (a.status < b.status) ? 1 : ((b.status < a.status) ? -1 : 0)) // sorting based on online status
         const slice = response.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
         const postSliceData =(
@@ -60,7 +59,7 @@ const ProfileUsers = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (users != []) {
+  if (users != null) {
     content = (
         <div className = "profile main">
           <SideBar/>

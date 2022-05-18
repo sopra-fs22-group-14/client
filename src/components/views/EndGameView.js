@@ -6,20 +6,30 @@ import 'styles/views/EndGameView.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
-/*
-Upon completion of the game, the each player is forwarded to the EndGameView page and the {gameId}/gamewinner is called. 
-*When the game is deleted?*
-    ---> When last player leaves the game 
-*What button should be avaialable in the EndGameView?*
-    ---> [Continue] = brings back to the lobby
-    FOR M4: 
-    ---> [Display your choices] = calls for respective Player played combinations in the game 
-            ---> Click on the one you want to save and send POST request to the backend 
-*/ 
+import PropTypes from "prop-types";
+
 const EndGameView = () => {
   const { gameId } = useParams(); // history.push(`/endGame/${gameId}`);
   const history = useHistory();
   const [endGame, setEndGame] = useState(null);
+  const [playedCombinations, setPlayedCombinations] = useState(null);
+  const [chosenCombination, setChosenCombination] = useState(null);
+  const [displayChoices, setDisplayChoices] = useState(false); 
+  const [isPending, setIsPending] = useState(false);
+
+  // COMMENT - Container for each combination instance 
+  const Combination = ({combination}) => {
+    let divClassName;
+    if(combination.combinationText === chosenCombination) divClassName = "combination chosenCombination";
+    else divClassName = "combination nothosenCombination"
+    return(    
+      <div className={divClassName} onClick={() => setChosenCombination(combination.combinationText)}>    
+          <div className="combination text">{combination.combinationText}</div>
+      </div>)
+  }
+  Combination.propTypes = {
+    combination: PropTypes.object
+  };
 
   // COMMENT - fetch EndGame data:
   useEffect(() => {
@@ -29,32 +39,46 @@ const EndGameView = () => {
         const endGame = new EndGame(response.data);
         setEndGame(endGame);
         console.log("EndGame data received"); 
-        // ------------ just for testing:
-        // var dict = {
-        //   playersNames: ["Alex", "Diego", "Szymek", "Ege"],
-        //   playersNumbersOfPicked: [2,3,15,10],
-        //   winnersNames: ["Diego", "Alex"],
-        //   winnersIds: [2]
-        // };
-        // const endGame = new EndGame(dict);
-        // setEndGame(dict);
-        // console.log(endGame);
       } catch (error) {
         catchError(history, error, 'fetching the EndGame data');
       }
     }
+    async function fetchPlayedCombinations() {
+      try {
+        // const response = await api.get(`/combinations`); // TODO - request to get the combinations played 
+        const combinations = [
+            {combinationText: "SuperCrazyFreackingFancyMysteriousGreatAndAwesomeAsWellAsLegendaryAndStupidOrWellThoughtStringJustToTestThingsOut"},
+            {combinationText: "Chupapi Muñañyo"},
+            {combinationText: "Oh yes daddy"},
+            {combinationText: "Oh wow this design is super ugly"},
+            {combinationText: "You know what also is ugly? Yo mama!"},
+            {combinationText: "Why is life so hard guys?"}]
+        setPlayedCombinations(combinations);
+        console.log("Played combinations received"); 
+      } catch (error) {
+        catchError(history, error, 'fetching played combinations');
+      }
+    }
     fetchData();
+    fetchPlayedCombinations();
   }, []);
 
   const leaveGame = async () => {
     try { 
+      if(chosenCombination !== null) {
+        setIsPending(true);
+        // TODO - request to save the combination on the profile 
+        const requestBody = JSON.stringify({chosenCombination}); 
+        console.log(requestBody);
+        // const response = await api.post(`...`, requestBody);
+      }
       await api.put('/leave/'+gameId);
       history.push('/lobby'); 
     } catch (error) {
+      setIsPending(false);
       catchError(history, error, 'leaving the game');
     }
   }
-
   // COMMENT - display personalised messaged based on EndGame data:
   const displayPersonalisedMessage = () => {
     const userId = localStorage.getItem('loggedInUserID');
@@ -109,7 +133,7 @@ const EndGameView = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (endGame != null) {
+  if (endGame != null && playedCombinations != null) {
     content = (
       <div className = "endGameView main">
         <div className = "endGameView personalisedMessage">
@@ -122,23 +146,50 @@ const EndGameView = () => {
           </div>
         </div>
         <div className = "endGameView gameSummary">
-          <h1>Game Summary</h1>
+          <h2>Game Summary</h2>
           {getSummary()}
         </div>
+        {displayChoices &&
+        <div className = "endGameView combinationsContainer">
+          <h2>Played combinations</h2>
+          <h4>Pick a combination and press continue to save it on your profile!</h4>
+          <ul className="endGameView combinations-list"> 
+              {playedCombinations.map(combination => (
+                <Combination combination={combination} key={combination.combinationText}/>
+              ))}
+          </ul>
+        </div>}
         <div className = "endGameView buttonsSection">
-            <Button
-              disabled
-                width="100%"
-                // onClick={() => displayChoices()} // TODO - displayChoices()
-              >
-              Display your choices
-            </Button>
-            <Button
-                width="100%"
-                onClick={() => leaveGame()}
-              >
-              Continue...
-            </Button>
+            {!displayChoices &&
+                            <Button
+                                width="100%"
+                                onClick={() => setDisplayChoices(true)}
+                              >
+                              Display combinations you played
+                            </Button>}
+            {displayChoices &&
+                            <Button
+                                width="100%"
+                                onClick={() => setChosenCombination(null)}
+                              >
+                              Reset choice 
+                            </Button>}
+            {!isPending &&
+                      <Button
+                          width="100%"
+                          onClick={() => leaveGame()}
+                        >
+                        Continue...
+                      </Button>}
+
+            {isPending &&
+                        <Button
+                            width="100%"
+                            disabled
+                            onClick={() => leaveGame()}
+                          >
+                          Saving changes & leaving ...  
+                        </Button>}
         </div>
       </div>
     );
