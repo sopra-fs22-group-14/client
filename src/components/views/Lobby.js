@@ -50,11 +50,9 @@ const Lobby = () => {
       try {
         // updating the current game list
         const response = await api.get('/games');
-        // Get the returned games and update the state.
-        setGames(response.data);
-
-        // See here to get more data.
-        // console.log(response);
+        // Get the returned games and update the state (only if it actually changed)
+        if (JSON.stringify(response.data) != JSON.stringify(games)) 
+          setGames(response.data);
       } catch (error) {
         catchError(history, error, 'fetching the games list');
       }

@@ -3,7 +3,6 @@ import {useInterval, pickRandom, createText} from 'helpers/utils';
 import {api, catchError} from 'helpers/api';
 import Player from 'models/Player';
 import {useHistory, useParams} from 'react-router-dom';
-import {Button} from 'components/ui/Button';
 import {Confetti} from 'components/ui/Confetti';
 import 'styles/views/GameView.scss';
 import BaseContainer from "components/ui/BaseContainer";
@@ -12,6 +11,7 @@ import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import Countdown from 'components/ui/Countdown';
+import {Button} from 'components/ui/Button';
 
 const GameView = () => {
   const { gameId } = useParams();
@@ -252,11 +252,10 @@ const GameView = () => {
       // in case a new round started, save the important things in useRefs for now.
       roundId.current = response.data.roundId;
       blackCardVariable.current = response.data.blackCard;
-      if (blackCard == null) { 
-        setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
-      }
-      setPlayersChoices(response.data.playedCards);
-      isFinal.current = response.data.final;
+      if (blackCard == null) setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
+      // only re-render on actual change
+      if (JSON.stringify(response.data.playedCards) != JSON.stringify(playersChoices))
+        setPlayersChoices(response.data.playedCards);
 
       playersWhoPlayed.current = ["ghsdrtxdf", "Egdgfgjhjfghe"]; // TODO delete dummy data when endpoint is ready
     } catch (error) {
@@ -274,14 +273,12 @@ const GameView = () => {
       }
       isCardCzarMode.current = response.data.cardCzarMode;
       totalRounds.current = response.data.numOfRounds;
-      setRoundWinner(response.data.latestRoundWinner);
-      setRoundWinningCardText(response.data.latestWinningCardText);
-      setOpponentNames(response.data.playerNames);
-      // console.log(sessionStorage.getItem('cardsPlayed', 0));
-      // console.log(isCardCzarMode.current);
-      // console.log(response.data);
-      // console.log('chosenCard', chosenCard);
-      // console.log('chosenWinner', chosenWinner);
+      if (JSON.stringify(response.data.latestRoundWinner) != JSON.stringify(roundWinner))
+        setRoundWinner(response.data.latestRoundWinner);
+      if (JSON.stringify(response.data.latestWinningCardText) != JSON.stringify(roundWinningCardText))
+        setRoundWinningCardText(response.data.latestWinningCardText);
+      if (JSON.stringify(response.data.playerNames) != JSON.stringify(opponentNames))
+        setOpponentNames(response.data.playerNames);
     } catch (error) {
       catchError(history, error, 'fetching the winner data');
     }
@@ -373,40 +370,6 @@ const GameView = () => {
 
 
   // ------------------------------ DIEGO: GAME COUNTDOWN ---------------------------------
-
-  // useInterval(() => {
-  //   try {
-  //     // POLLING
-  //     fetchRoundData();
-  //     fetchGameInformation();
-
-  //     if (playingCountdown > 0) {
-  //       setPollingActive(false);
-  //       // just update the counter
-  //       setPlayingCountdown(playingCountdown - 1);
-  //       sessionStorage.setItem('playingCountdown', playingCountdown - 1);
-  //     } else if (playingCountdown == 0) {
-  //       // only reached if playingCountdown ends
-  //       setPollingActive(true);
-  //       // ----- PLAY card -----
-  //       if (!isChoosing.current) {
-  //         // if you have already played or don't need to play, then don't do anything
-  //         if (player.cardCzar || (sessionStorage.getItem('cardsPlayed') == 1)) return;
-  //         playCard();
-  //         return;
-  //       }
-  //       // ----- CHOOSE card -----
-  //       // if you are no card czar or have already submitted, don't submit again
-  //       if ((isCardCzarMode.current && !player.cardCzar) || 
-  //         (isCardCzarMode.current && player.cardCzar && sessionStorage.getItem('cardsPlayed') == 1) ||
-  //         (!isCardCzarMode.current && (sessionStorage.getItem('cardsPlayed') == 2))) return;
-  //       chooseRoundWinner(); // otherwise, automatically submit
-  //     }
-  //   } catch (error) {
-  //     catchError(history, error, 'updating the playingCountdown');
-  //   }
-  // }, 1000);
-
 
   const handleTimerFinish = () => {
     // ----- PLAY card -----
@@ -519,7 +482,7 @@ const GameView = () => {
       sessionStorage.clear();
       history.push('/lobby');
     } catch (error) {
-      catchError(history, error, 'being kicket out of the game');
+      catchError(history, error, 'being kicked out of the game');
     }
   }
 
@@ -805,7 +768,7 @@ const GameView = () => {
         {displayButtons(player, isCardCzarMode, chosenCard, playersChoices)}
       </div>
     );
-  } 
+  }
   // -------------------------------- RETURN --------------------------------
   return (
     <BaseContainer className="gameView container">
