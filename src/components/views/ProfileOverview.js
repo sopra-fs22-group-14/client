@@ -1,14 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {api, catchError} from 'helpers/api';
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import {Button} from 'components/ui/Button';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import SideBar from "components/views/SideBar";
 import "styles/views/ProfileOverview.scss";
 import "styles/views/ProfileLobbyCommon.scss";
-
 // -------------------------------- FORMS --------------------------------
 const FormFieldUsername = props => {
   return (
@@ -16,7 +15,8 @@ const FormFieldUsername = props => {
       <input
         className="profile inputUsername"
         placeholder="type new username..."
-        maxLength="10"
+        maxLength="15"
+        disabled = {props.isDisabled}
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -29,7 +29,7 @@ const FormFieldPassword = props => {
       <input
         className="profile inputPassword"
         type="password"
-        placeholder="type new password..."
+        placeholder="type password..."
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -43,6 +43,7 @@ const FormFieldBirthday = props => {
         className="profile inputBirthday"
         type="date"
         placeholder="Birthday"
+        disabled = {props.isDisabled}
         value={props.value}
         onChange={e => props.onChange(e.target.value)}
       />
@@ -51,6 +52,7 @@ const FormFieldBirthday = props => {
 };
 FormFieldUsername.propTypes = {
   value: PropTypes.string,
+  isDisabled: PropTypes.bool,
   onChange: PropTypes.func
 };
 FormFieldPassword.propTypes = {
@@ -59,58 +61,90 @@ FormFieldPassword.propTypes = {
 };
 FormFieldBirthday.propTypes = {
   value: PropTypes.string,
+  isDisabled: PropTypes.bool,
   onChange: PropTypes.func
 };
+
 // -------------------------------- ProfileOverview --------------------------------
 const ProfileOverview = () => {
   const history = useHistory(); // history.push('/profile/userId');
-  const [username, setUsername] = useState(null);
-  const [birthday, setBirthday] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [username, setUsername] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [isEditingCompleted, setIsEditingCompleted] = useState(false);
-
-  const startEdit = () => {
+  const [isEditingPofile, setIsEditingProfile] = useState(false);
+  const hasProfileChanged = useRef(false);
+ 
+  const startEditProfile = () => {
     setIsEditing(true);
-    setUsername(null);
-    setBirthday(null);
-    setPassword(null);
+    setIsEditingProfile(true);
+    setPassword("");
+    hasProfileChanged.current = false;
   };
-
+  const startEditPassword = () => {
+    setIsEditing(true);
+    setPassword("");
+    setNewPassword("");
+    hasProfileChanged.current = false;
+  };
   const cancelEdit = () => {
     setIsEditing(false);
-    setIsEditingCompleted(true);
+    setIsEditingCompleted(!isEditingCompleted);
+    setIsEditingProfile(false);
   }
 
+  // COMMENT - changing password
+  const changePassword = async () => {
+    try {
+      setIsPending(true);
+      const loggedInUserID = localStorage.getItem('loggedInUserID');
+      const requestBody = JSON.stringify({password, newPassword}); 
+      // const response = await api.put(`/users/${loggedInUserID}/password`, requestBody); // TESTME - password changing
+      // localStorage.setItem('token', response.data.token);
+      console.log('Password change successfull');
+      setIsPending(false);
+      hasProfileChanged.current = true;
+      cancelEdit();
+    } catch (error) {
+      setIsPending(false);
+      catchError(history, error, 'changing user password');
+    }
+  };
+
+  // COMMENT - changing username and/or birthday
   const changeProfile = async () => {
     try {
       setIsPending(true);
       const loggedInUserID = localStorage.getItem('loggedInUserID');
-      const requestBody = JSON.stringify({username, birthday, password});
-      await api.put(`/users/${loggedInUserID}`, requestBody);
+      const requestBody = JSON.stringify({username, birthday, password}); 
+      await api.put(`/users/${loggedInUserID}`, requestBody); // TESTME
       console.log('Profile change successfull');
-      setIsEditingCompleted(true);
+      setIsPending(false);
+      hasProfileChanged.current = true;
+      cancelEdit();
     } catch (error) {
       setIsPending(false);
-      catchError(history, error, 'changing user data'); // TODO adjust error message so that it is more user friendly, not just alert 
+      catchError(history, error, 'changing user data');
     }
   };
 
-  // TESTME - when edpoint is ready
+  // COMMENT - get User data
   useEffect(() => {
     async function fetchUserData() {
       try {
-        setIsPending(true);
-        // const loggedInUserID = localStorage.getItem('loggedInUserID'); 
-        // const response = await api.get(`/users/${loggedInUserID}`);
-        // setUsername(response.data.username);
-        // setBirthday(response.data.birthday);
-        setUsername("Sopra_username");
-        setBirthday("1970-01-18");
+        const loggedInUserID = localStorage.getItem('loggedInUserID');  
+        const response = await api.get(`/users/${loggedInUserID}`); 
+        setUsername(response.data.username);
+        if(response.data.birthday === null) {
+          setBirthday("");
+        } else {
+          setBirthday(response.data.birthday);
+        }
         console.log('Fetching user data successfull');
       } catch (error) {
-        setIsPending(false);
         catchError(history, error, 'fetching the user data');
       }
     }
@@ -120,50 +154,89 @@ const ProfileOverview = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (true) { //TODO - change this "true" when endpoint is ready
+  if (username != "" || isEditing == true) {
     content = (
         <div className = "profile main">
           <SideBar/>
           <div className="profile minor">
               <h2>Overview</h2>
               <div className="profile form">
-                <table className = "profile formTable">
-                  <tbody>
-                    <tr>
-                      <td>Username</td>
-                      <td>          
-                        <FormFieldUsername
-                        value={username} 
-                        onChange={un => setUsername(un)}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Birthday</td>
-                      <td>      
-                        <FormFieldBirthday
-                          value={birthday} // TESTME - when edpoint is ready
-                          onChange={un => setBirthday(un)}
+                <div className="profile tableContainer"> 
+                  <table className = "profile formTable">
+                    <tbody>
+                      {(!isEditing || isEditingPofile) &&
+                      <tr>
+                        <td>Username</td>
+                        <td>          
+                          <FormFieldUsername
+                          value={username} 
+                          isDisabled = {!isEditing}
+                          onChange={un => setUsername(un)}
                           />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Password</td>
-                      <td>          
-                        <FormFieldPassword
-                        onChange={un => setPassword(un)}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                        </td>
+                      </tr>}
+                      {(!isEditing || isEditingPofile) &&
+                      <tr>
+                        <td>Birthday</td>
+                        <td>      
+                          <FormFieldBirthday
+                            value={birthday} 
+                            isDisabled = {!isEditing}
+                            onChange={un => setBirthday(un)}
+                            />
+                        </td>
+                      </tr>}
+                      {isEditing && isEditingPofile &&
+                        <tr>
+                          <td>Current password</td>
+                          <td>          
+                            <FormFieldPassword
+                            onChange={un => setPassword(un)}
+                            />
+                          </td>
+                        </tr>}
+                        {/* COMMENT - for editing the password */}
+                        {isEditing && !isEditingPofile &&
+                        <tr>
+                          <td>Current password</td>
+                          <td>          
+                            <FormFieldPassword
+                            onChange={un => setPassword(un)}
+                            />
+                          </td>
+                        </tr>}
+                        {isEditing && !isEditingPofile &&
+                        <tr>
+                          <td>New password</td>
+                          <td>          
+                            <FormFieldPassword
+                            onChange={un => setNewPassword(un)}
+                            />
+                          </td>
+                        </tr>}
+                    </tbody>
+                  </table>
+                </div>
+                <div className = "profile instructions">
+                  {isEditing && isEditingPofile &&
+                  <h4>Change username/ birthday, then type current password and press "Change profile" button.</h4>}
+                  {isEditing && !isEditingPofile && 
+                  <h4>Type current and new password, then press "Change password" button.</h4>}
+                  {hasProfileChanged.current && <h4>Changes saved.</h4>}
+                </div>
                   {!isEditing &&
                                 <div className="profile button-container">                   
                                   <Button
                                     width="100%"
-                                    onClick={() => startEdit()}
+                                    onClick={() => startEditProfile()}
                                   >
                                     Edit profile
+                                  </Button>
+                                  <Button
+                                    width="100%"
+                                    onClick={() => startEditPassword()}
+                                  >
+                                    Edit password
                                   </Button>
                                 </div>}
                   {isEditing &&       
@@ -174,24 +247,35 @@ const ProfileOverview = () => {
                                   >
                                     Cancel
                                   </Button> 
-
-                                  {!isPending &&
+                                  {/* COMMENT - profile editing */}
+                                  {!isPending && isEditingPofile &&
                                     <Button
                                       width="100%"
+                                      disabled = {username == "" || password == ""}
                                       onClick={() => changeProfile()}
                                     >
                                       Change profile
                                     </Button>}
+                                  {/* COMMENT - password editing */}
+                                  {!isPending && !isEditingPofile &&
+                                  <Button
+                                    width="100%"
+                                    disabled = {newPassword == "" || password == ""}
+                                    onClick={() => changePassword()}
+                                  >
+                                    Change password
+                                  </Button>}
                                   {isPending &&
                                   <Button
                                     disabled
                                     width="100%"
                                   >
-                                    Changing profile...
+                                    {isEditingPofile && "Changing profile..."}
+                                    {!isEditingPofile && "Changing password..."}
                                   </Button>}
                                 </div>}
               </div>
-          </div>
+          </div>  
         </div>
     );
   }

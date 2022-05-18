@@ -1,11 +1,23 @@
 @import 'styles/theme';
 
 .profile {
+  &.instructions{
+    min-height: 3em;
+    // background-color: yellow;
+    h4{
+      margin: 0;
+    }
+  }
+  &.tableContainer{
+    // background-color: fuchsia;
+    min-height: 15em;
+  }
   // FORM STYLING 
   &.form{
     margin-top: 5em;
     padding: 0.2em;
     // background-color: red;
+    // min-height: 25em;
     // display: flex;
     // flex-direction: column;
     // justify-content: center;
@@ -14,7 +26,7 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
   &.formTable{
-    // background-color: aqua;
+    // background-color: blue;
     width: 100%;
     table-layout: fixed;
     text-align: left;
@@ -28,13 +40,13 @@
   &.formField {
     // background-color: green;
     width: 100%;
-    text-align: center;
+    // text-align: center;
   }
   &.inputUsername {
     padding: 0.5em;
     height: 2em;
     width: 100%;
-    text-align: center;
+    // text-align: center;
     border: none;
     border-radius: $borderRadius;
     background: #d6d6d6;
@@ -47,7 +59,7 @@
     padding: 0.5em;
     height: 2em;
     width: 100%;
-    text-align: center;
+    // text-align: center;
     border: none;
     border-radius: $borderRadius;
     background: #d6d6d6;
@@ -60,7 +72,7 @@
     padding: 0.5em;
     height: 2em;
     width: 100%;
-    text-align: center;
+    // text-align: center;
     border: none;
     border-radius: $borderRadius;
     background: #d6d6d6;
@@ -72,6 +84,6 @@
   &.button-container {
     display: flex;
     justify-content: center;
-    margin-top: 4em;
+    margin-top: 1em;
   }
 }
