@@ -264,16 +264,15 @@ const GameView = () => {
       // in case a new round started, save the important things in useRefs for now.
       roundId.current = response.data.roundId;
       blackCardVariable.current = response.data.blackCard;
+      isFinal.current = response.data.final;
+      playersChoicesVariable.current = response.data.playedCards;
       if (blackCard == null) setBlackCard(blackCardVariable.current); // COMMENT - called only intially when the blackCard is still null
       if (playersChoices == null) setPlayersChoices(response.data.playedCards);
       // only re-render on actual change
       if (JSON.stringify(response.data.playedCards) != JSON.stringify(playersChoices)) {
         if (response.data.playedCards.length != 0)
           setPlayersChoices(response.data.playedCards);
-        else
-          playersChoicesVariable.current = response.data.playedCards;
       }
-      isFinal.current = response.data.final;
       playersWhoPlayed.current = ["ghsdrtxdf", "Egdgfgjhjfghe"]; // TODO delete dummy data when endpoint is ready
     } catch (error) {
       catchError(history, error, 'fetching the round data');
@@ -364,22 +363,23 @@ const GameView = () => {
         }, 1000);
         sessionStorage.setItem('cardsPlayed', 0); // enable the submit button again
       } else {
-        // after the countdown, update the states from the new round data
+        // after the countdown, check if the last round finished
+        if (isFinal.current && playersChoicesVariable.current.length > 0) {
+          console.log("Going to end game screen");
+          history.push(`/endGame/${gameId}`);
+          return;
+        }
+        // If not, update the states from the new round data
         setRoundNr(roundNumberVariable.current);  // this will also trigger the useEffect to fetch the new player data
         setBlackCard(blackCardVariable.current);
         setPlayersChoices(playersChoicesVariable.current);
-        // start the countdown for the next round
+        // and start the countdown for the next round
         if (opponentNames != null) {
           sessionStorage.setItem('playingCountdown', 60);
           setIsChoosing(false);
           sessionStorage.setItem('isChoosing', false);
         }
         setWasCardPlayed(false);
-        // last round finished
-        if (isFinal.current && playersChoicesVariable.current > 0) {
-          console.log("Going to end game screen");
-          history.push(`/endGame/${gameId}`);
-        }
       }
     } catch (error) {
       catchError(history, error, 'updating the countdown');
@@ -399,7 +399,7 @@ const GameView = () => {
     }
     // ----- CHOOSE card -----
     // if you are no card czar or have already submitted, don't submit again
-    if ((isCardCzarMode.current && !player.cardCzar) || 
+    if ((isCardCzarMode.current && !player.cardCzar) ||
       (isCardCzarMode.current && player.cardCzar && sessionStorage.getItem('cardsPlayed') == 1) ||
       (!isCardCzarMode.current && (sessionStorage.getItem('cardsPlayed') == 2))) return;
     chooseRoundWinner(); // otherwise, automatically submit
@@ -410,7 +410,6 @@ const GameView = () => {
   useEffect(() => {
     if (playersChoices == null) return;
     if ((isCardCzarMode.current && playersChoices.length == 3) || (!isCardCzarMode.current && playersChoices.length == 4)) {
-      // handleChoosingCountdown();
       if (isChoosing) return;
       setIsChoosing(true);
       sessionStorage.setItem('isChoosing', true);
@@ -656,7 +655,7 @@ const GameView = () => {
   */
   const displayEndRoundView = () => {
     let text;
-    if (isFinal.current && playersChoices.length > 0) {
+    if (isFinal.current && playersChoicesVariable.current.length > 0) {
       text = <p>The Game overview is displayed in: {countdown}</p>
     } else {
       text = <p>Next round starts in: {countdown}</p>
