@@ -7,29 +7,38 @@ import BaseContainer from "components/ui/BaseContainer";
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
 import PropTypes from "prop-types";
+import Player from 'models/Player';
 
 const EndGameView = () => {
   const { gameId } = useParams(); // history.push(`/endGame/${gameId}`);
   const history = useHistory();
   const [endGame, setEndGame] = useState(null);
   const [playedCombinations, setPlayedCombinations] = useState(null);
-  const [chosenCombination, setChosenCombination] = useState(null);
+  const [bestCombination, setBestCombination] = useState(null);
   const [displayChoices, setDisplayChoices] = useState(false); 
   const [isPending, setIsPending] = useState(false);
+  const [player, setPlayer] = useState(null);
 
   // COMMENT - Container for each combination instance 
   const Combination = ({combination}) => {
     let divClassName;
-    if(combination.combinationText === chosenCombination) divClassName = "combination chosenCombination";
+    if(combination.combinationText === bestCombination) divClassName = "combination chosenCombination";
     else divClassName = "combination nothosenCombination"
     return(    
-      <div className={divClassName} onClick={() => setChosenCombination(combination.combinationText)}>    
+      <div className={divClassName} onClick={() => setBestCombination(combination.combinationText)}>    
           <div className="combination text">{combination.combinationText}</div>
       </div>)
   }
   Combination.propTypes = {
     combination: PropTypes.object
   };
+
+  function convertArray(arr) {
+    var rv = [];
+    for (var i = 0; i < arr.length; ++i)
+      rv[i] = {"combinationId": i, "combinationText": arr[i]};
+    return rv;
+  }
 
   // COMMENT - fetch EndGame data:
   useEffect(() => {
@@ -43,34 +52,28 @@ const EndGameView = () => {
         catchError(history, error, 'fetching the EndGame data');
       }
     }
-    async function fetchPlayedCombinations() {
+    async function fetchPlayerData() {
       try {
-        // const response = await api.get(`/combinations`); // TODO - request to get the combinations played 
-        const combinations = [
-            {combinationText: "SuperCrazyFreackingFancyMysteriousGreatAndAwesomeAsWellAsLegendaryAndStupidOrWellThoughtStringJustToTestThingsOut"},
-            {combinationText: "Chupapi Muñañyo"},
-            {combinationText: "Oh yes daddy"},
-            {combinationText: "Oh wow this design is super ugly"},
-            {combinationText: "You know what also is ugly? Yo mama!"},
-            {combinationText: "Why is life so hard guys?"}]
-        setPlayedCombinations(combinations);
+        const response = await api.get('/player');
+        const player = new Player(response.data);
+        setPlayer(player);
+        setPlayedCombinations(convertArray(player.playedCombinations));
         console.log("Played combinations received"); 
       } catch (error) {
         catchError(history, error, 'fetching played combinations');
       }
     }
     fetchData();
-    fetchPlayedCombinations();
+    fetchPlayerData();
   }, []);
 
   const leaveGame = async () => {
     try { 
-      if(chosenCombination !== null) {
-        setIsPending(true);
-        // TODO - request to save the combination on the profile 
-        const requestBody = JSON.stringify({chosenCombination}); 
-        console.log(requestBody);
-        // const response = await api.post(`...`, requestBody);
+      setIsPending(true);
+      if(bestCombination !== null) {
+        const playerId = localStorage.getItem('loggedInUserID');
+        const requestBody = JSON.stringify({playerId, bestCombination});
+        await api.post(`/combinations`, requestBody);
       }
       await api.put('/leave/'+gameId);
       history.push('/lobby'); 
@@ -155,7 +158,7 @@ const EndGameView = () => {
           <h4>Pick a combination and press continue to save it on your profile!</h4>
           <ul className="endGameView combinations-list"> 
               {playedCombinations.map(combination => (
-                <Combination combination={combination} key={combination.combinationText}/>
+                <Combination combination={combination} key={combination.combinationId}/>
               ))}
           </ul>
         </div>}
@@ -170,7 +173,7 @@ const EndGameView = () => {
             {displayChoices &&
                             <Button
                                 width="100%"
-                                onClick={() => setChosenCombination(null)}
+                                onClick={() => setBestCombination(null)}
                               >
                               Reset choice 
                             </Button>}

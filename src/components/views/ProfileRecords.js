@@ -23,11 +23,18 @@ const ProfileRecords = () => {
   const [perPage] = useState(5);
   const [pageCount, setPageCount] = useState(0);
 
+  function convertArray(arr) {
+    var rv = [];
+    for (var i = 0; i < arr.length; ++i)
+      rv[i] = {"combinationId": i, "combinationText": arr[i]};
+    return rv;
+  }
+
   useEffect(() => {
     async function fetchUserRecordsData() {
       try {
         const response = await api.get(`/users/${userId}/records`);
-        const combinationsData = response.data.bestCombinations;
+        const combinationsData = convertArray(response.data.bestCombinations);
         const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
         const postData = slice.map(combination => 
           <div key={combination.combinationId}>
@@ -38,31 +45,6 @@ const ProfileRecords = () => {
         setRoundsWon(response.data.totalRoundWon); // for Card Czar 
         setPointsEarned(response.data.timesPicked);  // for Community
         setGamesWon(response.data.totalGameWon);
-        // const response = [
-        //   { username: "John Doe" },
-        //   { roundsWon: 10 },
-        //   { pointsEarned: 56 },
-        //   { gamesWon: 2 },
-        //   { favouriteCombinations: [
-        //     { combinationId: 1 , combinationText: "SuperCrazyFreackingFancyMysteriousGreatAndAwesomeAsWellAsLegendaryAndStupidOrWellThoughtStringJustToTestThingsOut"},
-        //     { combinationId: 2 , combinationText: "Chupapi Muñañyo"},
-        //     { combinationId: 3 , combinationText: "Oh yes daddy 🤪"},
-        //     { combinationId: 4 , combinationText: "Oh wow this design is super ugly"},
-        //     { combinationId: 5 , combinationText: "You know what also is ugly? Yo mama!"},
-        //     { combinationId: 6 , combinationText: "Why is life so hard guys?"}
-        //   ]},
-        // ];
-        // const combinationsData = response[4].favouriteCombinations;
-        // const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
-        // const postData = slice.map(combination => 
-        //   <div key={combination.combinationId}>
-        //       <p>{combination.combinationText}</p>
-        //   </div>)
-        // setFavouriteCombinations(postData);
-        // setUsername(response[0].username);
-        // setRoundsWon(response[1].roundsWon);
-        // setPointsEarned(response[2].pointsEarned);
-        // setGamesWon(response[3].gamesWon);
         setPageCount(Math.ceil(combinationsData.length / perPage));
         console.log('Fetching user records data successfull');
       } catch (error) {

@@ -187,7 +187,7 @@ const GameView = () => {
       const response = await api.get('/player');
       const player = new Player(response.data);
       setPlayer(player);
-      console.log("Player")
+      // console.log("Player")
     } catch (error) {
       catchError(history, error, 'fetching the player data');
     }

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {api, catchError} from 'helpers/api';
+import {api, updateApi, catchError} from 'helpers/api';
 import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import {Button} from 'components/ui/Button';
 import {useHistory} from 'react-router-dom';
@@ -94,6 +94,7 @@ const ProfileOverview = () => {
     setIsEditing(false);
     setIsEditingCompleted(!isEditingCompleted);
     setIsEditingProfile(false);
+    setIsPending(false);
   }
 
   // COMMENT - changing password
@@ -101,15 +102,18 @@ const ProfileOverview = () => {
     try {
       setIsPending(true);
       const loggedInUserID = localStorage.getItem('loggedInUserID');
-      const requestBody = JSON.stringify({password, newPassword}); 
-      // const response = await api.put(`/users/${loggedInUserID}/password`, requestBody); // TESTME - password changing
-      // localStorage.setItem('token', response.data.token);
+      const oldPassword = password;
+      const requestBody = JSON.stringify({newPassword, oldPassword}); 
+      const response = await api.put(`/users/${loggedInUserID}/password`, requestBody);
+      localStorage.setItem('token', response.data.token); 
+      updateApi();
       console.log('Password change successfull');
-      setIsPending(false);
       hasProfileChanged.current = true;
       cancelEdit();
     } catch (error) {
       setIsPending(false);
+      setPassword("");
+      setNewPassword("");
       catchError(history, error, 'changing user password', true);
     }
   };
@@ -120,13 +124,13 @@ const ProfileOverview = () => {
       setIsPending(true);
       const loggedInUserID = localStorage.getItem('loggedInUserID');
       const requestBody = JSON.stringify({username, birthday, password}); 
-      await api.put(`/users/${loggedInUserID}`, requestBody); // TESTME
+      await api.put(`/users/${loggedInUserID}`, requestBody);
       console.log('Profile change successfull');
-      setIsPending(false);
       hasProfileChanged.current = true;
       cancelEdit();
     } catch (error) {
       setIsPending(false);
+      setPassword("");
       catchError(history, error, 'changing user data', true);
     }
   };
@@ -191,6 +195,7 @@ const ProfileOverview = () => {
                           <td>Current password</td>
                           <td>          
                             <FormFieldPassword
+                            value={password} 
                             onChange={un => setPassword(un)}
                             />
                           </td>
@@ -201,6 +206,7 @@ const ProfileOverview = () => {
                           <td>Current password</td>
                           <td>          
                             <FormFieldPassword
+                            value={password} 
                             onChange={un => setPassword(un)}
                             />
                           </td>
@@ -210,6 +216,7 @@ const ProfileOverview = () => {
                           <td>New password</td>
                           <td>          
                             <FormFieldPassword
+                            value={newPassword} 
                             onChange={un => setNewPassword(un)}
                             />
                           </td>

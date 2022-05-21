@@ -4,6 +4,6 @@ import CAH_logo from '../../CAH_logo3.png';
 
 export const CAHLogo = props => {
   return (
-    <Link to="/lobby"><a><img src={CAH_logo}/></a></Link>
+    <Link to="/lobby"><img src={CAH_logo}/></Link>
   );
 };
