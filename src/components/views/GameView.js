@@ -38,7 +38,6 @@ const GameView = () => {
   const [isChoosing, setIsChoosing] = useState(sessionStorage.getItem('isChoosing') ?? false);
   
   // COMMENT Game data:
-  // const [cardsPlayed, setCardsPlayed] = useState(0); // if this is > 0 then button is disabled till next round 
   const [opponentNames, setOpponentNames] = useState(null);
   const playersWhoPlayed= useRef(null);
   const isCardCzarMode = useRef(null);
@@ -425,7 +424,6 @@ const GameView = () => {
         setChosenCard(null); // TODO not needed after we display only cards that were not played by the player
         chosenCardText.current = null;
       }
-      // change cardsPlayed so that the useEffect is triggered to fetch the playerData (only 9 cards remaining)
       sessionStorage.setItem('cardsPlayed', 1);
       setCardsPlayed(cardsPlayed + 1);   // ensure re-render to disable button
       let requestBody;
