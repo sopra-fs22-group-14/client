@@ -376,7 +376,7 @@ const GameView = () => {
         }
         setWasCardPlayed(false);
         // last round finished
-        if (isFinal.current && playersChoices.length > 0) {
+        if (isFinal.current && playersChoicesVariable.current > 0) {
           console.log("Going to end game screen");
           history.push(`/endGame/${gameId}`);
         }
