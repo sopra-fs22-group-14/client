@@ -15,7 +15,7 @@ const WaitingArea = () => {
   const history = useHistory();
   const [playerCount, setPlayerCount] = useState(1);
   const [gameName, setGameName] = useState(0);
-  const [isLastPlayerLeaving, setIsLastPlayerLeaving] = useState(false); //NOTE - for pausing the polling 
+  const [isPolling, setIsPolling] = useState(true); //NOTE - for pausing the polling 
 
   const getPlayerCount = async () => {
     try {
@@ -42,17 +42,17 @@ const WaitingArea = () => {
 
   useInterval( async () => {
     getPlayerCount();
-  }, isLastPlayerLeaving ? null : 1000) //NOTE - for pausing the polling 
+  }, isPolling ? 1000 : null) //NOTE - for pausing the polling 
 
 
   const leaveGame = async () => {
-    try { 
-      if (playerCount === 1)
-        setIsLastPlayerLeaving(true); //NOTE - for pausing the polling 
+    try {
+      setIsPolling(false);
       await api.put('/leave/'+gameId);
-      history.push('/lobby'); 
+      history.push('/lobby');
     } catch (error) {
       catchError(history, error, 'leaving the game');
+      setIsPolling(true);
     }
   }
   
