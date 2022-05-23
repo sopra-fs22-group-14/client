@@ -22,11 +22,14 @@
     letter-spacing: 10px;
   }
 
+  h4{
+    margin: 0;
+  }
   &.combinations{
 //     background-color: brown;
     width: 100%;
     word-wrap: break-word;
-    min-height: 17em;
+    min-height: 13em;
     // margin-bottom: 3em;
     // padding: 0.5em;
     text-shadow: $dropShadowGame;

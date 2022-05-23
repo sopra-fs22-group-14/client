@@ -15,7 +15,7 @@ const ProfileUsers = () => {
   // FOR PAGINATION: 
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState(null);
-  const [perPage] = useState(5);
+  const [perPage] = useState(4);
   const [pageCount, setPageCount] = useState(0);
 
   // -------------------------------- container for each USER --------------------------------

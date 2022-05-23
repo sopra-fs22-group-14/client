@@ -30,29 +30,32 @@ const ProfileRecords = () => {
     return rv;
   }
 
-  useEffect(() => {
-    async function fetchUserRecordsData() {
-      try {
-        const response = await api.get(`/users/${userId}/records`);
-        const combinationsData = convertArray(response.data.bestCombinations);
-        const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
-        const postData = slice.map(combination => 
-          <div key={combination.combinationId}>
-              <p>{combination.combinationText}</p>
-          </div>)
-        setFavouriteCombinations(postData);
-        setUsername(response.data.username);
-        setRoundsWon(response.data.totalRoundWon); // for Card Czar 
-        setPointsEarned(response.data.timesPicked);  // for Community
-        setGamesWon(response.data.totalGameWon);
-        setPageCount(Math.ceil(combinationsData.length / perPage));
-        console.log('Fetching user records data successfull');
-      } catch (error) {
-        catchError(history, error, 'fetching the user records data');
-      }
+  async function fetchUserRecordsData() {
+    try {
+      const IdOfUser = userId;
+      console.log(`/users/${IdOfUser}/records`);
+      const response = await api.get(`/users/${IdOfUser}/records`);
+      const combinationsData = convertArray(response.data.bestCombinations);
+      const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
+      const postData = slice.map(combination => 
+        <div key={combination.combinationId}>
+            <p>{combination.combinationText}</p>
+        </div>)
+      setFavouriteCombinations(postData);
+      setUsername(response.data.username);
+      setRoundsWon(response.data.totalRoundWon); // for Card Czar 
+      setPointsEarned(response.data.timesPicked);  // for Community
+      setGamesWon(response.data.totalGameWon);
+      setPageCount(Math.ceil(combinationsData.length / perPage));
+      console.log('Fetching user records data successfull');
+    } catch (error) {
+      catchError(history, error, 'fetching the user records data');
     }
+  }
+
+  useEffect(() => {
     fetchUserRecordsData();
-  },[currentPage]);
+  },[currentPage, userId]);
 
   const onPageClick = (e) => {
     setCurrentPage(e.selected + 1)

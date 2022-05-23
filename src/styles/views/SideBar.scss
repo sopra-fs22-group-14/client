@@ -2,7 +2,7 @@
 
 .sidebar {
   &.container {
-    // background-color: grey;
+    // background-color: red;
     cursor: pointer;
     background-color: #8585853b;
     border-radius: $borderRadius;
@@ -64,7 +64,7 @@
   }
   &.buttonsList > li{
     padding: 0.3em;
-    width: 9VW;
+    // width: 9VW;
     margin: 0.6em;
     border-radius: $borderRadius;
   } 

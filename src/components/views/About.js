@@ -33,12 +33,13 @@ const About = props => {
             <div className="column">
               <div className="about-card">
                 <div className="container">
-                  <h1>No Card Czar Mode</h1>
+                  <h1>Community  Mode</h1>
                   <p className="title">The Engaging</p>
                   <p>Rather than a Card Czar choosing the winner, this Mode allows for
                     all players to decide for themselves.<br/>After all white cards were
-                    played, every player gets ten points to distribute between the
-                    others. The player who received the most points wins the round!
+                    played, every player determines the winner by choosing his/her 
+                    favorite card that was played by the opponent. 
+                    In the end the player who was chosen most often wins the game!
                   </p>
                 </div>
               </div>

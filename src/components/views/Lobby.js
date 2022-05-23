@@ -15,29 +15,48 @@ import "styles/views/ProfileLobbyCommon.scss";
 const Lobby = () => {
   const history = useHistory();
   const [games, setGames] = useState(null);
+  const [isPending, setIsPending] = useState(false);
+  const [chosenGame, setChosenGame] = useState(null);
   sessionStorage.clear();
 
   // -------------------------------- Joining game --------------------------------
   const joinGame = async (gameId) => {
     try {
-      const requestBody = JSON.stringify({gameId});
-      console.log(gameId);
-      const response = await api.put('/games', requestBody);
-      history.push(`/lobby/wait/${gameId}`);
+      if(isPending === false){
+        setIsPending(true);
+        setChosenGame(gameId);
+        const requestBody = JSON.stringify({gameId});
+        console.log(gameId);
+        const response = await api.put('/games', requestBody);
+        history.push(`/lobby/wait/${gameId}`);
+      }
     } catch (error) {
+      setIsPending(false);
+      setChosenGame(null);
       catchError(history, error, 'joining the game');
     }
   }
 
   // Container for each GAME instance 
   const Game = ({game}) => (
-      <div className="game container"
-           onClick={() => joinGame(game.gameId)}>    
-        <div className="game name">{game.gameName}</div>
-        <div className="game numberOfRounds">{game.numOfRounds}</div>
-        <div className="game numberOfPlayers">{game.numOfPlayersJoined} / 4</div>
-        <div className="game cardsType">{game.gameEdition}</div>
-        <div className="game gameMode">{game.cardCzarMode ? "Card Czar" : "Community"}</div>
+      <div
+           onClick={() => joinGame(game.gameId)}>   
+        {chosenGame!=game.gameId &&
+        <div className="game container">
+          <div className="game name">{game.gameName}</div>
+          <div className="game numberOfRounds">{game.numOfRounds}</div>
+          <div className="game numberOfPlayers">{game.numOfPlayersJoined} / 4</div>
+          <div className="game cardsType">{game.gameEdition}</div>
+          <div className="game gameMode">{game.cardCzarMode ? "Card Czar" : "Community"}</div>
+        </div>}
+        {chosenGame==game.gameId &&
+        <div className="game container">
+          <div className="game name"></div>
+          <div className="game numberOfRounds"></div>
+          <div className="game numberOfPlayers">Joining...</div>
+          <div className="game cardsType"></div>
+          <div className="game gameMode"></div>
+        </div>}
       </div>
   );
   Game.propTypes = {
@@ -81,6 +100,14 @@ const Lobby = () => {
               <Game game={game} key={game.gameId}/>
             ))}
           </ul>
+
+          {/* {isPending && <h3>Joining...</h3>}
+          {!isPending &&           <ul className="lobby games-list">
+            {games.map(game => (
+              <Game game={game} key={game.gameId}/>
+            ))}
+          </ul>} */}
+
           <div className = "buttons">
             {/* GAME CREATION BUTTON  */}
             <Button

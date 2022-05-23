@@ -18,6 +18,7 @@ const SideBar = () => {
   };
   
   const redirectRecords = () => {
+    console.log("history: ", `/profile/${userId}/records`)
     history.push(`/profile/${userId}/records`);
   };
 
@@ -47,9 +48,9 @@ const SideBar = () => {
   return (
     <div className="sidebar container">
       <div className="sidebar lobby" onClick={() => redirectLobby()}>🎮 Lobby</div>
-      <div className="sidebar profile" onClick={() => redirectProfile()}>📸 Profile</div>
+      {/* <div className="sidebar profile" onClick={() => redirectProfile()}>📸 Profile</div> */}
       <ul className = "sidebar buttonsList">
-        <li className = "listElement" onClick={() => redirectProfile()}>📝 Overview</li>
+        <li className = "listElement" onClick={() => redirectProfile()}>📸 My profile</li>
         <li className = "listElement" onClick={() => redirectRecords()}>🏆 Records</li>
         <li className = "listElement" onClick={() => redirectUsers()}>🥰 Other players</li>
         {!linkCopied && <li className = "listElement" onClick={() => inviteFriends()}>✉️ Invite friends</li>}
