@@ -55,15 +55,63 @@ const ProfileRecords = () => {
 
   useEffect(() => {
     fetchUserRecordsData();
-  },[currentPage,userId]);
-
-  useEffect(() => {
-    fetchUserRecordsData();
-  },[]);
+  },[currentPage, userId]);
 
   const onPageClick = (e) => {
     setCurrentPage(e.selected + 1)
   };
+
+
+  const displayProfileRecords = () => {
+    return (
+        <div className="profile minor">
+        <h2>Records</h2>
+        <h3 className = "animatedH3">{username}</h3>
+        <table className = "profile statsTable">
+          <tbody>
+              <tr>
+                <td>🏆Games won</td>
+                <td>{gamesWon}</td>
+              </tr>
+              <tr>
+                <td>⭐Points earned (Community mode)</td>
+                <td>{pointsEarned}</td>
+              </tr>
+              <tr>
+                <td>🥊Rounds won (Card Czar mode)</td>
+                <td>{roundsWon}</td>
+              </tr>
+          </tbody>
+      </table>
+      <div className = "profile combinations">
+            <div className = "profile combinations list"> 
+              <h4>Favourite combinations</h4>
+                {favouriteCombinations}
+                {favouriteCombinations.length == 0 && userId == localStorage.getItem('loggedInUserID') &&
+                  <p>You don't have any favourite combinations yet! You can add them to the profile at the end of each game!</p>
+                }
+                {favouriteCombinations.length == 0 && userId != localStorage.getItem('loggedInUserID') &&
+                  <p>User does not have any favourite combinations yet!</p>
+                }
+            </div>
+      </div>
+      <div> 
+        {favouriteCombinations.length != 0 &&                   
+                <ReactPaginate
+                  previousLabel={"←"}
+                  nextLabel={"→"}
+                  breakLabel={"..."}
+                  breakClassName={"break-me"}
+                  pageCount={pageCount}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={5}
+                  onPageChange={onPageClick}
+                  containerClassName={"pagination"}
+                  subContainerClassName={"pages pagination"}
+                  activeClassName={"active"}/>}
+      </div> 
+    </div>  )
+  }
 
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
@@ -72,53 +120,7 @@ const ProfileRecords = () => {
     content = (
         <div className = "profile main">
           <SideBar/>
-          <div className="profile minor">
-              <h2>Records</h2>
-              <h3 className = "animatedH3">{username}</h3>
-              <table className = "profile statsTable">
-                <tbody>
-                    <tr>
-                      <td>🏆Games won</td>
-                      <td>{gamesWon}</td>
-                    </tr>
-                    <tr>
-                      <td>⭐Points earned (Community mode)</td>
-                      <td>{pointsEarned}</td>
-                    </tr>
-                    <tr>
-                      <td>🥊Rounds won (Card Czar mode)</td>
-                      <td>{roundsWon}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div className = "profile combinations">
-                  <div className = "profile combinations list"> 
-                    <h4>Favourite combinations</h4>
-                      {favouriteCombinations}
-                      {favouriteCombinations.length == 0 && userId == localStorage.getItem('loggedInUserID') &&
-                        <p>You don't have any favourite combinations yet! You can add them to the profile at the end of each game!</p>
-                      }
-                      {favouriteCombinations.length == 0 && userId != localStorage.getItem('loggedInUserID') &&
-                        <p>User does not have any favourite combinations yet!</p>
-                      }
-                  </div>
-            </div>
-            <div> 
-              {favouriteCombinations.length != 0 &&                   
-                      <ReactPaginate
-                        previousLabel={"←"}
-                        nextLabel={"→"}
-                        breakLabel={"..."}
-                        breakClassName={"break-me"}
-                        pageCount={pageCount}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={onPageClick}
-                        containerClassName={"pagination"}
-                        subContainerClassName={"pages pagination"}
-                        activeClassName={"active"}/>}
-            </div> 
-          </div>  
+          {displayProfileRecords()}
         </div>
     );
   }
