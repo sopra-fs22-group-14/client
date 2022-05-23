@@ -17,6 +17,7 @@ const Lobby = () => {
   const [games, setGames] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const [chosenGame, setChosenGame] = useState(null);
+  const [isPolling, setIsPolling] = useState(true);
   sessionStorage.clear();
 
   // -------------------------------- Joining game --------------------------------
@@ -77,14 +78,23 @@ const Lobby = () => {
       }
     }
     fetchData();
-  }, 1000);
+  }, isPolling ? 1000 : null);
+
+  const stopPolling = () => {
+    setIsPolling(false);
+  }
+
+  const startPolling = () => {
+    setIsPolling(true);
+  }
+
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
   if (games) {
     content = (
       <div className = "lobby main">
-        <SideBar/>
+        <SideBar stopPolling={stopPolling} startPolling={startPolling}/>
         <div  className="lobby games">
           <h2>Games</h2>
           <h5>Join by clicking on the game!</h5>

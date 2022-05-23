@@ -7,6 +7,7 @@ import 'styles/views/WaitingArea.scss';
 import BaseContainer from "components/ui/BaseContainer";
 import {useInterval} from 'helpers/utils';
 import {SpinnerSquares} from 'components/ui/SpinnerSquares';
+import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 
 const WaitingArea = () => {
   const { gameId } = useParams(); // in case we want to pass it as param
@@ -14,7 +15,7 @@ const WaitingArea = () => {
 
   const history = useHistory();
   const [playerCount, setPlayerCount] = useState(1);
-  const [gameName, setGameName] = useState(0);
+  const [gameName, setGameName] = useState("");
   const [isPolling, setIsPolling] = useState(true); //NOTE - for pausing the polling 
 
   const getPlayerCount = async () => {
@@ -61,8 +62,11 @@ const WaitingArea = () => {
   const hname = "waitingArea h2_" + playerCount;
   const bname = "waitingArea bar b" + playerCount;
 
-  return (
-    <BaseContainer>
+  let content = <SpinnerBalls/>;
+  let joining = null;
+
+  if (gameName != "") {
+    content = (
       <div className="waitingArea base">
         <h2>{gameName}</h2>
         <SpinnerSquares/> {/* <WaitingLogo/> */}
@@ -71,7 +75,8 @@ const WaitingArea = () => {
           <div className={bname} />
         </div>
       </div>
-      {playerCount === 4 ?
+    )
+    joining = (playerCount === 4 ?
       <div className="waitingArea join">
         <h2>Joining Game...</h2>
       </div> :
@@ -83,8 +88,13 @@ const WaitingArea = () => {
         >
           Leave
         </Button>
-      </div>}
+      </div>);
+  }
 
+  return (
+    <BaseContainer>
+      {content}
+      {joining}
     </BaseContainer>
   );
 }

@@ -32,8 +32,9 @@
   &.roundSection {
     // background-color: green;
     width: 100%;
-    h3{
+    h3 {
       margin: 0;
+      font-size: larger;
     }
     p {
       margin-top: 0.1em;
@@ -433,7 +434,7 @@
     margin-top: 2.5em;
     margin-left: 1em;
     margin-right: 1em;
-    background-color: rgb(197, 197, 197);
+    background-color: rgb(212, 212, 212);
     border-radius: 1em;
     border: solid black 2px;
     h2 {

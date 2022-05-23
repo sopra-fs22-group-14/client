@@ -4,7 +4,7 @@ import "styles/views/SideBar.scss";
 import { useHistory } from "react-router-dom";
 import {api, updateApi, catchError} from 'helpers/api';
 
-const SideBar = () => {
+const SideBar = props => {
   const history = useHistory();
   const [linkCopied, setLinkCopied] = useState(false);
   const userId = localStorage.getItem('loggedInUserID');
@@ -33,6 +33,8 @@ const SideBar = () => {
 
   const logout = async () => {
     try {
+      // stop polling
+      if (props.stopPolling) props.stopPolling();
       // prepare logout API call
       await api.post('/users/logout');
       localStorage.removeItem('token');
@@ -42,6 +44,7 @@ const SideBar = () => {
       history.push('/login');
     } catch (error) {
       catchError(history, error, 'logging out');
+      if (props.startPolling) props.startPolling();
     }
   }
 

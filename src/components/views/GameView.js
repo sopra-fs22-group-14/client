@@ -423,10 +423,6 @@ const GameView = () => {
   // method that is called when a player plays a white card
   const playCard = async () => {
     try {
-      if (isCardCzarMode.current === false) {
-        setChosenCard(null); // TODO not needed after we display only cards that were not played by the player
-        chosenCardText.current = null;
-      }
       sessionStorage.setItem('cardsPlayed', 1);
       setCardsPlayed(cardsPlayed + 1);   // ensure re-render to disable button
       let requestBody;
@@ -785,7 +781,10 @@ const GameView = () => {
                 </div>
               }
               {/* If player is a card czar, display a hint */}
-              {player.cardCzar && <div className="gameView cardCzarHint"><h2>You are Card Czar this round!</h2></div> }
+              {player.cardCzar && playersChoices.length < 3 && <div className="gameView cardCzarHint"><h2>You are Card Czar this round!</h2></div> }
+              {player.cardCzar && playersChoices.length == 3 && <div className="gameView cardCzarHint"><h2>Pick your favourite card now!</h2></div> }
+              {playersChoices.length == 4 && !isCardCzarMode.current && <div className="gameView cardCzarHint"><h2>Pick your favourite card now!</h2></div> }
+              {!player.cardCzar && isCardCzarMode.current && playersChoices.length == 3 && <div className="gameView cardCzarHint"><h2>Wait for the Card Czar to pick!</h2></div> }
             </div>
           </div>
         </div>
