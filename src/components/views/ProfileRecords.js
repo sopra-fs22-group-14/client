@@ -33,7 +33,7 @@ const ProfileRecords = () => {
   async function fetchUserRecordsData() {
     try {
       const IdOfUser = userId;
-      console.log(`/users/${IdOfUser}/records`);
+      // console.log(`/users/${IdOfUser}/records`);
       const response = await api.get(`/users/${IdOfUser}/records`);
       const combinationsData = convertArray(response.data.bestCombinations);
       const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
@@ -55,7 +55,11 @@ const ProfileRecords = () => {
 
   useEffect(() => {
     fetchUserRecordsData();
-  },[currentPage, userId]);
+  },[currentPage,userId]);
+
+  useEffect(() => {
+    fetchUserRecordsData();
+  },[]);
 
   const onPageClick = (e) => {
     setCurrentPage(e.selected + 1)

@@ -18,7 +18,7 @@ const SideBar = () => {
   };
   
   const redirectRecords = () => {
-    console.log("history: ", `/profile/${userId}/records`)
+    // console.log("history: ", `/profile/${userId}/records`)
     history.push(`/profile/${userId}/records`);
   };
 
