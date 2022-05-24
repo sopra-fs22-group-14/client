@@ -501,20 +501,17 @@ const GameView = () => {
   }
 
   const displayRoundSection = (roundNr, player, isCardCzarMode) => {
-    if(isCardCzarMode.current === false){
-      const container = (<div className="gameView roundSection">
+    if(isCardCzarMode.current === false) {
+      return (<div className="gameView roundSection">
                         <h3>{"Round "+roundNr+" / "+totalRounds.current}</h3>
                         {player.cardCzar === false && <p className = "vibrate">Submit a card from your hand, then pick your favourite from round's played cards!</p>}
                       </div>);
-      return container;
-    }
-    else{
-      const container = (<div className="gameView roundSection">
-        {"Round "+roundNr+" / "+totalRounds.current}
+    } else {
+      return (<div className="gameView roundSection">
+        <h3>{"Round "+roundNr+" / "+totalRounds.current}</h3>
         {player.cardCzar === false && <p className = "vibrate">You are a normal player this round - pick card from hand!</p>}
         {player.cardCzar === true && <p className = "vibrate" >You are a Card Czar this round - pick played card that you think is best!</p>}
       </div>);
-      return container;
     }
   }
 

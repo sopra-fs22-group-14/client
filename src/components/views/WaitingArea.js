@@ -82,7 +82,7 @@ const WaitingArea = () => {
       </div> :
       <div className="waitingArea button-container">
         <Button
-          disabled = {playerCount === 4}
+          disabled = {!isPolling}
           width="50%"
           onClick={() => leaveGame()}
         >
