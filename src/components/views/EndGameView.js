@@ -8,6 +8,7 @@ import {SpinnerBalls} from 'components/ui/SpinnerBalls';
 import EndGame from 'models/EndGame';
 import PropTypes from "prop-types";
 import Player from 'models/Player';
+import { useInterval } from 'helpers/utils';
 
 const EndGameView = () => {
   const { gameId } = useParams(); // history.push(`/endGame/${gameId}`);
@@ -66,6 +67,17 @@ const EndGameView = () => {
     fetchData();
     fetchPlayerData();
   }, []);
+
+  useInterval(() => {
+    async function pollSomeData() {
+      try {
+        await api.get('/player');
+      } catch (error) {
+        catchError(history, error, 'polling');
+      }
+    }
+    pollSomeData();
+  }, isPending ? null : 5000)
 
   const leaveGame = async () => {
     try { 
