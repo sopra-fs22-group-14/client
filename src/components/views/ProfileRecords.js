@@ -32,9 +32,7 @@ const ProfileRecords = () => {
 
   async function fetchUserRecordsData() {
     try {
-      const IdOfUser = userId;
-      // console.log(`/users/${IdOfUser}/records`);
-      const response = await api.get(`/users/${IdOfUser}/records`);
+      const response = await api.get(`/users/${userId}/records`);
       const combinationsData = convertArray(response.data.bestCombinations);
       const slice = combinationsData.slice((currentPage-1)*perPage, (currentPage-1)*perPage + perPage);
       const postData = slice.map(combination => 
@@ -62,41 +60,41 @@ const ProfileRecords = () => {
   };
 
 
-  const displayProfileRecords = () => {
+  const displayProfileRecords = (idOfUser, nameOfUser, nrOfGamesWon, nrOfPointsEarned, nrOfRoundsWon, combinations) => {
     return (
         <div className="profile minor">
         <h2>Records</h2>
-        <h3 className = "animatedH3">{username}</h3>
+        <h3 className = "animatedH3">{nameOfUser}</h3>
         <table className = "profile statsTable">
           <tbody>
               <tr>
                 <td>🏆Games won</td>
-                <td>{gamesWon}</td>
+                <td>{nrOfGamesWon}</td>
               </tr>
               <tr>
                 <td>⭐Points earned (Community mode)</td>
-                <td>{pointsEarned}</td>
+                <td>{nrOfPointsEarned}</td>
               </tr>
               <tr>
                 <td>🥊Rounds won (Card Czar mode)</td>
-                <td>{roundsWon}</td>
+                <td>{nrOfRoundsWon}</td>
               </tr>
           </tbody>
       </table>
       <div className = "profile combinations">
             <div className = "profile combinations list"> 
               <h4>Favourite combinations</h4>
-                {favouriteCombinations}
-                {favouriteCombinations.length == 0 && userId == localStorage.getItem('loggedInUserID') &&
+                {combinations}
+                {combinations.length == 0 && idOfUser == localStorage.getItem('loggedInUserID') &&
                   <p>You don't have any favourite combinations yet! You can add them to the profile at the end of each game!</p>
                 }
-                {favouriteCombinations.length == 0 && userId != localStorage.getItem('loggedInUserID') &&
+                {combinations.length == 0 && idOfUser != localStorage.getItem('loggedInUserID') &&
                   <p>User does not have any favourite combinations yet!</p>
                 }
             </div>
       </div>
       <div> 
-        {favouriteCombinations.length != 0 &&                   
+        {combinations.length != 0 &&                   
                 <ReactPaginate
                   previousLabel={"←"}
                   nextLabel={"→"}
@@ -120,7 +118,7 @@ const ProfileRecords = () => {
     content = (
         <div className = "profile main">
           <SideBar/>
-          {displayProfileRecords()}
+          {displayProfileRecords(userId, username, gamesWon, pointsEarned, roundsWon, favouriteCombinations)}
         </div>
     );
   }
