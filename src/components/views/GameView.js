@@ -40,6 +40,7 @@ const GameView = () => {
   // COMMENT Game data:
   const [opponentNames, setOpponentNames] = useState(null);
   const [playersWhoPlayed, setPlayersWhoPlayed] = useState(null);
+  const [playersWhoPicked, setPlayersWhoPicked] = useState(null);
   const isCardCzarMode = useRef(null);
   const [endGame, setEndGame] = useState(null); // leaderboard table during the game
   const totalRounds = useRef(null);
@@ -258,8 +259,6 @@ const GameView = () => {
     try {
       console.log("Round");
       const response = await api.get(`/${gameId}/gameround`);
-      // console.log(response.data);
-
       // in case a new round started, save the important things in useRefs for now.
       roundId.current = response.data.roundId;
       blackCardVariable.current = response.data.blackCard;
@@ -272,10 +271,10 @@ const GameView = () => {
         if (response.data.playedCards.length != 0)
           setPlayersChoices(response.data.playedCards);
       }
-      // console.log("CURRENT response.data.playedPlayerNames: ",playersWhoPlayed);
-      // console.log("new response.data.playedPlayerNames: ", response.data.playedPlayerNames);
       if (JSON.stringify(response.data.playedPlayerNames) != JSON.stringify(playersWhoPlayed))
         setPlayersWhoPlayed(response.data.playedPlayerNames);
+      if (JSON.stringify(response.data.pickedPlayerNames) != JSON.stringify(playersWhoPicked))
+        setPlayersWhoPicked(response.data.pickedPlayerNames);
     } catch (error) {
       catchError(history, error, 'fetching the round data');
     }
@@ -692,7 +691,7 @@ const GameView = () => {
   // -------------------------------- SPINNER --------------------------------
   let content = <SpinnerBalls/>;
   // -------------------------------- IF --------------------------------
-  if (player != null && blackCard != null && playersChoices != null && roundNr != null && opponentNames != null && playersWhoPlayed != null) { 
+  if (player != null && blackCard != null && playersChoices != null && roundNr != null && opponentNames != null && playersWhoPlayed != null && playersWhoPicked != null) { 
     content = (
       <div className = {mainClass}>
         {displayRoundSection(roundNr, player, isCardCzarMode)}
@@ -705,8 +704,6 @@ const GameView = () => {
               <div><h3>Time left to pick a favourite:</h3><br/><Countdown onFinish={handleTimerFinish} /></div>}
             <div className="gameView gameProgress">
               {isCardCzarMode.current && <h5>#Players who already played: {playersWhoPlayed.length}/4</h5>} 
-              {/* {!isCardCzarMode.current && <h5>#Players that already picked from hand: {playersWhoPlayed.length} / 4</h5>} 
-              {!isCardCzarMode.current && <h5>#Players that already chosen a winner: {playersWhoPlayed.length} / 4</h5>}  */}
               {!isCardCzarMode.current &&
               <table className = "gameView gameProgress progressTable">
                 <tbody>
@@ -716,17 +713,25 @@ const GameView = () => {
                   </tr>
                   <tr>
                     <td><h6>#Players who chose a winner:</h6></td>
-                    <td><h6>{playersWhoPlayed.length}/4</h6></td>
+                    <td><h6>{playersWhoPicked.length}/4</h6></td>
                   </tr>
                 </tbody>
               </table>}
             </div>
           </div>
           <div className="gameView topSection center"> 
-            <div className="gameView tile">
-              {Object.keys(opponentNames).length > 0 && (!(playersWhoPlayed.includes(opponentNames[0]))) && <h3>{opponentNames[0]}</h3>}
-              {Object.keys(opponentNames).length > 0 && (playersWhoPlayed.includes(opponentNames[0])) && <h3 style={{color: 'green'}}>{opponentNames[0]}</h3>}
-            </div>
+              <div className="gameView tile">
+                {/* name is black */}
+                {Object.keys(opponentNames).length > 0 
+                  && (((!playersWhoPlayed.includes(opponentNames[0])) && (!playersWhoPicked.includes(opponentNames[0])))
+                  || ((playersWhoPlayed.includes(opponentNames[0]))  && (!playersWhoPicked.includes(opponentNames[0]))  && (playersChoices.length == 4)))
+                  &&  <h3>{opponentNames[0]}</h3>}
+                {/* name is green */}
+                {Object.keys(opponentNames).length > 0 
+                  && (playersWhoPlayed.includes(opponentNames[0])) 
+                  && ((playersWhoPicked.includes(opponentNames[0])) || ((!playersWhoPicked.includes(opponentNames[0])) && (playersChoices.length < 4)))
+                  && <h3 style={{color: 'green'}}>{opponentNames[0]}</h3>}
+              </div>
           </div>
           <div className="gameView topSection leaderboard">
             <h4>Leaderboard</h4>
@@ -735,19 +740,35 @@ const GameView = () => {
         </div>
         <div className="gameView middleSection">
           <div className="gameView middleSection opponentSection"> 
-            <div className="gameView tile">
-              {Object.keys(opponentNames).length > 1 && (!(playersWhoPlayed.includes(opponentNames[1]))) && <h3>{opponentNames[1]}</h3>}
-              {Object.keys(opponentNames).length > 1 && (playersWhoPlayed.includes(opponentNames[1])) && <h3 style={{color: 'green'}}>{opponentNames[1]}</h3>}
-            </div>
+              <div className="gameView tile">
+                {/* name is black */}
+                {Object.keys(opponentNames).length > 0 
+                  && (((!playersWhoPlayed.includes(opponentNames[1])) && (!playersWhoPicked.includes(opponentNames[1])))
+                  || ((playersWhoPlayed.includes(opponentNames[1]))  && (!playersWhoPicked.includes(opponentNames[1]))  && (playersChoices.length == 4)))
+                  &&  <h3>{opponentNames[1]}</h3>}
+                {/* name is green */}
+                {Object.keys(opponentNames).length > 0 
+                  && (playersWhoPlayed.includes(opponentNames[1])) 
+                  && ((playersWhoPicked.includes(opponentNames[1])) || ((!playersWhoPicked.includes(opponentNames[1])) && (playersChoices.length < 4)))
+                  && <h3 style={{color: 'green'}}>{opponentNames[1]}</h3>}
+              </div>
           </div>
           <div className="gameView middleSection blackCardSection">
             <Card isBlack={true} isChoice={false} key={blackCard.cardId} text={blackCard.cardText} role={player.cardCzar}/>
           </div>
           <div className="gameView middleSection opponentSection"> 
-            <div className="gameView tile">
-              {Object.keys(opponentNames).length > 2 && (!(playersWhoPlayed.includes(opponentNames[2]))) && <h3>{opponentNames[2]}</h3>}
-              {Object.keys(opponentNames).length > 2 && (playersWhoPlayed.includes(opponentNames[2])) && <h3 style={{color: 'green'}}>{opponentNames[2]}</h3>}
-            </div>
+              <div className="gameView tile">
+                {/* name is black */}
+                {Object.keys(opponentNames).length > 0 
+                  && (((!playersWhoPlayed.includes(opponentNames[2])) && (!playersWhoPicked.includes(opponentNames[2])))
+                  || ((playersWhoPlayed.includes(opponentNames[2]))  && (!playersWhoPicked.includes(opponentNames[2]))  && (playersChoices.length == 4)))
+                  &&  <h3>{opponentNames[2]}</h3>}
+                {/* name is green */}
+                {Object.keys(opponentNames).length > 0 
+                  && (playersWhoPlayed.includes(opponentNames[2])) 
+                  && ((playersWhoPicked.includes(opponentNames[2])) || ((!playersWhoPicked.includes(opponentNames[2])) && (playersChoices.length < 4)))
+                  && <h3 style={{color: 'green'}}>{opponentNames[2]}</h3>}
+              </div>
           </div>
         </div>
 

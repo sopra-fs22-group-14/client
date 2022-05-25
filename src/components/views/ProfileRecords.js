@@ -60,41 +60,41 @@ const ProfileRecords = () => {
   };
 
 
-  const displayProfileRecords = (idOfUser, nameOfUser, nrOfGamesWon, nrOfPointsEarned, nrOfRoundsWon, combinations) => {
+  const displayProfileRecords = () => {
     return (
         <div className="profile minor">
         <h2>Records</h2>
-        <h3 className = "animatedH3">{nameOfUser}</h3>
+        <h3 className = "animatedH3">{username}</h3>
         <table className = "profile statsTable">
           <tbody>
               <tr>
                 <td>🏆Games won</td>
-                <td>{nrOfGamesWon}</td>
+                <td>{gamesWon}</td>
               </tr>
               <tr>
                 <td>⭐Points earned (Community mode)</td>
-                <td>{nrOfPointsEarned}</td>
+                <td>{pointsEarned}</td>
               </tr>
               <tr>
                 <td>🥊Rounds won (Card Czar mode)</td>
-                <td>{nrOfRoundsWon}</td>
+                <td>{roundsWon}</td>
               </tr>
           </tbody>
       </table>
       <div className = "profile combinations">
             <div className = "profile combinations list"> 
               <h4>Favourite combinations</h4>
-                {combinations}
-                {combinations.length == 0 && idOfUser == localStorage.getItem('loggedInUserID') &&
+                {favouriteCombinations}
+                {favouriteCombinations.length == 0 && userId == localStorage.getItem('loggedInUserID') &&
                   <p>You don't have any favourite combinations yet! You can add them to the profile at the end of each game!</p>
                 }
-                {combinations.length == 0 && idOfUser != localStorage.getItem('loggedInUserID') &&
+                {favouriteCombinations.length == 0 && userId != localStorage.getItem('loggedInUserID') &&
                   <p>User does not have any favourite combinations yet!</p>
                 }
             </div>
       </div>
       <div> 
-        {combinations.length != 0 &&                   
+        {favouriteCombinations.length != 0 &&                   
                 <ReactPaginate
                   previousLabel={"←"}
                   nextLabel={"→"}
@@ -118,7 +118,7 @@ const ProfileRecords = () => {
     content = (
         <div className = "profile main">
           <SideBar/>
-          {displayProfileRecords(userId, username, gamesWon, pointsEarned, roundsWon, favouriteCombinations)}
+          {displayProfileRecords()}
         </div>
     );
   }
