@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/sopra-fs22-group-14"><img src="src/CAH_Logo.png" alt="Cards Against Humanity" width="400"></a>
+  <a href="https://github.com/sopra-fs22-group-14"><img src="src/CAH_Logo.png" alt="Cards Against Humanity" width="300"></a>
   <br>
   Cards Against Humanity - Client
   <br>
