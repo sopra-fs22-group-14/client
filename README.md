@@ -75,7 +75,7 @@ The following things could be implemented in the future:
 
    1. New endpoint for the round ending in the Community Mode, so that the played cards and the times chosen can be associated to the users
    2. Include a chat feature to enable communication during the game
-   3. Develop a mobile version of the game, so that it can be played on mobiledevices too
+   3. Develop a mobile version of the game, so that it can be played on mobile devices too
 
 ## Authors and Acknowledgements
 
@@ -86,3 +86,7 @@ The following things could be implemented in the future:
 <h3>Acknowledgements</h3>
 
 We would like to thank our tutor [Kyrill Hux](https://github.com/realChesta), who was always able to support us when we had any concerns. His support resulted in an application that is more user-friendy and also more secure :)
+
+## License
+
+[Apache License 2.0](LICENSE)
