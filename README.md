@@ -7,7 +7,12 @@
 </h1>
 
 <p align="center">
-   TODO: include batches
+   <a href="https://github.com/sopra-fs22-group-14/client/actions">
+     <img src="https://github.com/sopra-fs22-group-14/client/workflows/Deploy%20Project/badge.svg" alt="Deployment Status">
+   </a>
+   <a href="https://sonarcloud.io/project/overview?id=sopra-fs22-group-14_client">
+      <img src="https://sonarcloud.io/api/project_badges/measure?project=sopra-fs22-group-14_client&metric=alert_status" alt="Quality Gate Status">
+  </a>
 </p>
 
 ## Introduction
