@@ -331,7 +331,6 @@ const GameView = () => {
       setChosenCard(null);
       chosenCardText.current = null;
       setChosenWinner(null);
-      // TODO set session storage to 0 after the round is over, maybe also wasCardPlayed to null
     }
   }, [roundWinningCardText]); // use roundWinningCardText to ensure change
 
@@ -476,7 +475,6 @@ const GameView = () => {
   // method for players to leave an ongoing game
   const leaveGame = async () => {
     try {
-      // TODO give player a choice to not leave (alert-style)
       setPollingActive(false);
       await api.put('/leave/'+gameId);
       sessionStorage.clear();
