@@ -67,8 +67,26 @@ For development in React, the following tutorials will make your life easier:
 
 ## Illustrations
 
-TODO add pictures with description
+Entry point for the application - our home page.
+![Home_Page](markdown/home_page.jpg)
+  
+Lobby where the player can either create or join a game.
+![Lobby](markdown/lobby.jpg)
+  
+Once we are in the game this is how it looks like from the player perspective. 
+![Ingame](markdown/ingame.jpg)
 
+When the game ends summary is shown to the players. 
+![Endgame](markdown/end_game.jpg)
+  
+Player can easily see who is currently online & offline. By clicking on the player one can visits his/her profile records page. 
+![Other Players](markdown/players.jpg)
+
+This is how the profile records section looks like. 
+![records](markdown/records.jpg)
+
+Other pages include an "About" page where the rules are explained, "Game creation" page, as well as "Profile editing" page, where the password or username can be changed. 
+ 
 ## Roadmap
 
 The following things could be implemented in the future:
